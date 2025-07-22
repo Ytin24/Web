@@ -29,6 +29,37 @@ export default function Admin() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
 
+  // Queries with proper fetcher functions - moved to top to avoid hooks rule violation
+  const { data: sections } = useQuery<Section[]>({
+    queryKey: ["/api/sections"],
+    queryFn: () => fetch("/api/sections").then(res => res.json()),
+    enabled: isAuthenticated // Only fetch when authenticated
+  });
+
+  const { data: callbackRequests } = useQuery<CallbackRequest[]>({
+    queryKey: ["/api/callback-requests"],
+    queryFn: () => fetch("/api/callback-requests").then(res => res.json()),
+    enabled: isAuthenticated
+  });
+
+  const { data: blogPosts } = useQuery<BlogPost[]>({
+    queryKey: ["/api/blog-posts"],
+    queryFn: () => fetch("/api/blog-posts").then(res => res.json()),
+    enabled: isAuthenticated
+  });
+
+  const { data: portfolioItems } = useQuery<PortfolioItem[]>({
+    queryKey: ["/api/portfolio-items"],
+    queryFn: () => fetch("/api/portfolio-items").then(res => res.json()),
+    enabled: isAuthenticated
+  });
+
+  const { data: loyaltyPrograms } = useQuery<LoyaltyProgram[]>({
+    queryKey: ["/api/loyalty-program"],
+    queryFn: () => fetch("/api/loyalty-program").then(res => res.json()),
+    enabled: isAuthenticated
+  });
+
   // Check authentication status on component mount
   useEffect(() => {
     checkAuthStatus();
@@ -108,32 +139,6 @@ export default function Admin() {
   if (!isAuthenticated) {
     return null; // Component will be unmounted as we redirect
   }
-
-  // Queries with proper fetcher functions
-  const { data: sections } = useQuery<Section[]>({
-    queryKey: ["/api/sections"],
-    queryFn: () => fetch("/api/sections").then(res => res.json())
-  });
-
-  const { data: callbackRequests } = useQuery<CallbackRequest[]>({
-    queryKey: ["/api/callback-requests"],
-    queryFn: () => fetch("/api/callback-requests").then(res => res.json())
-  });
-
-  const { data: blogPosts } = useQuery<BlogPost[]>({
-    queryKey: ["/api/blog-posts"],
-    queryFn: () => fetch("/api/blog-posts").then(res => res.json())
-  });
-
-  const { data: portfolioItems } = useQuery<PortfolioItem[]>({
-    queryKey: ["/api/portfolio-items"],
-    queryFn: () => fetch("/api/portfolio-items").then(res => res.json())
-  });
-
-  const { data: loyaltyPrograms } = useQuery<LoyaltyProgram[]>({
-    queryKey: ["/api/loyalty-program"],
-    queryFn: () => fetch("/api/loyalty-program").then(res => res.json())
-  });
 
   // Dashboard statistics
   const pendingRequests = callbackRequests?.filter(req => req.status === 'pending').length || 0;
