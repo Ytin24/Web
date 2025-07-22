@@ -29,7 +29,7 @@ export class N8NIntegration {
       source: 'tsvetokraft-website'
     };
     
-    for (const [name, webhook] of this.webhooks) {
+    for (const [name, webhook] of Array.from(this.webhooks.entries())) {
       if (webhook.isActive && webhook.events.includes(eventType)) {
         try {
           const headers: Record<string, string> = {
@@ -204,7 +204,7 @@ export async function n8nApiEndpoint(req: Request, res: Response) {
         if (!data.id || !data.status) {
           return res.status(400).json({ error: 'ID and status are required' });
         }
-        const updated = await storage.updateCallbackRequest(data.id, { status: data.status });
+        const updated = await storage.updateCallbackRequest(data.id, data);
         res.json({ success: true, data: updated });
         break;
         

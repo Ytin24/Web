@@ -78,6 +78,15 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
+  async getUserById(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return db.select().from(users);
+  }
+
   async getUserByUsername(username: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.username, username));
     return user || undefined;
@@ -544,9 +553,59 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      role: insertUser.role || 'manager',
+      isActive: insertUser.isActive ?? true,
+      createdAt: new Date(),
+      lastLogin: null
+    };
     this.users.set(id, user);
     return user;
+  }
+
+  async getUserById(id: number): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return Array.from(this.users.values());
+  }
+
+  async updateUserLastLogin(id: number): Promise<void> {
+    const user = this.users.get(id);
+    if (user) {
+      user.lastLogin = new Date();
+      this.users.set(id, user);
+    }
+  }
+
+  // API Token methods
+  async getApiTokenById(id: number): Promise<ApiToken | undefined> {
+    // Not implemented in memory storage for simplicity
+    return undefined;
+  }
+
+  async getApiTokenByToken(token: string): Promise<ApiToken | undefined> {
+    // Not implemented in memory storage for simplicity
+    return undefined;
+  }
+
+  async getApiTokensByUserId(userId: number): Promise<ApiToken[]> {
+    return [];
+  }
+
+  async createApiToken(token: InsertApiToken): Promise<ApiToken> {
+    throw new Error('Not implemented in memory storage');
+  }
+
+  async updateApiTokenLastUsed(id: number): Promise<void> {
+    // Not implemented in memory storage
+  }
+
+  async revokeApiToken(id: number): Promise<void> {
+    // Not implemented in memory storage
   }
 
   // Section methods
@@ -657,6 +716,7 @@ export class MemStorage implements IStorage {
       id, 
       createdAt: new Date(),
       description: insertPortfolioItem.description || null,
+      imageUrl: insertPortfolioItem.imageUrl || null,
       isActive: insertPortfolioItem.isActive ?? true
     };
     this.portfolioItems.set(id, portfolioItem);
@@ -739,6 +799,50 @@ export class MemStorage implements IStorage {
     const updatedLevel = { ...existingLevel, ...levelData };
     this.loyaltyProgram.set(id, updatedLevel);
     return updatedLevel;
+  }
+
+  // Callback request update method
+  async updateCallbackRequest(id: number, data: Partial<InsertCallbackRequest>): Promise<CallbackRequest> {
+    const existingRequest = this.callbackRequests.get(id);
+    if (!existingRequest) {
+      throw new Error('Callback request not found');
+    }
+    const updatedRequest = { ...existingRequest, ...data };
+    this.callbackRequests.set(id, updatedRequest);
+    return updatedRequest;
+  }
+
+  // Image methods (stub implementation for MemStorage)
+  async getAllImages(): Promise<Image[]> {
+    return [];
+  }
+
+  async getImagesByCategory(category: string): Promise<Image[]> {
+    return [];
+  }
+
+  async getActiveImages(): Promise<Image[]> {
+    return [];
+  }
+
+  async getImage(id: number): Promise<Image | undefined> {
+    return undefined;
+  }
+
+  async getImageByFilename(filename: string): Promise<Image | undefined> {
+    return undefined;
+  }
+
+  async createImage(image: InsertImage): Promise<Image> {
+    throw new Error('Not implemented in memory storage');
+  }
+
+  async updateImage(id: number, image: Partial<InsertImage>): Promise<Image> {
+    throw new Error('Not implemented in memory storage');
+  }
+
+  async deleteImage(id: number): Promise<void> {
+    // Not implemented in memory storage
   }
 }
 
