@@ -16,6 +16,7 @@ import LoyaltyProgramManagement from "@/components/admin/loyalty-management";
 import TokenManagement from "@/components/admin/token-management";
 import ApiDocumentation from "@/components/admin/api-documentation";
 import CustomersManagement from "@/components/admin/customers-management";
+import CRMManagement from "@/components/admin/crm-management";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Section, BlogPost, PortfolioItem, CallbackRequest, LoyaltyProgram } from "@shared/schema";
 
@@ -243,6 +244,7 @@ export default function Admin() {
     { id: "portfolio", label: "Портфолио", icon: Image },
     { id: "requests", label: "Заявки", icon: Phone },
     { id: "customers", label: "Клиенты", icon: Users },
+    { id: "crm", label: "CRM", icon: TrendingUp },
     { id: "loyalty", label: "Лояльность", icon: Star },
     { id: "sections", label: "Секции", icon: Code },
     { id: "tokens", label: "API", icon: Code },
@@ -326,6 +328,10 @@ export default function Admin() {
             
             <TabsContent value="customers" className="mt-0">
               <CustomersManagement />
+            </TabsContent>
+            
+            <TabsContent value="crm" className="mt-0">
+              <CRMManagement />
             </TabsContent>
             
             <TabsContent value="loyalty" className="mt-0">

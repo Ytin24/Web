@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -108,6 +108,33 @@ export const images = pgTable("images", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Sales CRM Table
+export const sales = pgTable("sales", {
+  id: serial("id").primaryKey(),
+  customerName: text("customer_name"),
+  customerPhone: text("customer_phone"),
+  productName: text("product_name").notNull(),
+  quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(),
+  unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
+  subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+  taxAmount: decimal("tax_amount", { precision: 10, scale: 2 }).default("0"),
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+  saleDate: timestamp("sale_date").defaultNow(),
+  notes: text("notes"),
+  paymentMethod: text("payment_method").notNull().default("cash"), // 'cash', 'card', 'transfer', 'other'
+  status: text("status").notNull().default("completed"), // 'pending', 'completed', 'cancelled'
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Settings Table for tax rates and other configurations
+export const settings = pgTable("settings", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull(),
+  description: text("description"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -201,6 +228,27 @@ export const insertCustomerSchema = createInsertSchema(customers).pick({
   lastOrderDate: true,
 });
 
+export const insertSaleSchema = createInsertSchema(sales).pick({
+  customerName: true,
+  customerPhone: true,
+  productName: true,
+  quantity: true,
+  unitPrice: true,
+  subtotal: true,
+  taxAmount: true,
+  totalAmount: true,
+  saleDate: true,
+  notes: true,
+  paymentMethod: true,
+  status: true,
+});
+
+export const insertSettingSchema = createInsertSchema(settings).pick({
+  key: true,
+  value: true,
+  description: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -228,3 +276,9 @@ export type ApiToken = typeof apiTokens.$inferSelect;
 
 export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
 export type Customer = typeof customers.$inferSelect;
+
+export type InsertSale = z.infer<typeof insertSaleSchema>;
+export type Sale = typeof sales.$inferSelect;
+
+export type InsertSetting = z.infer<typeof insertSettingSchema>;
+export type Setting = typeof settings.$inferSelect;

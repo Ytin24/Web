@@ -4,7 +4,8 @@ import { z } from "zod";
 import { storage } from "./storage";
 import { 
   insertSectionSchema, insertBlogPostSchema, insertPortfolioItemSchema, 
-  insertCallbackRequestSchema, insertLoyaltyProgramSchema, insertImageSchema, insertCustomerSchema
+  insertCallbackRequestSchema, insertLoyaltyProgramSchema, insertImageSchema, insertCustomerSchema,
+  insertSaleSchema, insertSettingSchema
 } from "@shared/schema";
 import { 
   authenticateToken, 
@@ -603,6 +604,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete customer" });
+    }
+  });
+
+  // Sales CRM routes
+  app.get("/api/sales", async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      let salesData;
+      
+      if (startDate && endDate) {
+        salesData = await storage.getSalesByDateRange(new Date(startDate as string), new Date(endDate as string));
+      } else {
+        salesData = await storage.getAllSales();
+      }
+      
+      res.json(salesData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch sales" });
+    }
+  });
+
+  app.get("/api/sales/stats", async (req, res) => {
+    try {
+      const stats = await storage.getSalesStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch sales statistics" });
+    }
+  });
+
+  app.get("/api/sales/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const sale = await storage.getSale(id);
+      if (!sale) {
+        return res.status(404).json({ message: "Sale not found" });
+      }
+      res.json(sale);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch sale" });
+    }
+  });
+
+  app.post("/api/sales", async (req, res) => {
+    try {
+      const validatedData = insertSaleSchema.parse(req.body);
+      const sale = await storage.createSale(validatedData);
+      res.status(201).json(sale);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid sale data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create sale" });
+    }
+  });
+
+  app.put("/api/sales/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertSaleSchema.partial().parse(req.body);
+      const updatedSale = await storage.updateSale(id, validatedData);
+      res.json(updatedSale);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid sale data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update sale" });
+    }
+  });
+
+  app.delete("/api/sales/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteSale(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete sale" });
+    }
+  });
+
+  // Settings routes
+  app.get("/api/settings", async (req, res) => {
+    try {
+      const settings = await storage.getAllSettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch settings" });
+    }
+  });
+
+  app.get("/api/settings/:key", async (req, res) => {
+    try {
+      const key = req.params.key;
+      const setting = await storage.getSetting(key);
+      if (!setting) {
+        return res.status(404).json({ message: "Setting not found" });
+      }
+      res.json(setting);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch setting" });
+    }
+  });
+
+  app.post("/api/settings", async (req, res) => {
+    try {
+      const validatedData = insertSettingSchema.parse(req.body);
+      const setting = await storage.setSetting(validatedData.key, validatedData.value, validatedData.description);
+      res.status(201).json(setting);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid setting data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create/update setting" });
+    }
+  });
+
+  app.put("/api/settings/:key", async (req, res) => {
+    try {
+      const key = req.params.key;
+      const { value, description } = req.body;
+      const setting = await storage.setSetting(key, value, description);
+      res.json(setting);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update setting" });
+    }
+  });
+
+  app.delete("/api/settings/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteSetting(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete setting" });
     }
   });
 

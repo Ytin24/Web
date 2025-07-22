@@ -1,12 +1,13 @@
 import { 
-  users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images, apiTokens, customers,
+  users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images, apiTokens, customers, sales, settings,
   type User, type InsertUser, type Section, type InsertSection,
   type BlogPost, type InsertBlogPost, type PortfolioItem, type InsertPortfolioItem,
   type CallbackRequest, type InsertCallbackRequest, type LoyaltyProgram, type InsertLoyaltyProgram,
-  type Image, type InsertImage, type ApiToken, type InsertApiToken, type Customer, type InsertCustomer
+  type Image, type InsertImage, type ApiToken, type InsertApiToken, type Customer, type InsertCustomer,
+  type Sale, type InsertSale, type Setting, type InsertSetting
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, and, desc, asc, gte, lte } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -82,6 +83,22 @@ export interface IStorage {
   createCustomer(customer: InsertCustomer): Promise<Customer>;
   updateCustomer(id: number, customer: Partial<InsertCustomer>): Promise<Customer>;
   deleteCustomer(id: number): Promise<void>;
+
+  // Sales CRM
+  getAllSales(): Promise<Sale[]>;
+  getSalesByDateRange(startDate: Date, endDate: Date): Promise<Sale[]>;
+  getSale(id: number): Promise<Sale | undefined>;
+  createSale(sale: InsertSale): Promise<Sale>;
+  updateSale(id: number, sale: Partial<InsertSale>): Promise<Sale>;
+  deleteSale(id: number): Promise<void>;
+  getSalesStats(): Promise<{ totalSales: number, totalRevenue: number, avgOrderValue: number }>;
+
+  // Settings
+  getAllSettings(): Promise<Setting[]>;
+  getSetting(key: string): Promise<Setting | undefined>;
+  setSetting(key: string, value: string, description?: string): Promise<Setting>;
+  updateSetting(id: number, setting: Partial<InsertSetting>): Promise<Setting>;
+  deleteSetting(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -428,6 +445,100 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCustomer(id: number): Promise<void> {
     await db.delete(customers).where(eq(customers.id, id));
+  }
+
+  // Sales CRM
+  async getAllSales(): Promise<Sale[]> {
+    return await db.select().from(sales).orderBy(sales.saleDate);
+  }
+
+  async getSalesByDateRange(startDate: Date, endDate: Date): Promise<Sale[]> {
+    return await db.select().from(sales)
+      .where(and(gte(sales.saleDate, startDate), lte(sales.saleDate, endDate)))
+      .orderBy(sales.saleDate);
+  }
+
+  async getSale(id: number): Promise<Sale | undefined> {
+    const [sale] = await db.select().from(sales).where(eq(sales.id, id));
+    return sale || undefined;
+  }
+
+  async createSale(insertSale: InsertSale): Promise<Sale> {
+    const [sale] = await db
+      .insert(sales)
+      .values(insertSale)
+      .returning();
+    return sale;
+  }
+
+  async updateSale(id: number, saleData: Partial<InsertSale>): Promise<Sale> {
+    const [updatedSale] = await db
+      .update(sales)
+      .set(saleData)
+      .where(eq(sales.id, id))
+      .returning();
+    return updatedSale;
+  }
+
+  async deleteSale(id: number): Promise<void> {
+    await db.delete(sales).where(eq(sales.id, id));
+  }
+
+  async getSalesStats(): Promise<{ totalSales: number, totalRevenue: number, avgOrderValue: number }> {
+    const result = await db.select({
+      totalSales: sql<number>`count(*)`,
+      totalRevenue: sql<number>`sum(${sales.totalAmount})`,
+      avgOrderValue: sql<number>`avg(${sales.totalAmount})`,
+    }).from(sales).where(eq(sales.status, 'completed'));
+    
+    const stats = result[0];
+    return {
+      totalSales: Number(stats.totalSales) || 0,
+      totalRevenue: Number(stats.totalRevenue) || 0,
+      avgOrderValue: Number(stats.avgOrderValue) || 0,
+    };
+  }
+
+  // Settings
+  async getAllSettings(): Promise<Setting[]> {
+    return await db.select().from(settings).orderBy(settings.key);
+  }
+
+  async getSetting(key: string): Promise<Setting | undefined> {
+    const [setting] = await db.select().from(settings).where(eq(settings.key, key));
+    return setting || undefined;
+  }
+
+  async setSetting(key: string, value: string, description?: string): Promise<Setting> {
+    const existingSetting = await this.getSetting(key);
+    
+    if (existingSetting) {
+      const [updated] = await db
+        .update(settings)
+        .set({ value, description, updatedAt: new Date() })
+        .where(eq(settings.key, key))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(settings)
+        .values({ key, value, description })
+        .returning();
+      return created;
+    }
+  }
+
+  async updateSetting(id: number, settingData: Partial<InsertSetting>): Promise<Setting> {
+    const [updatedSetting] = await db
+      .update(settings)
+      .set({ ...settingData, updatedAt: new Date() })
+      .where(eq(settings.id, id))
+      .returning();
+    return updatedSetting;
+  }
+
+  async deleteSetting(id: number): Promise<void> {
+    await db.delete(settings).where(eq(settings.id, id));
   }
 }
 
@@ -981,6 +1092,56 @@ export class MemStorage implements IStorage {
 
   async deleteCustomer(id: number): Promise<void> {
     throw new Error("MemStorage doesn't support customer operations");
+  }
+
+  // Sales CRM (not implemented in MemStorage)
+  async getAllSales(): Promise<Sale[]> {
+    throw new Error("MemStorage doesn't support sales operations");
+  }
+
+  async getSalesByDateRange(startDate: Date, endDate: Date): Promise<Sale[]> {
+    throw new Error("MemStorage doesn't support sales operations");
+  }
+
+  async getSale(id: number): Promise<Sale | undefined> {
+    throw new Error("MemStorage doesn't support sales operations");
+  }
+
+  async createSale(sale: InsertSale): Promise<Sale> {
+    throw new Error("MemStorage doesn't support sales operations");
+  }
+
+  async updateSale(id: number, sale: Partial<InsertSale>): Promise<Sale> {
+    throw new Error("MemStorage doesn't support sales operations");
+  }
+
+  async deleteSale(id: number): Promise<void> {
+    throw new Error("MemStorage doesn't support sales operations");
+  }
+
+  async getSalesStats(): Promise<{ totalSales: number, totalRevenue: number, avgOrderValue: number }> {
+    throw new Error("MemStorage doesn't support sales operations");
+  }
+
+  // Settings (not implemented in MemStorage)
+  async getAllSettings(): Promise<Setting[]> {
+    throw new Error("MemStorage doesn't support settings operations");
+  }
+
+  async getSetting(key: string): Promise<Setting | undefined> {
+    throw new Error("MemStorage doesn't support settings operations");
+  }
+
+  async setSetting(key: string, value: string, description?: string): Promise<Setting> {
+    throw new Error("MemStorage doesn't support settings operations");
+  }
+
+  async updateSetting(id: number, setting: Partial<InsertSetting>): Promise<Setting> {
+    throw new Error("MemStorage doesn't support settings operations");
+  }
+
+  async deleteSetting(id: number): Promise<void> {
+    throw new Error("MemStorage doesn't support settings operations");
   }
 }
 
