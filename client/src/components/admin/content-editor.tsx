@@ -516,20 +516,20 @@ export default function ContentEditor({ post, onSave, onCancel, isLoading }: Con
                 <div className="mt-4">
                   <Label>Ответ Профессора Ботаникуса:</Label>
                   <div className="mt-2 p-4 bg-purple-50 dark:bg-purple-950 rounded-lg border border-purple-200 dark:border-purple-800">
-                    <div className="relative">
-                      <ScrollArea className="max-h-60 w-full overflow-y-auto">
-                        <div className="pr-4 space-y-2">
-                          <div 
-                            className="text-sm whitespace-pre-wrap leading-relaxed prose prose-sm max-w-none text-foreground"
-                            dangerouslySetInnerHTML={{ 
-                              __html: aiResponse.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') 
-                            }}
-                          />
-                        </div>
-                      </ScrollArea>
-                      {aiResponse.length > 500 && (
-                        <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-purple-50 dark:from-purple-950 to-transparent pointer-events-none" />
-                      )}
+                    <div 
+                      className="max-h-60 overflow-y-auto border border-purple-200 dark:border-purple-700 rounded p-3 scrollable-content"
+                    >
+                      <div 
+                        className="text-sm whitespace-pre-wrap leading-relaxed prose prose-sm max-w-none text-foreground"
+                        dangerouslySetInnerHTML={{ 
+                          __html: aiResponse
+                            .replace(/\n/g, '<br>')
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                            .replace(/##\s+(.*?)(<br>|$)/g, '<h2 class="text-lg font-bold mt-4 mb-2 text-purple-700 dark:text-purple-300">$1</h2>')
+                            .replace(/###\s+(.*?)(<br>|$)/g, '<h3 class="text-md font-semibold mt-3 mb-2 text-purple-600 dark:text-purple-400">$1</h3>')
+                        }}
+                      />
                     </div>
                     <div className="flex gap-2 mt-3">
                       <Button

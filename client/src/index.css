@@ -446,3 +446,43 @@
 * {
   transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1) !important;
 }
+
+/* Custom scrollbar styles for AI response area */
+.scrollable-content {
+  scrollbar-width: thin;
+  scrollbar-color: #d8b4fe #f3e8ff;
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: #f3e8ff;
+  border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: #d8b4fe;
+  border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #c4a7fc;
+}
+
+.dark .scrollable-content {
+  scrollbar-color: #7c3aed #1e1b4b;
+}
+
+.dark .scrollable-content::-webkit-scrollbar-track {
+  background: #1e1b4b;
+}
+
+.dark .scrollable-content::-webkit-scrollbar-thumb {
+  background: #7c3aed;
+}
+
+.dark .scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #8b5cf6;
+}
