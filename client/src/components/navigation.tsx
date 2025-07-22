@@ -44,13 +44,7 @@ export default function Navigation() {
                   {link.label}
                 </button>
               ))}
-              <Button
-                variant="outline"
-                onClick={() => window.location.href = '/admin'}
-                className="glass-effect px-6 py-2 text-[hsl(213,27%,19%)] hover:text-[hsl(252,100%,71%)]"
-              >
-                Админ
-              </Button>
+
             </div>
 
             {/* Mobile Menu Button */}
@@ -80,13 +74,7 @@ export default function Navigation() {
                 {link.label}
               </button>
             ))}
-            <Button
-              variant="outline"
-              onClick={() => window.location.href = '/admin'}
-              className="w-full glass-effect"
-            >
-              Админ
-            </Button>
+
           </div>
         </div>
       )}
