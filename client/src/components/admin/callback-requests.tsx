@@ -21,11 +21,7 @@ export default function CallbackRequests() {
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
-      return fetch(`/api/callback-requests/${id}/status`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status })
-      }).then(res => res.json());
+      return apiRequest("PUT", `/api/callback-requests/${id}/status`, { status }).then(res => res.json());
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/callback-requests"] });
@@ -38,9 +34,7 @@ export default function CallbackRequests() {
 
   const deleteRequestMutation = useMutation({
     mutationFn: async (id: number) => {
-      return fetch(`/api/callback-requests/${id}`, {
-        method: "DELETE"
-      });
+      return apiRequest("DELETE", `/api/callback-requests/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/callback-requests"] });

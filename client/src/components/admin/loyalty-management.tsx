@@ -25,11 +25,8 @@ export default function LoyaltyProgramManagement() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: InsertLoyaltyProgram) => fetch("/api/loyalty-program", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }).then(res => res.json()),
+    mutationFn: (data: InsertLoyaltyProgram) => 
+      apiRequest("POST", "/api/loyalty-program", data).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/loyalty-program"] });
       setIsCreateOpen(false);
@@ -39,11 +36,7 @@ export default function LoyaltyProgramManagement() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<LoyaltyProgram> }) => 
-      fetch(`/api/loyalty-program/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      }).then(res => res.json()),
+      apiRequest("PATCH", `/api/loyalty-program/${id}`, data).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/loyalty-program"] });
       setEditingProgram(null);
@@ -52,9 +45,7 @@ export default function LoyaltyProgramManagement() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => fetch(`/api/loyalty-program/${id}`, {
-      method: "DELETE",
-    }),
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/loyalty-program/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/loyalty-program"] });
       toast({ title: "Уровень лояльности удален" });

@@ -32,11 +32,8 @@ export default function PortfolioManagement() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: InsertPortfolioItem) => fetch("/api/portfolio-items", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }).then(res => res.json()),
+    mutationFn: (data: InsertPortfolioItem) => 
+      apiRequest("POST", "/api/portfolio-items", data).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio-items"] });
       setIsCreateOpen(false);
@@ -49,11 +46,7 @@ export default function PortfolioManagement() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<PortfolioItem> }) => 
-      fetch(`/api/portfolio-items/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      }).then(res => res.json()),
+      apiRequest("PATCH", `/api/portfolio-items/${id}`, data).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio-items"] });
       setEditingItem(null);
@@ -65,9 +58,7 @@ export default function PortfolioManagement() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => fetch(`/api/portfolio-items/${id}`, {
-      method: "DELETE",
-    }),
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/portfolio-items/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio-items"] });
       toast({ title: "Работа удалена" });
@@ -79,10 +70,7 @@ export default function PortfolioManagement() {
 
   const toggleActiveMutation = useMutation({
     mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) =>
-      apiRequest(`/api/portfolio-items/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ isActive }),
-      }),
+      apiRequest("PATCH", `/api/portfolio-items/${id}`, { isActive }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio-items"] });
       toast({ title: "Статус видимости изменен" });
@@ -118,7 +106,7 @@ export default function PortfolioManagement() {
       description: item?.description || "",
       category: item?.category || "",
       imageUrl: item?.imageUrl || "",
-      isActive: item?.isActive || true
+      isActive: item?.isActive ?? true
     });
 
     const handleSubmit = (e: React.FormEvent) => {

@@ -36,12 +36,15 @@ export function ThemeProvider({
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
+      window.addEventListener("load", () => {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+          .matches
+          ? "dark"
+          : "light";
+        const root = window.document.documentElement;
+        root.classList.add(systemTheme);
+      });
 
-      root.classList.add(systemTheme);
       return;
     }
 

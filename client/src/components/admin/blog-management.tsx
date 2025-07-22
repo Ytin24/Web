@@ -11,7 +11,7 @@ import {
   BookOpen, FileText
 } from "lucide-react";
 import ContentEditor from "./content-editor";
-
+import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { BlogPost, InsertBlogPost } from "@shared/schema";
 
@@ -33,11 +33,7 @@ export default function BlogManagement() {
 
   const createMutation = useMutation({
     mutationFn: (data: InsertBlogPost) => 
-      fetch("/api/blog-posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      }).then(res => res.json()),
+      apiRequest("POST", "/api/blog-posts", data).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       setIsCreateOpen(false);
@@ -51,11 +47,7 @@ export default function BlogManagement() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<BlogPost> }) => 
-      fetch(`/api/blog-posts/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      }).then(res => res.json()),
+      apiRequest("PUT", `/api/blog-posts/${id}`, data).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       setEditingPost(null);
@@ -68,10 +60,7 @@ export default function BlogManagement() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => 
-      fetch(`/api/blog-posts/${id}`, {
-        method: "DELETE",
-      }),
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/blog-posts/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       toast({ title: "Статья удалена" });
@@ -83,11 +72,7 @@ export default function BlogManagement() {
 
   const togglePublishMutation = useMutation({
     mutationFn: ({ id, isPublished }: { id: number; isPublished: boolean }) =>
-      fetch(`/api/blog-posts/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isPublished }),
-      }).then(res => res.json()),
+      apiRequest("PUT", `/api/blog-posts/${id}`, { isPublished }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       toast({ title: "Статус публикации изменен" });

@@ -22,7 +22,7 @@ export default function LoyaltyModal({ isOpen, onClose }: LoyaltyModalProps) {
 
   const submitMutation = useMutation({
     mutationFn: (data: { name: string; phone: string; message: string }) => 
-      apiRequest("/api/callback-requests", "POST", data),
+      apiRequest("POST", "/api/callback-requests", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/callback-requests"] });
       setIsSubmitted(true);
