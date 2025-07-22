@@ -12,6 +12,9 @@ import {
 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import type { Components } from 'react-markdown';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -212,9 +215,31 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                             : 'bg-muted text-foreground rounded-bl-md'
                         }`}
                       >
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                          {message.content}
-                        </p>
+                        <div className="text-sm leading-relaxed">
+                          {message.role === 'assistant' ? (
+                            <ReactMarkdown
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                h1: ({children}) => <h1 className="text-base font-bold mb-2 text-pink-600 dark:text-pink-400">{children}</h1>,
+                                h2: ({children}) => <h2 className="text-sm font-bold mb-2 text-pink-600 dark:text-pink-400">{children}</h2>,
+                                h3: ({children}) => <h3 className="text-sm font-semibold mb-1 text-pink-600 dark:text-pink-400">{children}</h3>,
+                                h4: ({children}) => <h4 className="text-sm font-semibold mb-1 text-pink-600 dark:text-pink-400">{children}</h4>,
+                                p: ({children}) => <p className="mb-2 last:mb-0">{children}</p>,
+                                ul: ({children}) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                                ol: ({children}) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                                li: ({children}) => <li className="text-sm">{children}</li>,
+                                strong: ({children}) => <strong className="font-semibold text-pink-700 dark:text-pink-300">{children}</strong>,
+                                em: ({children}) => <em className="italic text-purple-600 dark:text-purple-400">{children}</em>,
+                                code: ({children}) => <code className="bg-muted px-1 py-0.5 rounded text-xs font-mono">{children}</code>,
+                                blockquote: ({children}) => <blockquote className="border-l-2 border-pink-400 pl-3 italic text-muted-foreground">{children}</blockquote>,
+                              } as Components}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
+                          ) : (
+                            <p className="whitespace-pre-wrap">{message.content}</p>
+                          )}
+                        </div>
                       </div>
                       
                       <div className="flex items-center gap-2 mt-1 px-2">
