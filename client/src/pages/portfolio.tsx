@@ -38,7 +38,7 @@ export default function Portfolio() {
   ) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen bg-muted/50 overflow-x-hidden">
       <Navigation />
       <main className="pt-20">
         {/* Header */}
@@ -93,7 +93,7 @@ export default function Portfolio() {
               {filteredItems.map((item, index) => (
                 <ScrollReveal key={item.id} delay={0.1 + (index % 8) * 0.1}>
                   <div className="group">
-                    <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
+                    <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-border/50 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
                       <img 
                         src={item.imageUrl || ''} 
                         alt={item.title} 
@@ -102,7 +102,7 @@ export default function Portfolio() {
                       
                       {/* Always visible expand button */}
                       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 group-hover:bg-white transition-colors duration-300">
-                        <Maximize2 className="w-4 h-4 text-gray-700" />
+                        <Maximize2 className="w-4 h-4 text-muted-foreground" />
                       </div>
                       
                       {/* Hover overlay */}
@@ -123,9 +123,9 @@ export default function Portfolio() {
 
             {filteredItems.length === 0 && (
               <div className="text-center py-20">
-                <Images className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">Работы не найдены</h3>
-                <p className="text-gray-500">В этой категории пока нет работ</p>
+                <Images className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="text-xl font-semibold text-muted-foreground mb-2">Работы не найдены</h3>
+                <p className="text-muted-foreground">В этой категории пока нет работ</p>
               </div>
             )}
           </div>

@@ -228,7 +228,7 @@ export default function ContentEditor({ post, onSave, onCancel, isLoading }: Con
               />
               <Label htmlFor="isPublished">Опубликовать статью</Label>
               {editorState.isPublished && (
-                <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                <Badge className="bg-green-100 text-secondary dark:bg-green-900 dark:text-secondary">
                   Будет опубликована
                 </Badge>
               )}

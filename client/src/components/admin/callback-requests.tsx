@@ -86,9 +86,9 @@ export default function CallbackRequests() {
     const now = new Date();
     const hoursAgo = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
     
-    if (hoursAgo > 24) return "text-red-600";
+    if (hoursAgo > 24) return "text-destructive";
     if (hoursAgo > 4) return "text-yellow-600";
-    return "text-green-600";
+    return "text-secondary";
   };
 
   if (isLoading) {
@@ -191,12 +191,12 @@ export default function CallbackRequests() {
                             <User className="w-4 h-4 mr-2" />
                             {request.name}
                           </h3>
-                          <div className="flex items-center space-x-4 text-sm text-gray-600">
-                            <span className="flex items-center">
+                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                            <span className="flex items-center text-muted-foreground">
                               <Phone className="w-4 h-4 mr-1" />
                               {request.phone}
                             </span>
-                            <span className={`flex items-center ${getPriorityColor(request.createdAt!.toString())}`}>
+                            <span className="flex items-center text-muted-foreground">
                               <Clock className="w-4 h-4 mr-1" />
                               {new Date(request.createdAt!).toLocaleString('ru-RU')}
                             </span>
@@ -206,24 +206,24 @@ export default function CallbackRequests() {
 
                       {/* Message */}
                       {request.message && (
-                        <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="bg-muted/50 rounded-lg p-4 border border-border/30">
                           <div className="flex items-start">
-                            <MessageSquare className="w-4 h-4 mr-2 mt-1 text-gray-400" />
-                            <p className="text-gray-700">{request.message}</p>
+                            <MessageSquare className="w-4 h-4 mr-2 mt-1 text-muted-foreground" />
+                            <p className="text-foreground">{request.message}</p>
                           </div>
                         </div>
                       )}
 
                       {/* Call Time Preference */}
                       {request.callTime && (
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-muted-foreground">
                           <strong>Удобное время для звонка:</strong> {request.callTime}
                         </div>
                       )}
 
                       {/* Status */}
                       <div className="flex items-center space-x-3">
-                        <span className="text-sm text-gray-600">Статус:</span>
+                        <span className="text-sm text-muted-foreground">Статус:</span>
                         {getStatusBadge(request.status)}
                       </div>
                     </div>
@@ -237,7 +237,7 @@ export default function CallbackRequests() {
                         }
                         disabled={updateStatusMutation.isPending}
                       >
-                        <SelectTrigger className="glass-effect border-white/20">
+                        <SelectTrigger className="glass-effect border-border/50">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -262,7 +262,7 @@ export default function CallbackRequests() {
                           size="sm"
                           onClick={() => deleteRequestMutation.mutate(request.id)}
                           disabled={deleteRequestMutation.isPending}
-                          className="glass-effect text-red-600 hover:text-red-700"
+                          className="glass-effect text-destructive hover:text-destructive/80"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -270,7 +270,7 @@ export default function CallbackRequests() {
 
                       {/* Quick Actions for Pending Requests */}
                       {request.status === 'pending' && (
-                        <div className="pt-2 border-t border-gray-200">
+                        <div className="pt-2 border-t border-border/30">
                           <div className="flex space-x-2">
                             <Button
                               variant="outline"
@@ -279,7 +279,7 @@ export default function CallbackRequests() {
                                 updateStatusMutation.mutate({ id: request.id, status: 'contacted' })
                               }
                               disabled={updateStatusMutation.isPending}
-                              className="glass-effect text-blue-600 hover:text-blue-700 flex-1"
+                              className="glass-effect text-primary hover:text-primary flex-1"
                             >
                               <CheckCircle className="w-4 h-4 mr-1" />
                               Связались
@@ -290,7 +290,7 @@ export default function CallbackRequests() {
 
                       {/* Quick Actions for Contacted Requests */}
                       {request.status === 'contacted' && (
-                        <div className="pt-2 border-t border-gray-200">
+                        <div className="pt-2 border-t border-border/30">
                           <Button
                             variant="outline"
                             size="sm"
@@ -298,7 +298,7 @@ export default function CallbackRequests() {
                               updateStatusMutation.mutate({ id: request.id, status: 'completed' })
                             }
                             disabled={updateStatusMutation.isPending}
-                            className="glass-effect text-green-600 hover:text-green-700 w-full"
+                            className="glass-effect text-secondary hover:text-secondary w-full"
                           >
                             <CheckCircle className="w-4 h-4 mr-1" />
                             Завершить
@@ -319,12 +319,12 @@ export default function CallbackRequests() {
         <Card className="border-red-200 bg-red-50">
           <CardContent className="pt-6">
             <div className="flex items-center">
-              <XCircle className="w-5 h-5 text-red-600 mr-3" />
+              <XCircle className="w-5 h-5 text-destructive mr-3" />
               <div>
-                <h4 className="font-semibold text-red-800">
+                <h4 className="font-semibold text-destructive">
                   Внимание! {pendingCount} заявок ожидают ответа
                 </h4>
-                <p className="text-sm text-red-600">
+                <p className="text-sm text-destructive">
                   Рекомендуется обработать заявки в течение 15 минут для лучшего клиентского сервиса
                 </p>
               </div>

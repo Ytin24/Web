@@ -192,7 +192,7 @@ export default function BlogManagement() {
             id="isPublished"
             checked={formData.isPublished}
             onChange={(e) => setFormData(prev => ({ ...prev, isPublished: e.target.checked }))}
-            className="rounded border-gray-300"
+            className="rounded border-border/30"
           />
           <Label htmlFor="isPublished">Опубликовать статью</Label>
         </div>
@@ -255,7 +255,7 @@ export default function BlogManagement() {
             <div>
               <Label htmlFor="search">Поиск</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="search"
                   placeholder="Поиск по заголовку..."
@@ -303,8 +303,8 @@ export default function BlogManagement() {
         ) : filteredPosts.length === 0 ? (
           <Card>
             <CardContent className="text-center py-8">
-              <BookOpen className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-600">Статьи не найдены</p>
+              <BookOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">Статьи не найдены</p>
             </CardContent>
           </Card>
         ) : (
@@ -320,8 +320,8 @@ export default function BlogManagement() {
                       </Badge>
                       <Badge variant="outline">{post.category}</Badge>
                     </div>
-                    <p className="text-gray-600 mb-3">{post.excerpt}</p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <p className="text-muted-foreground mb-3">{post.excerpt}</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         {post.createdAt ? new Date(post.createdAt).toLocaleDateString('ru-RU') : 'Не указано'}

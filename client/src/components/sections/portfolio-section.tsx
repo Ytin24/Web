@@ -34,7 +34,7 @@ export default function PortfolioSection() {
   ) || [];
 
   return (
-    <section id="portfolio" className="py-32 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
+    <section id="portfolio" className="py-32 bg-gradient-to-br from-background to-muted/50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
         <ScrollReveal delay={0.1}>
           <div className="text-center mb-20">
@@ -79,7 +79,7 @@ export default function PortfolioSection() {
                   
                   {/* Always visible expand button */}
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 group-hover:bg-white transition-colors duration-300">
-                    <Maximize2 className="w-4 h-4 text-gray-700" />
+                    <Maximize2 className="w-4 h-4 text-muted-foreground" />
                   </div>
                   
                   {/* Hover overlay */}

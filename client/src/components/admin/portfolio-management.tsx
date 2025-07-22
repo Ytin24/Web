@@ -182,7 +182,7 @@ export default function PortfolioManagement() {
             id="isActive"
             checked={formData.isActive}
             onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
-            className="rounded border-gray-300"
+            className="rounded border-border/30"
           />
           <Label htmlFor="isActive">Показывать на сайте</Label>
         </div>
@@ -205,7 +205,7 @@ export default function PortfolioManagement() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">Управление портфолио</h2>
-          <p className="text-gray-600">Добавление и редактирование работ</p>
+          <p className="text-muted-foreground">Добавление и редактирование работ</p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
@@ -236,7 +236,7 @@ export default function PortfolioManagement() {
             <div>
               <Label htmlFor="search">Поиск</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="search"
                   placeholder="Поиск по названию..."
@@ -285,8 +285,8 @@ export default function PortfolioManagement() {
       ) : filteredItems.length === 0 ? (
         <Card>
           <CardContent className="text-center py-8">
-            <Grid className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-600">Работы не найдены</p>
+            <Grid className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+            <p className="text-muted-foreground">Работы не найдены</p>
           </CardContent>
         </Card>
       ) : (
@@ -310,7 +310,7 @@ export default function PortfolioManagement() {
               </div>
               <CardContent className="p-4">
                 <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">{item.description}</p>
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{item.description}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Button

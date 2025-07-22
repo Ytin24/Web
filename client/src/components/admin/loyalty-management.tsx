@@ -86,7 +86,8 @@ export default function LoyaltyProgramManagement() {
       title: program?.title || "",
       description: program?.description || "",
       benefits: program?.benefits || "",
-      minAmount: program?.minAmount || 0
+      minAmount: program?.minAmount || 0,
+      discount: program?.discount || 5
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -174,7 +175,7 @@ export default function LoyaltyProgramManagement() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">Программа лояльности</h2>
-          <p className="text-gray-600">Управление уровнями и преимуществами</p>
+          <p className="text-muted-foreground">Управление уровнями и преимуществами</p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
@@ -215,21 +216,21 @@ export default function LoyaltyProgramManagement() {
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <div className="text-sm font-medium text-gray-700">Уровень:</div>
-                      <div className="text-lg font-semibold text-blue-600">
+                      <div className="text-sm font-medium text-muted-foreground">Уровень:</div>
+                      <div className="text-lg font-semibold text-primary">
                         {levelLabels[program.level as keyof typeof levelLabels]}
                       </div>
                     </div>
                     
                     <div>
-                      <div className="text-sm font-medium text-gray-700">Описание:</div>
-                      <div className="text-gray-600">{program.description}</div>
+                      <div className="text-sm font-medium text-muted-foreground">Описание:</div>
+                      <div className="text-muted-foreground">{program.description}</div>
                     </div>
                     
                     {program.benefits && (
                       <div>
-                        <div className="text-sm font-medium text-gray-700">Преимущества:</div>
-                        <div className="text-gray-600 text-sm">
+                        <div className="text-sm font-medium text-muted-foreground">Преимущества:</div>
+                        <div className="text-muted-foreground text-sm">
                           {program.benefits.split('\n').map((benefit, index) => (
                             <div key={index}>• {benefit}</div>
                           ))}
@@ -238,8 +239,8 @@ export default function LoyaltyProgramManagement() {
                     )}
                     
                     <div>
-                      <div className="text-sm font-medium text-gray-700">Минимальная сумма:</div>
-                      <div className="text-lg font-semibold text-green-600">
+                      <div className="text-sm font-medium text-muted-foreground">Минимальная сумма:</div>
+                      <div className="text-lg font-semibold text-secondary">
                         {program.minAmount.toLocaleString('ru-RU')} ₽
                       </div>
                     </div>

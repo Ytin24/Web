@@ -9,7 +9,7 @@ import ContactSection from "@/components/sections/contact-section";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen bg-muted/50 overflow-x-hidden">
       <Navigation />
       <main>
         <HeroSection />

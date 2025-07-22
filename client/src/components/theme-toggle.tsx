@@ -17,7 +17,7 @@ export function ThemeToggle() {
         <Button
           variant="outline"
           size="icon"
-          className="relative glass-effect border-white/20 text-white hover:bg-white/20 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+          className="relative glass-effect border-border/50 text-white hover:bg-white/20 dark:border-border/30 dark:text-muted-foreground dark:hover:bg-muted/50"
         >
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -26,12 +26,12 @@ export function ThemeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="glass-effect border-white/20 dark:bg-gray-900/90 dark:border-gray-700"
+        className="glass-effect border-border/50 dark:bg-muted/50/90 dark:border-border/30"
       >
         <DropdownMenuItem
           onClick={() => setTheme("light")}
           className={`flex items-center gap-2 ${
-            theme === "light" ? "bg-white/20 dark:bg-gray-700" : ""
+            theme === "light" ? "bg-white/20 dark:bg-muted/50" : ""
           }`}
         >
           <Sun className="h-4 w-4" />
@@ -40,7 +40,7 @@ export function ThemeToggle() {
         <DropdownMenuItem
           onClick={() => setTheme("dark")}
           className={`flex items-center gap-2 ${
-            theme === "dark" ? "bg-white/20 dark:bg-gray-700" : ""
+            theme === "dark" ? "bg-white/20 dark:bg-muted/50" : ""
           }`}
         >
           <Moon className="h-4 w-4" />
@@ -49,7 +49,7 @@ export function ThemeToggle() {
         <DropdownMenuItem
           onClick={() => setTheme("system")}
           className={`flex items-center gap-2 ${
-            theme === "system" ? "bg-white/20 dark:bg-gray-700" : ""
+            theme === "system" ? "bg-white/20 dark:bg-muted/50" : ""
           }`}
         >
           <Monitor className="h-4 w-4" />

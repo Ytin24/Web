@@ -203,9 +203,9 @@ export default function TokenManagement() {
 
   const getPermissionBadges = (permissions: string[]) => {
     const colors = {
-      read: "bg-blue-100 text-blue-800",
-      write: "bg-green-100 text-green-800",
-      admin: "bg-red-100 text-red-800"
+      read: "bg-blue-100 text-primary",
+      write: "bg-green-100 text-secondary",
+      admin: "bg-red-100 text-destructive"
     };
 
     return permissions.map(permission => (
@@ -237,7 +237,7 @@ export default function TokenManagement() {
             <Key className="w-6 h-6" />
             API Token Management
           </h2>
-          <p className="text-gray-600 mt-1">
+          <p className="text-muted-foreground mt-1">
             Manage API tokens for external integrations and automation
           </p>
         </div>
@@ -251,7 +251,7 @@ export default function TokenManagement() {
       {showNewToken && newTokenData && (
         <Card className="border-green-200 bg-green-50">
           <CardHeader>
-            <CardTitle className="text-green-800 flex items-center gap-2">
+            <CardTitle className="text-secondary flex items-center gap-2">
               <Shield className="w-5 h-5" />
               Token Created Successfully
             </CardTitle>
@@ -259,9 +259,9 @@ export default function TokenManagement() {
           <CardContent>
             <div className="space-y-4">
               <div className="bg-white p-4 rounded-lg border">
-                <Label className="text-sm font-medium text-green-700">Your new API token:</Label>
+                <Label className="text-sm font-medium text-secondary">Your new API token:</Label>
                 <div className="flex items-center gap-2 mt-2">
-                  <code className="flex-1 p-2 bg-gray-100 rounded font-mono text-sm">
+                  <code className="flex-1 p-2 bg-muted/50 rounded font-mono text-sm">
                     {showTokenValue ? newTokenData.token : '•'.repeat(50)}
                   </code>
                   <Button
@@ -308,7 +308,7 @@ export default function TokenManagement() {
       <Card>
         <CardHeader>
           <CardTitle>Create New API Token</CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Generate a new secure API token for external integrations
           </p>
         </CardHeader>
@@ -323,7 +323,7 @@ export default function TokenManagement() {
                   {...form.register("name")}
                 />
                 {form.formState.errors.name && (
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="text-sm text-destructive mt-1">
                     {form.formState.errors.name.message}
                   </p>
                 )}
@@ -365,7 +365,7 @@ export default function TokenManagement() {
                 ))}
               </div>
               {form.formState.errors.permissions && (
-                <p className="text-sm text-red-600 mt-1">
+                <p className="text-sm text-destructive mt-1">
                   {form.formState.errors.permissions.message}
                 </p>
               )}
@@ -391,7 +391,7 @@ export default function TokenManagement() {
                   rows={3}
                   {...form.register("ipWhitelist")}
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   One IP address per line. Leave empty to allow all IPs.
                 </p>
               </div>
@@ -422,7 +422,7 @@ export default function TokenManagement() {
       <Card>
         <CardHeader>
           <CardTitle>Your API Tokens</CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Manage your existing API tokens and their permissions
           </p>
         </CardHeader>
@@ -438,8 +438,8 @@ export default function TokenManagement() {
                         {getTokenStatus(token)}
                       </div>
                       
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <code className="bg-gray-100 px-2 py-1 rounded">{token.tokenPrefix}...</code>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <code className="bg-muted/50 px-2 py-1 rounded">{token.tokenPrefix}...</code>
                         <span>•</span>
                         <span>Used {token.usageCount} times</span>
                         <span>•</span>
@@ -450,7 +450,7 @@ export default function TokenManagement() {
                         {getPermissionBadges(token.permissions)}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                      <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
                         <div>
                           <span className="font-medium">Created:</span> {formatDate(token.createdAt)}
                         </div>
@@ -485,7 +485,7 @@ export default function TokenManagement() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <Key className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>No API tokens found</p>
               <p className="text-sm">Create your first token to get started with API integrations</p>

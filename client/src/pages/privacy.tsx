@@ -9,7 +9,7 @@ export default function Privacy() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen bg-muted/50 overflow-x-hidden">
       <Navigation />
       <main className="pt-20">
         <section className="py-20">

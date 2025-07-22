@@ -9,20 +9,20 @@ export default function Footer() {
   };
 
   return (
-    <footer className="py-20 bg-[hsl(213,27%,19%)] dark:bg-gray-900 text-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(213,27%,19%)] dark:from-gray-900 to-[hsl(252,100%,71%)]/20 dark:to-primary/20"></div>
+    <footer className="py-20 bg-muted dark:bg-background text-foreground relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-muted/80 to-primary/10"></div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-8">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center">
-                <Flower className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <Flower className="w-6 h-6 text-primary-foreground" />
               </div>
               <span className="text-2xl font-bold">Цветокрафт</span>
             </div>
-            <p className="text-white/70 leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed">
               Создаем магию из цветов для ваших особенных моментов. Более 15 лет опыта в цветочном искусстве.
             </p>
             <div className="flex space-x-3">
@@ -30,7 +30,7 @@ export default function Footer() {
                 href="https://instagram.com/tsvetokraft"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(252,100%,71%)] transition-colors"
+                className="w-10 h-10 rounded-full bg-muted/20 flex items-center justify-center hover:bg-primary transition-colors"
                 title="Instagram"
               >
                 📷
@@ -39,7 +39,7 @@ export default function Footer() {
                 href="https://vk.com/tsvetokraft"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(252,100%,71%)] transition-colors"
+                className="w-10 h-10 rounded-full bg-muted/20 flex items-center justify-center hover:bg-primary transition-colors"
                 title="VKontakte"
               >
                 🌐
@@ -48,7 +48,7 @@ export default function Footer() {
                 href="https://t.me/tsvetokraft"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(252,100%,71%)] transition-colors"
+                className="w-10 h-10 rounded-full bg-muted/20 flex items-center justify-center hover:bg-primary transition-colors"
                 title="Telegram"
               >
                 ✈️
@@ -57,7 +57,7 @@ export default function Footer() {
                 href="https://wa.me/78001234567"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(252,100%,71%)] transition-colors"
+                className="w-10 h-10 rounded-full bg-muted/20 flex items-center justify-center hover:bg-primary transition-colors"
                 title="WhatsApp"
               >
                 💬
@@ -152,7 +152,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/20 mt-12 pt-8 text-center">
+        <div className="border-t border-border/50 mt-12 pt-8 text-center">
           <p className="text-white/70">
             © 2024 Цветокрафт. Все права защищены. |{" "}
             <a href="/privacy" className="hover:text-white transition-colors">

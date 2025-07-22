@@ -35,7 +35,7 @@ export default function ImageModal({ isOpen, onClose, imageUrl, imageAlt }: Imag
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] p-4 bg-black/95 border border-white/20">
+      <DialogContent className="max-w-[95vw] max-h-[95vh] p-4 bg-black/95 border border-border/50">
         <VisuallyHidden>
           <DialogTitle>Просмотр изображения</DialogTitle>
           <DialogDescription>
@@ -48,7 +48,7 @@ export default function ImageModal({ isOpen, onClose, imageUrl, imageAlt }: Imag
           <Button
             variant="secondary"
             size="icon"
-            className="bg-white/20 hover:bg-white/30 text-white border-white/20"
+            className="bg-white/20 hover:bg-white/30 text-white border-border/50"
             onClick={handleZoomOut}
             disabled={zoom <= 0.5}
           >
@@ -57,7 +57,7 @@ export default function ImageModal({ isOpen, onClose, imageUrl, imageAlt }: Imag
           <Button
             variant="secondary"
             size="icon"
-            className="bg-white/20 hover:bg-white/30 text-white border-white/20"
+            className="bg-white/20 hover:bg-white/30 text-white border-border/50"
             onClick={handleZoomIn}
             disabled={zoom >= 3}
           >
@@ -66,7 +66,7 @@ export default function ImageModal({ isOpen, onClose, imageUrl, imageAlt }: Imag
           <Button
             variant="secondary"
             size="icon"
-            className="bg-white/20 hover:bg-white/30 text-white border-white/20"
+            className="bg-white/20 hover:bg-white/30 text-white border-border/50"
             onClick={onClose}
           >
             <X className="w-4 h-4" />

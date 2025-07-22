@@ -138,34 +138,34 @@ export default function SectionsManagement() {
           ) : (
             <div className="space-y-4">
               <div>
-                <div className="text-sm font-medium text-gray-700">Заголовок:</div>
+                <div className="text-sm font-medium text-muted-foreground">Заголовок:</div>
                 <div className="text-lg">{section.title}</div>
               </div>
               
               {section.subtitle && (
                 <div>
-                  <div className="text-sm font-medium text-gray-700">Подзаголовок:</div>
+                  <div className="text-sm font-medium text-muted-foreground">Подзаголовок:</div>
                   <div>{section.subtitle}</div>
                 </div>
               )}
 
               {section.content && (
                 <div>
-                  <div className="text-sm font-medium text-gray-700">Содержание:</div>
-                  <div className="text-gray-600">{section.content}</div>
+                  <div className="text-sm font-medium text-muted-foreground">Содержание:</div>
+                  <div className="text-muted-foreground">{section.content}</div>
                 </div>
               )}
 
               {section.buttonText && (
                 <div>
-                  <div className="text-sm font-medium text-gray-700">Текст кнопки:</div>
+                  <div className="text-sm font-medium text-muted-foreground">Текст кнопки:</div>
                   <div>{section.buttonText}</div>
                 </div>
               )}
 
               {section.imageUrl && (
                 <div>
-                  <div className="text-sm font-medium text-gray-700">Изображение:</div>
+                  <div className="text-sm font-medium text-muted-foreground">Изображение:</div>
                   <img 
                     src={section.imageUrl} 
                     alt={section.title}
@@ -189,7 +189,7 @@ export default function SectionsManagement() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Управление секциями</h2>
-        <p className="text-gray-600">Редактирование содержимого основных секций сайта</p>
+        <p className="text-muted-foreground">Редактирование содержимого основных секций сайта</p>
       </div>
 
       {isLoading ? (

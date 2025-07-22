@@ -72,7 +72,7 @@ export default function Services() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen bg-muted/50 overflow-x-hidden">
       <Navigation />
       <main className="pt-20">
         {/* Header */}
@@ -106,7 +106,7 @@ export default function Services() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service, index) => (
                 <ScrollReveal key={service.title} delay={0.1 + index * 0.1}>
-                  <Card className="relative bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 h-full">
+                  <Card className="relative bg-white/80 backdrop-blur-sm border border-border/50 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 h-full">
                     {service.popular && (
                       <div className="absolute -top-3 left-4 z-10">
                         <Badge className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white px-3 py-1">
@@ -137,7 +137,7 @@ export default function Services() {
                         ))}
                       </ul>
                       
-                      <div className="pt-4 border-t border-gray-200">
+                      <div className="pt-4 border-t border-border/30">
                         <div className="flex items-center justify-between">
                           <span className="text-2xl font-bold text-[hsl(252,100%,71%)]">
                             {service.price}
