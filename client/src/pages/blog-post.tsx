@@ -142,15 +142,15 @@ export default function BlogPostPage() {
           {/* Featured Image */}
           {blogPost.imageUrl && (
             <div className="mb-12">
-              <div className="relative group rounded-2xl overflow-hidden glass-effect">
+              <div className="relative group rounded-2xl overflow-hidden glass-effect cursor-pointer" 
+                   onClick={() => setIsImageModalOpen(true)}>
                 <img 
                   src={blogPost.imageUrl}
                   alt={blogPost.title}
-                  className="w-full h-80 md:h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
-                  onClick={() => setIsImageModalOpen(true)}
+                  className="w-full h-80 md:h-96 object-cover hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
-                  <Button variant="secondary" size="lg">
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 pointer-events-none">
+                  <Button variant="secondary" size="lg" className="pointer-events-none">
                     Увеличить изображение
                   </Button>
                 </div>
