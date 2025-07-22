@@ -86,14 +86,17 @@ export default function SectionsManagement() {
               </div>
 
               <div>
-                <Label htmlFor={`content-${section.name}`}>Содержание</Label>
+                <Label htmlFor={`content-${section.name}`}>Содержание (JSON)</Label>
                 <Textarea
                   id={`content-${section.name}`}
                   value={formData.content}
                   onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                  placeholder="Основное содержание секции"
-                  rows={4}
+                  placeholder='Например: {"description":"Текст описания","features":["Пункт 1","Пункт 2"]}'
+                  rows={6}
                 />
+                <div className="text-xs text-muted-foreground mt-1">
+                  Структурированные данные в JSON формате. Для hero: subtitle, cta, secondaryCta. Для about: experience, projects, clients, awards. Для loyalty: description, features.
+                </div>
               </div>
 
 
@@ -139,7 +142,15 @@ export default function SectionsManagement() {
               {section.content && (
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">Содержание:</div>
-                  <div className="text-muted-foreground">{section.content}</div>
+                  <pre className="text-muted-foreground text-xs bg-muted p-2 rounded overflow-auto">
+                    {(() => {
+                      try {
+                        return JSON.stringify(JSON.parse(section.content || '{}'), null, 2);
+                      } catch {
+                        return section.content;
+                      }
+                    })()}
+                  </pre>
                 </div>
               )}
 

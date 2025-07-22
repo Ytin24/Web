@@ -233,7 +233,7 @@ export default function Admin() {
     { id: "requests", label: "Заявки", icon: Phone },
     { id: "loyalty", label: "Лояльность", icon: Star },
     { id: "sections", label: "Секции", icon: Code },
-    { id: "tokens", label: "Токены", icon: Users },
+    { id: "tokens", label: "API", icon: Code },
   ];
 
   return (

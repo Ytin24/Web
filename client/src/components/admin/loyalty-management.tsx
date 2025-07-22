@@ -76,7 +76,7 @@ export default function LoyaltyProgramManagement() {
       level: program?.level || "",
       title: program?.title || "",
       description: program?.description || "",
-      benefits: program?.benefits || "",
+      benefits: program?.benefits || '["Преимущество 1", "Преимущество 2"]',
       minAmount: program?.minAmount || 0,
       discount: program?.discount || 5
     });
@@ -132,9 +132,12 @@ export default function LoyaltyProgramManagement() {
             id="benefits"
             value={formData.benefits}
             onChange={(e) => setFormData(prev => ({ ...prev, benefits: e.target.value }))}
-            placeholder="Список преимуществ (каждый с новой строки)"
+            placeholder='["Преимущество 1", "Преимущество 2", "Преимущество 3"]'
             rows={4}
           />
+          <div className="text-xs text-muted-foreground mt-1">
+            Введите преимущества в JSON формате как массив строк
+          </div>
         </div>
 
         <div>

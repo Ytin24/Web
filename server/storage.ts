@@ -62,6 +62,8 @@ export interface IStorage {
   getActiveLoyaltyLevels(): Promise<LoyaltyProgram[]>;
   getLoyaltyLevel(id: number): Promise<LoyaltyProgram | undefined>;
   updateLoyaltyLevel(id: number, level: Partial<InsertLoyaltyProgram>): Promise<LoyaltyProgram>;
+  createLoyaltyLevel(insertLoyaltyProgram: InsertLoyaltyProgram): Promise<LoyaltyProgram>;
+  deleteLoyaltyLevel(id: number): Promise<void>;
 
   // Images
   getAllImages(): Promise<Image[]>;
@@ -326,6 +328,18 @@ export class DatabaseStorage implements IStorage {
       .where(eq(loyaltyProgram.id, id))
       .returning();
     return updatedLevel;
+  }
+
+  async createLoyaltyLevel(insertLoyaltyProgram: InsertLoyaltyProgram): Promise<LoyaltyProgram> {
+    const [level] = await db
+      .insert(loyaltyProgram)
+      .values(insertLoyaltyProgram)
+      .returning();
+    return level;
+  }
+
+  async deleteLoyaltyLevel(id: number): Promise<void> {
+    await db.delete(loyaltyProgram).where(eq(loyaltyProgram.id, id));
   }
 
   // Images
@@ -836,6 +850,24 @@ export class MemStorage implements IStorage {
     const updatedLevel = { ...existingLevel, ...levelData };
     this.loyaltyProgram.set(id, updatedLevel);
     return updatedLevel;
+  }
+
+  async createLoyaltyLevel(insertLoyaltyProgram: InsertLoyaltyProgram): Promise<LoyaltyProgram> {
+    const id = this.currentLoyaltyProgramId++;
+    const loyaltyLevel: LoyaltyProgram = { 
+      ...insertLoyaltyProgram, 
+      id, 
+      description: insertLoyaltyProgram.description || null,
+      benefits: insertLoyaltyProgram.benefits || null,
+      maxAmount: insertLoyaltyProgram.maxAmount || null,
+      isActive: insertLoyaltyProgram.isActive ?? true
+    };
+    this.loyaltyProgram.set(id, loyaltyLevel);
+    return loyaltyLevel;
+  }
+
+  async deleteLoyaltyLevel(id: number): Promise<void> {
+    this.loyaltyProgram.delete(id);
   }
 
   // Callback request update method

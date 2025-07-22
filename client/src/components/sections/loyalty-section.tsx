@@ -69,7 +69,14 @@ export default function LoyaltySection() {
                     {level.description}
                   </p>
                   <ul className="space-y-3 mb-6">
-                    {level.benefits && JSON.parse(level.benefits).map((benefit: string, idx: number) => (
+                    {level.benefits && (() => {
+                      try {
+                        const benefits = JSON.parse(level.benefits);
+                        return Array.isArray(benefits) ? benefits : [benefits];
+                      } catch {
+                        return [level.benefits];
+                      }
+                    })().map((benefit: string, idx: number) => (
                       <li key={idx} className="flex items-center text-muted-foreground">
                         <Star className={`w-4 h-4 mr-3 ${getTextColor(level.level)}`} />
                         {benefit}
