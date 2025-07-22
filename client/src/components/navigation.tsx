@@ -31,6 +31,7 @@ export default function Navigation() {
 
   const navigationLinks = [
     { id: "about", label: "О нас", type: "section" },
+    { id: "services", label: "Услуги", type: "page", href: "/services" },
     { id: "blog", label: "Советы", type: "page", href: "/all-blog" },
     { id: "portfolio", label: "Портфолио", type: "page", href: "/portfolio" },
     { id: "loyalty", label: "Лояльность", type: "section" },
