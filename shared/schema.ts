@@ -71,6 +71,17 @@ export const callbackRequests = pgTable("callback_requests", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const customers = pgTable("customers", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  phone: text("phone").notNull().unique(),
+  loyaltyLevel: text("loyalty_level").notNull().default("bronze"), // 'bronze', 'silver', 'gold', 'platinum'
+  notes: text("notes"), // Дополнительные заметки о клиенте
+  totalOrders: integer("total_orders").notNull().default(0),
+  lastOrderDate: timestamp("last_order_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const loyaltyProgram = pgTable("loyalty_program", {
   id: serial("id").primaryKey(),
   level: text("level").notNull(), // 'beginner', 'connoisseur', 'vip'
@@ -181,6 +192,15 @@ export const insertImageSchema = createInsertSchema(images).pick({
   isActive: true,
 });
 
+export const insertCustomerSchema = createInsertSchema(customers).pick({
+  name: true,
+  phone: true,
+  loyaltyLevel: true,
+  notes: true,
+  totalOrders: true,
+  lastOrderDate: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -205,3 +225,6 @@ export type Image = typeof images.$inferSelect;
 
 export type InsertApiToken = z.infer<typeof insertApiTokenSchema>;
 export type ApiToken = typeof apiTokens.$inferSelect;
+
+export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
+export type Customer = typeof customers.$inferSelect;

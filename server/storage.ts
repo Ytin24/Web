@@ -1,9 +1,9 @@
 import { 
-  users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images, apiTokens,
+  users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images, apiTokens, customers,
   type User, type InsertUser, type Section, type InsertSection,
   type BlogPost, type InsertBlogPost, type PortfolioItem, type InsertPortfolioItem,
   type CallbackRequest, type InsertCallbackRequest, type LoyaltyProgram, type InsertLoyaltyProgram,
-  type Image, type InsertImage, type ApiToken, type InsertApiToken
+  type Image, type InsertImage, type ApiToken, type InsertApiToken, type Customer, type InsertCustomer
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, sql } from "drizzle-orm";
@@ -74,6 +74,14 @@ export interface IStorage {
   createImage(image: InsertImage): Promise<Image>;
   updateImage(id: number, image: Partial<InsertImage>): Promise<Image>;
   deleteImage(id: number): Promise<void>;
+
+  // Customers
+  getAllCustomers(): Promise<Customer[]>;
+  getCustomer(id: number): Promise<Customer | undefined>;
+  getCustomerByPhone(phone: string): Promise<Customer | undefined>;
+  createCustomer(customer: InsertCustomer): Promise<Customer>;
+  updateCustomer(id: number, customer: Partial<InsertCustomer>): Promise<Customer>;
+  deleteCustomer(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -384,6 +392,42 @@ export class DatabaseStorage implements IStorage {
 
   async deleteImage(id: number): Promise<void> {
     await db.delete(images).where(eq(images.id, id));
+  }
+
+  // Customers
+  async getAllCustomers(): Promise<Customer[]> {
+    return await db.select().from(customers).orderBy(customers.createdAt);
+  }
+
+  async getCustomer(id: number): Promise<Customer | undefined> {
+    const [customer] = await db.select().from(customers).where(eq(customers.id, id));
+    return customer || undefined;
+  }
+
+  async getCustomerByPhone(phone: string): Promise<Customer | undefined> {
+    const [customer] = await db.select().from(customers).where(eq(customers.phone, phone));
+    return customer || undefined;
+  }
+
+  async createCustomer(insertCustomer: InsertCustomer): Promise<Customer> {
+    const [customer] = await db
+      .insert(customers)
+      .values(insertCustomer)
+      .returning();
+    return customer;
+  }
+
+  async updateCustomer(id: number, customerData: Partial<InsertCustomer>): Promise<Customer> {
+    const [updatedCustomer] = await db
+      .update(customers)
+      .set(customerData)
+      .where(eq(customers.id, id))
+      .returning();
+    return updatedCustomer;
+  }
+
+  async deleteCustomer(id: number): Promise<void> {
+    await db.delete(customers).where(eq(customers.id, id));
   }
 }
 
@@ -912,6 +956,31 @@ export class MemStorage implements IStorage {
 
   async deleteImage(id: number): Promise<void> {
     // Not implemented in memory storage
+  }
+
+  // Customers (not implemented in MemStorage)
+  async getAllCustomers(): Promise<Customer[]> {
+    throw new Error("MemStorage doesn't support customer operations");
+  }
+
+  async getCustomer(id: number): Promise<Customer | undefined> {
+    throw new Error("MemStorage doesn't support customer operations");
+  }
+
+  async getCustomerByPhone(phone: string): Promise<Customer | undefined> {
+    throw new Error("MemStorage doesn't support customer operations");
+  }
+
+  async createCustomer(customer: InsertCustomer): Promise<Customer> {
+    throw new Error("MemStorage doesn't support customer operations");
+  }
+
+  async updateCustomer(id: number, customer: Partial<InsertCustomer>): Promise<Customer> {
+    throw new Error("MemStorage doesn't support customer operations");
+  }
+
+  async deleteCustomer(id: number): Promise<void> {
+    throw new Error("MemStorage doesn't support customer operations");
   }
 }
 

@@ -15,6 +15,7 @@ import CallbackRequests from "@/components/admin/callback-requests";
 import LoyaltyProgramManagement from "@/components/admin/loyalty-management";
 import TokenManagement from "@/components/admin/token-management";
 import ApiDocumentation from "@/components/admin/api-documentation";
+import CustomersManagement from "@/components/admin/customers-management";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Section, BlogPost, PortfolioItem, CallbackRequest, LoyaltyProgram } from "@shared/schema";
 
@@ -205,6 +206,15 @@ export default function Admin() {
             </Button>
             
             <Button 
+              onClick={() => setActiveTab("customers")}
+              className="h-20 flex-col gap-2 glass-hover"
+              variant="outline"
+            >
+              <Users className="w-6 h-6" />
+              <span className="text-sm">Клиенты</span>
+            </Button>
+            
+            <Button 
               onClick={() => setActiveTab("loyalty")}
               className="h-20 flex-col gap-2 glass-hover"
               variant="outline"
@@ -232,6 +242,7 @@ export default function Admin() {
     { id: "blog", label: "Блог", icon: BookOpen },
     { id: "portfolio", label: "Портфолио", icon: Image },
     { id: "requests", label: "Заявки", icon: Phone },
+    { id: "customers", label: "Клиенты", icon: Users },
     { id: "loyalty", label: "Лояльность", icon: Star },
     { id: "sections", label: "Секции", icon: Code },
     { id: "tokens", label: "API", icon: Code },
@@ -311,6 +322,10 @@ export default function Admin() {
                   <CallbackRequests />
                 </CardContent>
               </Card>
+            </TabsContent>
+            
+            <TabsContent value="customers" className="mt-0">
+              <CustomersManagement />
             </TabsContent>
             
             <TabsContent value="loyalty" className="mt-0">
