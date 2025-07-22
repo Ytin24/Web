@@ -4,6 +4,8 @@ import {
   type BlogPost, type InsertBlogPost, type PortfolioItem, type InsertPortfolioItem,
   type CallbackRequest, type InsertCallbackRequest, type LoyaltyProgram, type InsertLoyaltyProgram
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -46,6 +48,181 @@ export interface IStorage {
   getActiveLoyaltyLevels(): Promise<LoyaltyProgram[]>;
   getLoyaltyLevel(id: number): Promise<LoyaltyProgram | undefined>;
   updateLoyaltyLevel(id: number, level: Partial<InsertLoyaltyProgram>): Promise<LoyaltyProgram>;
+}
+
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  // Sections
+  async getAllSections(): Promise<Section[]> {
+    return await db.select().from(sections);
+  }
+
+  async getSectionByName(name: string): Promise<Section | undefined> {
+    const [section] = await db.select().from(sections).where(eq(sections.name, name));
+    return section || undefined;
+  }
+
+  async updateSection(id: number, sectionData: Partial<InsertSection>): Promise<Section> {
+    const [updatedSection] = await db
+      .update(sections)
+      .set(sectionData)
+      .where(eq(sections.id, id))
+      .returning();
+    return updatedSection;
+  }
+
+  async createSection(insertSection: InsertSection): Promise<Section> {
+    const [section] = await db
+      .insert(sections)
+      .values(insertSection)
+      .returning();
+    return section;
+  }
+
+  // Blog Posts
+  async getAllBlogPosts(): Promise<BlogPost[]> {
+    return await db.select().from(blogPosts).orderBy(blogPosts.createdAt);
+  }
+
+  async getPublishedBlogPosts(): Promise<BlogPost[]> {
+    return await db.select().from(blogPosts).where(eq(blogPosts.isPublished, true)).orderBy(blogPosts.createdAt);
+  }
+
+  async getBlogPost(id: number): Promise<BlogPost | undefined> {
+    const [post] = await db.select().from(blogPosts).where(eq(blogPosts.id, id));
+    return post || undefined;
+  }
+
+  async createBlogPost(insertBlogPost: InsertBlogPost): Promise<BlogPost> {
+    const [post] = await db
+      .insert(blogPosts)
+      .values(insertBlogPost)
+      .returning();
+    return post;
+  }
+
+  async updateBlogPost(id: number, postData: Partial<InsertBlogPost>): Promise<BlogPost> {
+    const [updatedPost] = await db
+      .update(blogPosts)
+      .set(postData)
+      .where(eq(blogPosts.id, id))
+      .returning();
+    return updatedPost;
+  }
+
+  async deleteBlogPost(id: number): Promise<void> {
+    await db.delete(blogPosts).where(eq(blogPosts.id, id));
+  }
+
+  // Portfolio Items
+  async getAllPortfolioItems(): Promise<PortfolioItem[]> {
+    return await db.select().from(portfolioItems).orderBy(portfolioItems.createdAt);
+  }
+
+  async getActivePortfolioItems(): Promise<PortfolioItem[]> {
+    return await db.select().from(portfolioItems).where(eq(portfolioItems.isActive, true)).orderBy(portfolioItems.createdAt);
+  }
+
+  async getPortfolioItemsByCategory(category: string): Promise<PortfolioItem[]> {
+    return await db.select().from(portfolioItems).where(eq(portfolioItems.category, category)).orderBy(portfolioItems.createdAt);
+  }
+
+  async getPortfolioItem(id: number): Promise<PortfolioItem | undefined> {
+    const [item] = await db.select().from(portfolioItems).where(eq(portfolioItems.id, id));
+    return item || undefined;
+  }
+
+  async createPortfolioItem(insertPortfolioItem: InsertPortfolioItem): Promise<PortfolioItem> {
+    const [item] = await db
+      .insert(portfolioItems)
+      .values(insertPortfolioItem)
+      .returning();
+    return item;
+  }
+
+  async updatePortfolioItem(id: number, itemData: Partial<InsertPortfolioItem>): Promise<PortfolioItem> {
+    const [updatedItem] = await db
+      .update(portfolioItems)
+      .set(itemData)
+      .where(eq(portfolioItems.id, id))
+      .returning();
+    return updatedItem;
+  }
+
+  async deletePortfolioItem(id: number): Promise<void> {
+    await db.delete(portfolioItems).where(eq(portfolioItems.id, id));
+  }
+
+  // Callback Requests
+  async getAllCallbackRequests(): Promise<CallbackRequest[]> {
+    return await db.select().from(callbackRequests).orderBy(callbackRequests.createdAt);
+  }
+
+  async getCallbackRequest(id: number): Promise<CallbackRequest | undefined> {
+    const [request] = await db.select().from(callbackRequests).where(eq(callbackRequests.id, id));
+    return request || undefined;
+  }
+
+  async createCallbackRequest(insertCallbackRequest: InsertCallbackRequest): Promise<CallbackRequest> {
+    const [request] = await db
+      .insert(callbackRequests)
+      .values(insertCallbackRequest)
+      .returning();
+    return request;
+  }
+
+  async updateCallbackRequestStatus(id: number, status: string): Promise<CallbackRequest> {
+    const [updatedRequest] = await db
+      .update(callbackRequests)
+      .set({ status })
+      .where(eq(callbackRequests.id, id))
+      .returning();
+    return updatedRequest;
+  }
+
+  async deleteCallbackRequest(id: number): Promise<void> {
+    await db.delete(callbackRequests).where(eq(callbackRequests.id, id));
+  }
+
+  // Loyalty Program
+  async getAllLoyaltyLevels(): Promise<LoyaltyProgram[]> {
+    return await db.select().from(loyaltyProgram);
+  }
+
+  async getActiveLoyaltyLevels(): Promise<LoyaltyProgram[]> {
+    return await db.select().from(loyaltyProgram).where(eq(loyaltyProgram.isActive, true));
+  }
+
+  async getLoyaltyLevel(id: number): Promise<LoyaltyProgram | undefined> {
+    const [level] = await db.select().from(loyaltyProgram).where(eq(loyaltyProgram.id, id));
+    return level || undefined;
+  }
+
+  async updateLoyaltyLevel(id: number, levelData: Partial<InsertLoyaltyProgram>): Promise<LoyaltyProgram> {
+    const [updatedLevel] = await db
+      .update(loyaltyProgram)
+      .set(levelData)
+      .where(eq(loyaltyProgram.id, id))
+      .returning();
+    return updatedLevel;
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -455,4 +632,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
