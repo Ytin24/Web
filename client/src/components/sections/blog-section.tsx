@@ -47,23 +47,25 @@ export default function BlogSection() {
                   <img 
                     src={post.imageUrl || '/api/images/blog-care-1.svg'} 
                     alt={post.title} 
-                    className="w-full h-64 object-cover transition-all duration-300 group-hover:scale-105"
+                    className="w-full h-64 object-cover transition-all duration-300 group-hover:scale-105 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openImageModal(post.imageUrl || '/api/images/blog-care-1.svg', post.title);
+                    }}
                   />
-                  {post.imageUrl && (
-                    <div className="absolute top-3 right-3">
-                      <Button 
-                        variant="secondary" 
-                        size="sm"
-                        className="bg-white/90 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openImageModal(post.imageUrl!, post.title);
-                        }}
-                      >
-                        <Maximize2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  )}
+                  <div className="absolute top-3 right-3">
+                    <Button 
+                      variant="secondary" 
+                      size="sm"
+                      className="bg-white/90 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openImageModal(post.imageUrl || '/api/images/blog-care-1.svg', post.title);
+                      }}
+                    >
+                      <Maximize2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 <div className="p-6 bg-white/95 backdrop-blur-sm">

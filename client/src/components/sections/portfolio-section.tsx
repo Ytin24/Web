@@ -70,20 +70,27 @@ export default function PortfolioSection() {
           {filteredItems.map((item, index) => (
             <ScrollReveal key={item.id} delay={0.3 + index * 0.1}>
               <div className="group">
-                <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
+                <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer group" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
                   <img 
                     src={item.imageUrl || ''} 
                     alt={item.title} 
                     className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  
+                  {/* Always visible expand button */}
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 group-hover:bg-white transition-colors duration-300">
+                    <Maximize2 className="w-4 h-4 text-gray-700" />
+                  </div>
+                  
+                  {/* Hover overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute bottom-6 left-6 right-6">
                       <h3 className="text-xl font-bold text-white mb-2 drop-shadow-lg">{item.title}</h3>
                       <p className="text-white/95 text-sm mb-3 drop-shadow">{item.description}</p>
                       <div className="flex items-center justify-between">
-                        <Button variant="secondary" size="sm" className="bg-white/90 hover:bg-white text-black">
+                        <Button variant="secondary" size="sm" className="bg-white/90 hover:bg-white text-black pointer-events-none">
                           <Maximize2 className="w-4 h-4 mr-1" />
-                          Увеличить
+                          Нажмите для увеличения
                         </Button>
                         <Badge className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white">
                           {item.category}
