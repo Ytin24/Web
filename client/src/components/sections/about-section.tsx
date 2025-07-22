@@ -88,8 +88,7 @@ export default function AboutSection() {
       </div>
 
       {/* Floating Background Elements */}
-      <div className="absolute top-20 right-10 w-32 h-32 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 animate-float"></div>
-      <div className="absolute bottom-20 left-10 w-24 h-24 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 animate-float" style={{ animationDelay: '3s' }}></div>
+
     </section>
   );
 }

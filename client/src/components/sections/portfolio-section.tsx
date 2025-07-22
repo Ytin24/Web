@@ -118,8 +118,7 @@ export default function PortfolioSection() {
       </div>
 
       {/* Background Elements */}
-      <div className="absolute top-32 left-20 w-40 h-40 rounded-full bg-gradient-to-br from-secondary/20 to-primary/20 animate-float"></div>
-      <div className="absolute bottom-32 right-20 w-28 h-28 rounded-full bg-gradient-to-br from-accent/20 to-secondary/20 animate-float" style={{ animationDelay: '2s' }}></div>
+
 
       {/* Image Modal */}
       <ImageModal

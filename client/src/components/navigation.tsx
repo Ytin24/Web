@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Flower, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { AppleButton, MagneticElement } from "@/components/animations/apple-interactions";
 import { useLocation } from "wouter";
 
 export default function Navigation() {
@@ -41,18 +42,20 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 glass-effect border-b border-border">
+      <nav className="fixed top-0 w-full z-50 glass-premium border-b border-white/10">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
-            <button 
-              onClick={() => setLocation('/')}
-              className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300"
-            >
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center pulse-glow transition-all duration-300 group-hover:scale-110">
-                <Flower className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <span className="text-2xl font-bold gradient-text">Цветокрафт</span>
-            </button>
+            <MagneticElement strength={0.15}>
+              <button 
+                onClick={() => setLocation('/')}
+                className="flex items-center space-x-3 group"
+              >
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-subtle-pulse">
+                  <Flower className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <span className="text-2xl font-bold gradient-text">Цветокрафт</span>
+              </button>
+            </MagneticElement>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-2">

@@ -182,8 +182,7 @@ export default function Footer() {
       </div>
 
       {/* Floating Elements */}
-      <div className="absolute top-10 left-20 w-20 h-20 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)]/20 to-[hsl(340,100%,69%)]/20 animate-float"></div>
-      <div className="absolute bottom-10 right-20 w-16 h-16 rounded-full bg-gradient-to-br from-[hsl(340,100%,69%)]/20 to-[hsl(74,64%,59%)]/20 animate-float" style={{ animationDelay: '2s' }}></div>
+
     </footer>
   );
 }
