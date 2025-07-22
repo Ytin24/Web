@@ -5,8 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
-import ScrollReveal from "@/components/animations/scroll-reveal";
-import { AppleCard, AppleButton, AppleText, MagneticElement } from "@/components/animations/apple-interactions";
 import { useLocation } from "wouter";
 
 export default function Services() {
@@ -17,7 +15,6 @@ export default function Services() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     } else {
-      // If not on home page, redirect to home with hash
       window.location.href = '/#contact';
     }
   };
@@ -144,8 +141,8 @@ export default function Services() {
     },
     {
       icon: Clock,
-      title: "Точные сроки",
-      description: "Всегда выполняем заказы в оговоренные сроки"
+      title: "Быстрое исполнение",
+      description: "Выполняем заказы в кратчайшие сроки без потери качества"
     },
     {
       icon: Award,
@@ -160,300 +157,243 @@ export default function Services() {
   ];
 
   return (
-    <div className="min-h-screen bg-muted/50 overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navigation />
       <main className="pt-20">
         {/* Header */}
-        <section className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-8">
+        <section className="section-spacing bg-background relative overflow-hidden">
+          <div className="max-w-6xl mx-auto px-8">
             <div className="flex items-center gap-4 mb-8">
               <Button 
                 variant="outline" 
                 onClick={() => setLocation('/')}
-                className="glass-effect"
+                className="natural-hover"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 На главную
               </Button>
             </div>
             
-            <div className="text-center mb-12">
-              <AppleText>
-                <h1 className="text-5xl md:text-7xl font-bold text-[hsl(213,27%,19%)] mb-6">Наши услуги</h1>
-              </AppleText>
-              <AppleText className="delay-100">
-                <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
-                  Профессиональные флористические услуги для любых событий и случаев жизни
-                </p>
-              </AppleText>
+            <div className="text-center">
+              <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight text-balance">
+                Наши услуги
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
+                Профессиональные флористические услуги для любых событий и случаев жизни
+              </p>
             </div>
           </div>
         </section>
 
         {/* Services Grid */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-8">
+        <section className="section-spacing bg-background">
+          <div className="max-w-6xl mx-auto px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+                Полный спектр услуг
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Создаем незабываемые моменты для каждого особого события в вашей жизни
+              </p>
+            </div>
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service, index) => (
-                <AppleCard key={service.title} className="delay-100"
-                          style={{ '--delay': `${0.1 + index * 0.1}s` } as any}>
-                  <Card className="relative bg-white/80 backdrop-blur-sm border border-border/50 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 h-full overflow-hidden">
-                    {service.popular && (
-                      <div className="absolute -top-3 left-4 z-10">
-                        <Badge className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white px-3 py-1">
-                          Популярно
-                        </Badge>
+                <div key={service.title} className="natural-card h-full overflow-hidden group natural-hover">
+                  {service.popular && (
+                    <div className="absolute -top-3 left-4 z-10">
+                      <Badge className="bg-primary text-white px-3 py-1">
+                        Популярно
+                      </Badge>
+                    </div>
+                  )}
+                  
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={service.image} 
+                      alt={service.title}
+                      className="w-full h-full object-cover natural-hover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    <div className="absolute top-4 right-4">
+                      <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center">
+                        <service.icon className="w-6 h-6 text-primary" />
                       </div>
-                    )}
+                    </div>
+                  </div>
+                  
+                  <div className="p-6">
+                    <div className="mb-4">
+                      <h3 className="text-xl font-semibold text-foreground mb-2">
+                        {service.title}
+                      </h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {service.description}
+                      </p>
+                    </div>
                     
-                    {/* Service Image */}
-                    <div className="relative h-48 overflow-hidden">
-                      <img 
-                        src={service.image} 
-                        alt={service.title}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                      <div className="absolute top-4 right-4">
-                        <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center">
-                          <service.icon className="w-6 h-6 text-[hsl(252,100%,71%)]" />
-                        </div>
+                    <div className="mb-6">
+                      <div className="grid grid-cols-2 gap-2">
+                        {service.features.map((feature, idx) => (
+                          <div key={idx} className="flex items-center text-xs text-muted-foreground">
+                            <CheckCircle className="w-3 h-3 mr-1 text-primary" />
+                            {feature}
+                          </div>
+                        ))}
                       </div>
                     </div>
                     
-                    <CardHeader className="pb-4">
-                      <CardTitle className="text-xl font-bold text-[hsl(213,27%,19%)]">
-                        {service.title}
-                      </CardTitle>
-                      <CardDescription className="text-[hsl(213,27%,19%)]/70">
-                        {service.description}
-                      </CardDescription>
-                      <div className="flex items-center text-sm text-[hsl(213,27%,19%)]/60 mt-2">
-                        <Clock className="w-4 h-4 mr-2" />
-                        {service.duration}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-lg font-semibold text-primary">{service.price}</p>
+                        <p className="text-xs text-muted-foreground">{service.duration}</p>
                       </div>
-                    </CardHeader>
-                    
-                    <CardContent className="space-y-4">
-                      <ul className="space-y-2">
-                        {service.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-center text-sm text-[hsl(213,27%,19%)]/80">
-                            <CheckCircle className="w-4 h-4 text-green-500 mr-3 flex-shrink-0" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                      
-                      <div className="pt-4 border-t border-border/30">
-                        <div className="flex items-center justify-between">
-                          <span className="text-2xl font-bold text-[hsl(252,100%,71%)]">
-                            {service.price}
-                          </span>
-                          <Button 
-                            onClick={scrollToContact}
-                            className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-                          >
-                            Заказать
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </AppleCard>
+                      <Button
+                        onClick={scrollToContact}
+                        size="sm"
+                        className="natural-hover"
+                      >
+                        Заказать
+                        <ArrowRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Advantages Section */}
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-8">
-            <ScrollReveal delay={0.1}>
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold text-[hsl(213,27%,19%)] mb-6">
-                  Почему выбирают нас
-                </h2>
-                <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-2xl mx-auto">
-                  Мы гордимся качеством наших услуг и доверием клиентов
-                </p>
-              </div>
-            </ScrollReveal>
+        {/* Work Process */}
+        <section className="section-spacing bg-muted/30">
+          <div className="max-w-6xl mx-auto px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+                Как мы работаем
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Четко структурированный процесс от идеи до воплощения
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {workProcess.map((step, index) => (
+                <div key={step.step} className="natural-card p-6 text-center natural-hover">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-4">
+                    <step.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="mb-4">
+                    <div className="text-sm text-primary font-medium mb-2">Шаг {step.step}</div>
+                    <h3 className="text-lg font-semibold text-foreground">{step.title}</h3>
+                  </div>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
+        {/* Advantages */}
+        <section className="section-spacing bg-background">
+          <div className="max-w-6xl mx-auto px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+                Наши преимущества
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Почему клиенты выбирают именно нас
+              </p>
+            </div>
+            
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {advantages.map((advantage, index) => (
-                <ScrollReveal key={advantage.title} delay={0.1 + index * 0.1}>
-                  <Card className="text-center bg-white/60 backdrop-blur-sm border border-border/50 hover:bg-white/80 transition-all duration-300">
-                    <CardContent className="p-8">
-                      <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center mb-4">
-                        <advantage.icon className="w-8 h-8 text-white" />
-                      </div>
-                      <h3 className="text-xl font-bold text-[hsl(213,27%,19%)] mb-2">
-                        {advantage.title}
-                      </h3>
-                      <p className="text-[hsl(213,27%,19%)]/70">
-                        {advantage.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Work Process Section */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-8">
-            <ScrollReveal delay={0.1}>
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold text-[hsl(213,27%,19%)] mb-6">
-                  Как мы работаем
-                </h2>
-                <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-2xl mx-auto">
-                  Простой и понятный процесс от идеи до готовой композиции
-                </p>
-              </div>
-            </ScrollReveal>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {workProcess.map((process, index) => (
-                <ScrollReveal key={process.title} delay={0.1 + index * 0.1}>
-                  <div className="relative">
-                    <Card className="text-center bg-white/80 backdrop-blur-sm border border-border/50 hover:shadow-lg transition-all duration-300">
-                      <CardContent className="p-8">
-                        <div className="relative mx-auto w-16 h-16 rounded-full bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center mb-4">
-                          <process.icon className="w-8 h-8 text-white" />
-                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full border-2 border-[hsl(252,100%,71%)] flex items-center justify-center text-xs font-bold text-[hsl(252,100%,71%)]">
-                            {process.step}
-                          </div>
-                        </div>
-                        <h3 className="text-xl font-bold text-[hsl(213,27%,19%)] mb-2">
-                          {process.title}
-                        </h3>
-                        <p className="text-[hsl(213,27%,19%)]/70">
-                          {process.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                    
-                    {index < workProcess.length - 1 && (
-                      <div className="hidden lg:block absolute top-8 -right-4 z-10">
-                        <ArrowRight className="w-8 h-8 text-[hsl(252,100%,71%)]" />
-                      </div>
-                    )}
+                <div key={advantage.title} className="natural-card p-6 text-center natural-hover">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <advantage.icon className="w-6 h-6 text-primary" />
                   </div>
-                </ScrollReveal>
+                  <h3 className="text-lg font-semibold text-foreground mb-3">{advantage.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {advantage.description}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-8">
-            <ScrollReveal delay={0.1}>
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold text-[hsl(213,27%,19%)] mb-6">
-                  Отзывы клиентов
-                </h2>
-                <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-2xl mx-auto">
-                  Мнение наших клиентов — лучшая оценка нашей работы
-                </p>
-              </div>
-            </ScrollReveal>
-
+        {/* Testimonials */}
+        <section className="section-spacing bg-muted/30">
+          <div className="max-w-6xl mx-auto px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+                Отзывы клиентов
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Что говорят о нас наши клиенты
+              </p>
+            </div>
+            
             <div className="grid md:grid-cols-3 gap-8">
               {testimonials.map((testimonial, index) => (
-                <ScrollReveal key={testimonial.name} delay={0.1 + index * 0.1}>
-                  <Card className="bg-white/80 backdrop-blur-sm border border-border/50 hover:shadow-lg transition-all duration-300">
-                    <CardContent className="p-8">
-                      <Quote className="w-8 h-8 text-[hsl(252,100%,71%)] mb-4" />
-                      <p className="text-[hsl(213,27%,19%)]/80 mb-6 italic">
-                        "{testimonial.content}"
-                      </p>
-                      
-                      <div className="flex items-center gap-4">
-                        <Avatar>
-                          <AvatarFallback className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white font-bold">
-                            {testimonial.avatar}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <h4 className="font-semibold text-[hsl(213,27%,19%)]">
-                            {testimonial.name}
-                          </h4>
-                          <p className="text-sm text-[hsl(213,27%,19%)]/70">
-                            {testimonial.role}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex gap-1 mt-4">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </ScrollReveal>
+                <div key={testimonial.name} className="natural-card p-6 natural-hover">
+                  <Quote className="w-8 h-8 text-primary/30 mb-4" />
+                  <p className="text-muted-foreground mb-6 leading-relaxed">
+                    {testimonial.content}
+                  </p>
+                  <div className="flex items-center">
+                    <Avatar className="w-10 h-10 mr-3">
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                        {testimonial.avatar}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold text-foreground">{testimonial.name}</p>
+                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                    <div className="ml-auto flex">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518895949257-7621c3c786d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=800')] opacity-10 bg-cover bg-center" />
-          <div className="relative max-w-4xl mx-auto px-8 text-center">
-            <ScrollReveal delay={0.1}>
-              <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+        <section className="section-spacing bg-background">
+          <div className="max-w-6xl mx-auto px-8">
+            <div className="natural-card p-12 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6 text-balance">
                 Готовы создать что-то прекрасное?
               </h2>
-              <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                Свяжитесь с нами для бесплатной консультации и индивидуального расчета стоимости. 
-                Мы поможем воплотить ваши идеи в жизнь!
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
+                Свяжитесь с нами для консультации и обсуждения вашего проекта
               </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-                <Button 
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
                   onClick={scrollToContact}
                   size="lg"
-                  className="bg-white text-[hsl(252,100%,71%)] hover:bg-white/90 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  className="px-8 py-4 text-lg natural-hover"
                 >
-                  Получить консультацию
+                  Заказать консультацию
                 </Button>
-                <Button 
-                  onClick={() => setLocation('/portfolio')}
+                <Button
                   variant="outline"
+                  onClick={() => setLocation('/portfolio')}
                   size="lg"
-                  className="border-2 border-white text-white hover:bg-white hover:text-[hsl(252,100%,71%)] px-8 py-4 text-lg font-semibold transition-all duration-300"
+                  className="px-8 py-4 text-lg natural-hover"
                 >
-                  Смотреть портфолио
+                  Посмотреть работы
                 </Button>
               </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-md mx-auto text-white/90">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">15+</div>
-                  <div className="text-sm">лет опыта</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">1000+</div>
-                  <div className="text-sm">довольных клиентов</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">500+</div>
-                  <div className="text-sm">проектов</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">24/7</div>
-                  <div className="text-sm">поддержка</div>
-                </div>
-              </div>
-            </ScrollReveal>
+            </div>
           </div>
         </section>
-
       </main>
       <Footer />
     </div>

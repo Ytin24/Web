@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import ScrollReveal from "@/components/animations/scroll-reveal";
-import { AppleCard, AppleText, AppleButton } from "@/components/animations/apple-interactions";
+
 import ImageModal from "@/components/image-modal";
 import type { PortfolioItem } from "@shared/schema";
 import { useLocation } from "wouter";
@@ -39,17 +39,17 @@ export default function Portfolio() {
   ) || [];
 
   return (
-    <div className="min-h-screen bg-muted/50 overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navigation />
       <main className="pt-20">
         {/* Header */}
-        <section className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-8">
+        <section className="section-spacing bg-background relative overflow-hidden">
+          <div className="max-w-6xl mx-auto px-8">
             <div className="flex items-center gap-4 mb-8">
               <Button 
                 variant="outline" 
                 onClick={() => setLocation('/')}
-                className="glass-effect"
+                className="natural-hover"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 На главную
@@ -57,68 +57,58 @@ export default function Portfolio() {
             </div>
             
             <div className="text-center mb-12">
-              <AppleText>
-                <h1 className="text-5xl md:text-7xl font-bold text-[hsl(213,27%,19%)] mb-6">Все наши работы</h1>
-              </AppleText>
-              <AppleText className="delay-100">
-                <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
-                  Полная галерея наших творений для разных событий и настроений
-                </p>
-              </AppleText>
+              <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+                Все наши работы
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Полная галерея наших творений для разных событий и настроений
+              </p>
             </div>
 
             {/* Portfolio Filter */}
             <div className="flex flex-wrap justify-center gap-4 mb-12">
-                {categories.map((category) => (
-                  <Button
-                    key={category.key}
-                    onClick={() => setActiveFilter(category.key)}
-                    variant={activeFilter === category.key ? "default" : "outline"}
-                    className={`glass-effect px-6 py-3 rounded-full font-medium transition-all ${
-                      activeFilter === category.key 
-                        ? 'bg-[hsl(252,85%,65%)] text-white shadow-lg' 
-                        : 'text-white/90 bg-white/20 backdrop-blur-md hover:bg-[hsl(252,85%,65%)] hover:text-white'
-                    }`}
-                  >
-                    {category.label}
-                  </Button>
-                ))}
-              </div>
+              {categories.map((category) => (
+                <Button
+                  key={category.key}
+                  onClick={() => setActiveFilter(category.key)}
+                  variant={activeFilter === category.key ? "default" : "outline"}
+                  className="natural-hover"
+                >
+                  {category.label}
+                </Button>
+              ))}
+            </div>
           </div>
         </section>
 
         {/* Portfolio Grid */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredItems.map((item, index) => (
-                <AppleCard key={item.id}>
-                  <div className="group">
-                    <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-border/50 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
-                      <img 
-                        src={item.imageUrl || ''} 
-                        alt={item.title} 
-                        className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      
-                      {/* Always visible expand button */}
-                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 group-hover:bg-white transition-colors duration-300">
-                        <Maximize2 className="w-4 h-4 text-muted-foreground" />
-                      </div>
-                      
-                      {/* Hover overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="absolute bottom-4 left-4 right-4">
-                          <h3 className="text-lg font-bold text-white mb-1 drop-shadow-lg">{item.title}</h3>
-                          <p className="text-white/95 text-sm mb-2 drop-shadow line-clamp-2">{item.description}</p>
-                          <Badge className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white text-xs">
-                            {item.category}
-                          </Badge>
-                        </div>
+        <section className="section-spacing bg-background">
+          <div className="max-w-6xl mx-auto px-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredItems.map((item) => (
+                <div key={item.id} className="natural-card overflow-hidden group">
+                  <div className="relative overflow-hidden cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
+                    <img 
+                      src={item.imageUrl || ''} 
+                      alt={item.title} 
+                      className="w-full h-64 object-cover natural-hover"
+                    />
+                    
+                    <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white">
+                      <Maximize2 className="w-4 h-4 text-foreground" />
+                    </div>
+                    
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
+                        <p className="text-white/90 text-sm mb-2">{item.description}</p>
+                        <Badge className="bg-primary text-white text-xs">
+                          {categories.find(cat => cat.key === item.category)?.label || item.category}
+                        </Badge>
                       </div>
                     </div>
                   </div>
-                </AppleCard>
+                </div>
               ))}
             </div>
 

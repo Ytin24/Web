@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import ScrollReveal from "@/components/animations/scroll-reveal";
-import { AppleCard, AppleText, AppleButton } from "@/components/animations/apple-interactions";
+
 import ImageModal from "@/components/image-modal";
 import type { BlogPost } from "@shared/schema";
 
@@ -76,13 +76,13 @@ export default function AllBlog() {
       <Navigation />
       <main className="pt-20">
         {/* Header */}
-        <section className="py-20 bg-gradient-to-br from-muted to-background relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-8">
+        <section className="section-spacing bg-background relative overflow-hidden">
+          <div className="max-w-6xl mx-auto px-8">
             <div className="flex items-center gap-4 mb-8">
               <Button 
                 variant="outline" 
                 onClick={() => setLocation('/')}
-                className="glass-effect"
+                className="natural-hover"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 На главную
@@ -90,14 +90,12 @@ export default function AllBlog() {
             </div>
             
             <div className="text-center mb-12">
-              <AppleText>
-                <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6">Все советы по уходу</h1>
-              </AppleText>
-              <AppleText className="delay-100">
-                <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                  Полная коллекция полезных советов от наших флористов для долгой жизни ваших цветов
-                </p>
-              </AppleText>
+              <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+                Все советы по уходу
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Полная коллекция полезных советов от наших флористов для долгой жизни ваших цветов
+              </p>
             </div>
 
             {/* Search and Filter Section */}
@@ -123,11 +121,7 @@ export default function AllBlog() {
                       key={category}
                       onClick={() => handleCategoryChange(category)}
                       variant={activeCategory === category ? "default" : "outline"}
-                      className={`glass-effect px-6 py-3 rounded-full font-medium transition-all ${
-                        activeCategory === category
-                          ? 'bg-primary text-primary-foreground shadow-lg' 
-                          : 'text-foreground/90 bg-card/50 backdrop-blur-md hover:bg-primary hover:text-primary-foreground border border-border'
-                      }`}
+                      className="natural-hover"
                     >
                       <Filter className="w-4 h-4 mr-2" />
                       {categoryLabels[category] || category}
@@ -149,65 +143,57 @@ export default function AllBlog() {
         </section>
 
         {/* Blog Posts Grid */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-8">
+        <section className="section-spacing bg-background">
+          <div className="max-w-6xl mx-auto px-8">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {paginatedPosts.map((post, index) => (
-                <AppleCard key={post.id}>
-                  <article className="bg-card/80 backdrop-blur-sm border border-border shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl hover:bg-card/90 transition-all duration-500 glass-hover hover:scale-[1.02]">
-                    <div className="relative group">
-                      <img 
-                        src={post.imageUrl || '/api/images/blog-care-1.svg'} 
-                        alt={post.title} 
-                        className="w-full h-64 object-cover transition-all duration-300 group-hover:scale-105 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openImageModal(post.imageUrl || '/api/images/blog-care-1.svg', post.title);
-                        }}
-                      />
-                      <div className="absolute top-3 right-3">
-                        <Button 
-                          variant="secondary" 
-                          size="sm"
-                          className="bg-white/90 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openImageModal(post.imageUrl || '/api/images/blog-care-1.svg', post.title);
-                          }}
-                        >
-                          <Maximize2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <article key={post.id} className="natural-card overflow-hidden group natural-hover">
+                  <div className="relative">
+                    <img 
+                      src={post.imageUrl || '/api/images/blog-care-1.svg'} 
+                      alt={post.title} 
+                      className="w-full h-64 object-cover cursor-pointer natural-hover"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openImageModal(post.imageUrl || '/api/images/blog-care-1.svg', post.title);
+                      }}
+                    />
+                    <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white cursor-pointer"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           openImageModal(post.imageUrl || '/api/images/blog-care-1.svg', post.title);
+                         }}>
+                      <Maximize2 className="w-4 h-4 text-foreground" />
                     </div>
-                    <div className="p-6 bg-card/95 backdrop-blur-sm">
-                      <div className="flex items-center justify-between mb-3">
-                        <Badge className="bg-gradient-to-r from-primary to-secondary text-primary-foreground">
-                          {post.category}
-                        </Badge>
-                        {post.createdAt && (
-                          <div className="flex items-center text-xs text-muted-foreground">
-                            <Calendar className="w-3 h-3 mr-1" />
-                            {new Date(post.createdAt).toLocaleDateString('ru-RU')}
-                          </div>
-                        )}
-                      </div>
-                      <h3 className="text-xl font-semibold text-foreground mb-3 hover:text-primary transition-colors cursor-pointer" onClick={() => openBlogPost(post.id)}>
-                        {post.title}
-                      </h3>
-                      <p className="text-muted-foreground mb-4 leading-relaxed line-clamp-3">
-                        {post.excerpt || post.content.substring(0, 150) + '...'}
-                      </p>
-                      <button 
-                        onClick={() => openBlogPost(post.id)}
-                        className="inline-flex items-center text-primary font-semibold hover:text-secondary transition-colors cursor-pointer group"
-                      >
-                        Читать далее 
-                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                      </button>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <Badge variant="secondary" className="bg-primary/10 text-primary font-medium">
+                        {post.category || 'Совет'}
+                      </Badge>
+                      {post.createdAt && (
+                        <div className="flex items-center text-xs text-muted-foreground">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          {new Date(post.createdAt).toLocaleDateString('ru-RU')}
+                        </div>
+                      )}
                     </div>
-                  </article>
-                </AppleCard>
+                    <h3 className="text-xl font-semibold text-foreground mb-3 hover:text-primary transition-colors cursor-pointer" onClick={() => openBlogPost(post.id)}>
+                      {post.title}
+                    </h3>
+                    <p className="text-muted-foreground mb-4 leading-relaxed text-sm">
+                      {post.excerpt || (post.content?.substring(0, 120) + '...')}
+                    </p>
+                    <button 
+                      onClick={() => openBlogPost(post.id)}
+                      className="inline-flex items-center text-primary font-medium hover:text-primary/80 transition-colors cursor-pointer group"
+                    >
+                      Читать далее 
+                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </article>
               ))}
             </div>
 
