@@ -22,6 +22,7 @@ function Router() {
       <Route path="/blog/:id" component={BlogPost} />
       <Route path="/portfolio" component={Portfolio} />
       <Route path="/blog" component={AllBlog} />
+      <Route path="/all-blog" component={AllBlog} />
       <Route path="/services" component={Services} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />

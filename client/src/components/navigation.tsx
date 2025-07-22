@@ -2,24 +2,39 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Flower, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useLocation } from "wouter";
 
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [location, setLocation] = useLocation();
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
+  const handleNavigation = (sectionId: string) => {
+    setIsMobileMenuOpen(false);
+    
+    if (location === '/') {
+      // If on home page, scroll to section
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If on other page, navigate to home and then scroll
+      setLocation('/');
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
     }
   };
 
   const navigationLinks = [
-    { id: "about", label: "О нас" },
-    { id: "blog", label: "Советы" },
-    { id: "portfolio", label: "Портфолио" },
-    { id: "loyalty", label: "Лояльность" },
-    { id: "contact", label: "Контакты" },
+    { id: "about", label: "О нас", type: "section" },
+    { id: "blog", label: "Советы", type: "page", href: "/all-blog" },
+    { id: "portfolio", label: "Портфолио", type: "page", href: "/portfolio" },
+    { id: "loyalty", label: "Лояльность", type: "section" },
+    { id: "contact", label: "Контакты", type: "section" },
   ];
 
   return (
@@ -27,19 +42,28 @@ export default function Navigation() {
       <nav className="fixed top-0 w-full z-50 glass-effect border-b border-border">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 group">
+            <button 
+              onClick={() => setLocation('/')}
+              className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300"
+            >
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center pulse-glow transition-all duration-300 group-hover:scale-110">
                 <Flower className="w-6 h-6 text-primary-foreground" />
               </div>
               <span className="text-2xl font-bold gradient-text">Цветокрафт</span>
-            </div>
+            </button>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-2">
               {navigationLinks.map((link) => (
                 <button
                   key={link.id}
-                  onClick={() => scrollToSection(link.id)}
+                  onClick={() => {
+                    if (link.type === 'page' && link.href) {
+                      setLocation(link.href);
+                    } else {
+                      handleNavigation(link.id);
+                    }
+                  }}
                   className="nav-item text-foreground hover:text-primary font-medium"
                 >
                   {link.label}
@@ -74,7 +98,13 @@ export default function Navigation() {
             {navigationLinks.map((link) => (
               <button
                 key={link.id}
-                onClick={() => scrollToSection(link.id)}
+                onClick={() => {
+                  if (link.type === 'page' && link.href) {
+                    setLocation(link.href);
+                  } else {
+                    handleNavigation(link.id);
+                  }
+                }}
                 className="block w-full text-left py-3 px-4 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
               >
                 {link.label}
