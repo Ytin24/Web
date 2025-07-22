@@ -8,9 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Plus, Edit, Trash2, Eye, EyeOff, Calendar, Search,
-  BookOpen, FileText
+  BookOpen, FileText, Bot, Sparkles, Loader2, Lightbulb
 } from "lucide-react";
 import ContentEditor from "./content-editor";
+import BlogAiAssistant from "./blog-ai-assistant";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { BlogPost, InsertBlogPost } from "@shared/schema";
@@ -224,10 +225,13 @@ export default function BlogManagement() {
           <h2 className="text-2xl font-bold text-foreground">Управление блогом</h2>
           <p className="text-muted-foreground">Создание и редактирование статей</p>
         </div>
-        <Button onClick={() => { setIsCreateOpen(true); setShowEditor(true); }}>
-          <Plus className="w-4 h-4 mr-2" />
-          Новая статья
-        </Button>
+        <div className="flex gap-2">
+          <BlogAiAssistant />
+          <Button onClick={() => { setIsCreateOpen(true); setShowEditor(true); }}>
+            <Plus className="w-4 h-4 mr-2" />
+            Новая статья
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}

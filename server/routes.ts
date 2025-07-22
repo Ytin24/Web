@@ -43,6 +43,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Initialize webhooks
   await initializeDefaultWebhooks();
+  
+  // Import blog assistant for admin routes
+  const { getBlogAssistantResponse } = await import('./openai-service');
 
   /**
    * @swagger
@@ -525,6 +528,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Import and setup chatbot routes
   const { default: chatbotRoutes } = await import('./chatbot-routes.js');
   app.use('/api/chatbot', chatbotRoutes);
+
+  // Blog Assistant AI endpoint for admin panel
+  app.post("/api/blog-assistant", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const { prompt } = req.body;
+      
+      if (!prompt || typeof prompt !== 'string') {
+        return res.status(400).json({ message: "Prompt is required" });
+      }
+
+      const response = await getBlogAssistantResponse(prompt);
+      res.json({ response });
+    } catch (error) {
+      console.error("Blog assistant error:", error);
+      res.status(500).json({ message: "Failed to get blog assistant response" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

@@ -8,8 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Bold, Italic, List, ListOrdered, Quote, Image, Link,
-  Eye, Save, X, Type, AlignLeft, AlignCenter, AlignRight
+  Eye, Save, X, Type, AlignLeft, AlignCenter, AlignRight,
+  Bot, Sparkles, Loader2, Lightbulb, Wand2
 } from "lucide-react";
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useMutation } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 import type { BlogPost, InsertBlogPost } from "@shared/schema";
 
 interface ContentEditorProps {
@@ -40,6 +46,29 @@ export default function ContentEditor({ post, onSave, onCancel, isLoading }: Con
 
   const [previewMode, setPreviewMode] = useState(false);
   const [selectedText, setSelectedText] = useState('');
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiResponse, setAiResponse] = useState('');
+  const [showAiAssistant, setShowAiAssistant] = useState(false);
+
+  const { toast } = useToast();
+
+  const aiAssistantMutation = useMutation({
+    mutationFn: async (prompt: string) => {
+      const response = await apiRequest('POST', '/api/blog-assistant', { prompt });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setAiResponse(data.response);
+      toast({ title: "Профессор Ботаникус готов помочь!" });
+    },
+    onError: () => {
+      toast({ 
+        title: "Профессор Ботаникус недоступен", 
+        description: "Попробуйте позже или обратитесь к администратору",
+        variant: "destructive" 
+      });
+    }
+  });
 
   const categories = [
     { value: 'care', label: 'Уход за цветами' },
