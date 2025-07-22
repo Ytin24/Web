@@ -44,7 +44,7 @@ export default function BlogSection() {
 
         <div className="grid md:grid-cols-3 gap-8">
           {blogPosts?.slice(0, 3).map((post, index) => (
-            <AppleCard key={post.id} className="bg-card/80 backdrop-blur-sm border border-border shadow-xl overflow-hidden group">
+            <AppleCard key={post.id} className="glass-premium border border-border/50 shadow-xl overflow-hidden group">
               <div className="relative overflow-hidden">
                 <AppleImage 
                   src={post.imageUrl || '/api/images/blog-care-1.svg'} 
@@ -63,16 +63,16 @@ export default function BlogSection() {
                   <Maximize2 className="w-4 h-4 text-white" />
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-6 bg-white/20 dark:bg-black/20 backdrop-blur-sm">
                 <div className="flex items-center mb-3">
-                  <Badge variant="secondary" className="mb-3">
+                  <Badge variant="secondary" className="mb-3 bg-primary/90 text-white font-semibold">
                     {post.category || 'Советы'}
                   </Badge>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3 leading-tight">
+                <h3 className="text-xl font-bold text-foreground mb-3 leading-tight drop-shadow-sm">
                   {post.title}
                 </h3>
-                <p className="text-muted-foreground mb-4 leading-relaxed">
+                <p className="text-foreground/80 mb-4 leading-relaxed font-medium drop-shadow-sm">
                   {post.excerpt}
                 </p>
                 <MagneticElement strength={0.1}>

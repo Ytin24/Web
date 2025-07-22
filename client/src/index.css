@@ -25,9 +25,9 @@
   --ring: hsl(320, 60%, 65%);
   --radius: 1rem;
   /* Стеклянный эффект для светлой темы */
-  --glass-bg: rgba(255, 255, 255, 0.25);
-  --glass-border: rgba(255, 255, 255, 0.4);
-  --glass-shadow: rgba(200, 180, 200, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-shadow: rgba(200, 180, 200, 0.2);
   --slate: hsl(340, 15%, 25%);
   --gradient-primary: linear-gradient(135deg, hsl(320, 60%, 65%) 0%, hsl(260, 50%, 70%) 100%);
   --gradient-secondary: linear-gradient(135deg, hsl(260, 50%, 70%) 0%, hsl(80, 40%, 65%) 100%);
@@ -55,9 +55,9 @@
   --destructive-foreground: hsl(260, 15%, 8%);
   --ring: hsl(320, 70%, 75%);
   /* Стеклянный эффект для темной темы */
-  --glass-bg: rgba(60, 40, 80, 0.3);
-  --glass-border: rgba(180, 120, 200, 0.2);
-  --glass-shadow: rgba(120, 80, 140, 0.25);
+  --glass-bg: rgba(60, 40, 80, 0.45);
+  --glass-border: rgba(180, 120, 200, 0.35);
+  --glass-shadow: rgba(120, 80, 140, 0.35);
   --slate: hsl(45, 25%, 88%);
   --gradient-primary: linear-gradient(135deg, hsl(320, 70%, 75%) 0%, hsl(260, 60%, 80%) 100%);
   --gradient-secondary: linear-gradient(135deg, hsl(260, 60%, 80%) 0%, hsl(80, 50%, 75%) 100%);
@@ -76,11 +76,25 @@
 
 @layer components {
   .glass-effect {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     box-shadow: 0 8px 32px var(--glass-shadow);
+  }
+
+  .glass-premium {
+    backdrop-filter: blur(24px) saturate(200%) brightness(110%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%) brightness(110%);
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  .dark .glass-premium {
+    background: rgba(40, 30, 60, 0.65);
+    border: 1px solid rgba(160, 120, 180, 0.5);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
   .glass-hover {
