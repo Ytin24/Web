@@ -55,8 +55,8 @@ export default function PortfolioSection() {
                 variant={activeFilter === category.key ? "default" : "outline"}
                 className={`glass-effect px-6 py-3 rounded-full font-medium transition-all ${
                   activeFilter === category.key 
-                    ? 'bg-[hsl(252,100%,71%)] text-white' 
-                    : 'text-[hsl(213,27%,19%)] hover:bg-[hsl(252,100%,71%)] hover:text-white'
+                    ? 'bg-[hsl(252,85%,65%)] text-white shadow-lg' 
+                    : 'text-white/90 bg-white/20 backdrop-blur-md hover:bg-[hsl(252,85%,65%)] hover:text-white'
                 }`}
               >
                 {category.label}
@@ -72,7 +72,7 @@ export default function PortfolioSection() {
               <div className="group">
                 <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
                   <img 
-                    src={item.imageUrl} 
+                    src={item.imageUrl || ''} 
                     alt={item.title} 
                     className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
                   />

@@ -31,21 +31,19 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 
 // Generate JWT token
 export function generateJwtToken(user: User): string {
-  return jwt.sign(
-    { 
-      id: user.id, 
-      username: user.username, 
-      role: user.role 
-    },
-    JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
-  );
+  const payload = { 
+    id: user.id, 
+    username: user.username, 
+    role: user.role 
+  };
+  const options = { expiresIn: JWT_EXPIRES_IN };
+  return jwt.sign(payload, JWT_SECRET as string, options);
 }
 
 // Verify JWT token
 export function verifyJwtToken(token: string): any {
   try {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, JWT_SECRET as string);
   } catch (error) {
     return null;
   }

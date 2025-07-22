@@ -351,7 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid status" });
       }
       
-      const updatedRequest = await storage.updateCallbackRequestStatus(id, status);
+      const updatedRequest = await storage.updateCallbackRequest(id, { status } as any);
       res.json(updatedRequest);
     } catch (error) {
       res.status(500).json({ message: "Failed to update callback request status" });
