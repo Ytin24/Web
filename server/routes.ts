@@ -436,7 +436,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         else if (filename.includes('corporate')) altText = 'Corporate flower arrangement';
         else if (filename.includes('birthday')) altText = 'Birthday flower arrangement';
         
-        image = { category, filename, altText, description: altText };
+        // Create a fallback image object for SVG generation
+        const fallbackImage = { 
+          category, 
+          filename, 
+          altText, 
+          description: altText,
+          id: 0,
+          originalName: filename,
+          mimeType: 'image/svg+xml',
+          size: 0,
+          url: `/api/images/${filename}`,
+          isActive: true,
+          createdAt: new Date()
+        };
+        image = fallbackImage;
       }
 
       // Generate SVG based on category and filename

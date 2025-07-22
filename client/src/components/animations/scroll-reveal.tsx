@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 interface ScrollRevealProps {
   children: React.ReactNode;
@@ -15,30 +15,39 @@ export default function ScrollReveal({
 }: ScrollRevealProps) {
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleIntersection = useCallback((entries: IntersectionObserverEntry[]) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !isVisible) {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+          setIsVisible(true);
+        }, delay * 1000);
+      }
+    });
+  }, [delay, isVisible]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting && !isVisible) {
-            setTimeout(() => {
-              setIsVisible(true);
-            }, delay * 1000);
-          }
-        });
-      },
-      {
-        threshold,
-        rootMargin: '0px 0px -50px 0px'
+    const element = elementRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(handleIntersection, {
+      threshold,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
-    );
-
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [delay, threshold, isVisible]);
+    };
+  }, [handleIntersection, threshold]);
 
   return (
     <div 
