@@ -177,6 +177,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/sections/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertSectionSchema.partial().parse(req.body);
+      const updatedSection = await storage.updateSection(id, validatedData);
+      res.json(updatedSection);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid section data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update section" });
+    }
+  });
+
   app.post("/api/sections", async (req, res) => {
     try {
       const validatedData = insertSectionSchema.parse(req.body);
@@ -313,6 +327,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/portfolio-items/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertPortfolioItemSchema.partial().parse(req.body);
+      const updatedPortfolioItem = await storage.updatePortfolioItem(id, validatedData);
+      res.json(updatedPortfolioItem);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid portfolio item data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update portfolio item" });
+    }
+  });
+
   app.delete("/api/portfolio-items/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -396,6 +424,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid loyalty program data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to update loyalty program" });
+    }
+  });
+
+  app.patch("/api/loyalty-program/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertLoyaltyProgramSchema.partial().parse(req.body);
+      const updatedLevel = await storage.updateLoyaltyLevel(id, validatedData);
+      res.json(updatedLevel);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid loyalty program data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update loyalty program" });
+    }
+  });
+
+  app.post("/api/loyalty-program", async (req, res) => {
+    try {
+      const validatedData = insertLoyaltyProgramSchema.parse(req.body);
+      const loyaltyLevel = await storage.createLoyaltyLevel(validatedData);
+      res.status(201).json(loyaltyLevel);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid loyalty program data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create loyalty program" });
+    }
+  });
+
+  app.delete("/api/loyalty-program/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteLoyaltyLevel(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete loyalty program" });
     }
   });
 

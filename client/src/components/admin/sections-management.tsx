@@ -22,11 +22,7 @@ export default function SectionsManagement() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Section> }) => 
-      fetch(`/api/sections/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      }).then(res => res.json()),
+      apiRequest("PATCH", `/api/sections/${id}`, data).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sections"] });
       setEditingSection(null);
@@ -40,9 +36,8 @@ export default function SectionsManagement() {
   const SectionEditor = ({ section }: { section: Section }) => {
     const [formData, setFormData] = useState({
       title: section.title,
-      subtitle: section.subtitle || "",
+      description: section.description || "",
       content: section.content || "",
-      buttonText: section.buttonText || "",
       imageUrl: section.imageUrl || ""
     });
 
@@ -81,12 +76,12 @@ export default function SectionsManagement() {
               </div>
 
               <div>
-                <Label htmlFor={`subtitle-${section.name}`}>Подзаголовок</Label>
+                <Label htmlFor={`description-${section.name}`}>Описание</Label>
                 <Input
-                  id={`subtitle-${section.name}`}
-                  value={formData.subtitle}
-                  onChange={(e) => setFormData(prev => ({ ...prev, subtitle: e.target.value }))}
-                  placeholder="Подзаголовок секции"
+                  id={`description-${section.name}`}
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Описание секции"
                 />
               </div>
 
@@ -101,15 +96,7 @@ export default function SectionsManagement() {
                 />
               </div>
 
-              <div>
-                <Label htmlFor={`buttonText-${section.name}`}>Текст кнопки</Label>
-                <Input
-                  id={`buttonText-${section.name}`}
-                  value={formData.buttonText}
-                  onChange={(e) => setFormData(prev => ({ ...prev, buttonText: e.target.value }))}
-                  placeholder="Текст кнопки (если есть)"
-                />
-              </div>
+
 
               <div>
                 <Label htmlFor={`imageUrl-${section.name}`}>URL изображения</Label>
@@ -142,10 +129,10 @@ export default function SectionsManagement() {
                 <div className="text-lg">{section.title}</div>
               </div>
               
-              {section.subtitle && (
+              {section.description && (
                 <div>
-                  <div className="text-sm font-medium text-muted-foreground">Подзаголовок:</div>
-                  <div>{section.subtitle}</div>
+                  <div className="text-sm font-medium text-muted-foreground">Описание:</div>
+                  <div>{section.description}</div>
                 </div>
               )}
 
@@ -156,12 +143,7 @@ export default function SectionsManagement() {
                 </div>
               )}
 
-              {section.buttonText && (
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground">Текст кнопки:</div>
-                  <div>{section.buttonText}</div>
-                </div>
-              )}
+
 
               {section.imageUrl && (
                 <div>
