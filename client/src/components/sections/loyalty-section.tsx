@@ -42,12 +42,12 @@ export default function LoyaltySection() {
   };
 
   return (
-    <section id="loyalty" className="py-32 bg-gradient-to-br from-[hsl(252,100%,71%)]/5 to-[hsl(340,100%,69%)]/5 relative overflow-hidden">
+    <section id="loyalty" className="py-32 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
         <ScrollReveal delay={0.1}>
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-bold text-[hsl(213,27%,19%)] mb-6">Программа лояльности</h2>
-            <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
+            <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Программа лояльности</h2>
+            <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Становитесь частью нашей цветочной семьи и получайте особые привилегии
             </p>
           </div>
@@ -64,8 +64,8 @@ export default function LoyaltySection() {
                   <div className={`w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br ${getGradient(level.level)} flex items-center justify-center`}>
                     <Icon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-[hsl(213,27%,19%)] mb-4">{level.title}</h3>
-                  <p className="text-[hsl(213,27%,19%)]/70 mb-6 leading-relaxed">
+                  <h3 className="text-2xl font-bold text-foreground mb-4">{level.title}</h3>
+                  <p className="text-foreground/70 mb-6 leading-relaxed">
                     {level.description}
                   </p>
                   <ul className="space-y-3 mb-6">

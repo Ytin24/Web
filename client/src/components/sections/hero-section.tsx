@@ -34,7 +34,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
       {/* Parallax Background */}
       <div 
         className="absolute inset-0 parallax-back bg-cover bg-center"
@@ -52,7 +52,7 @@ export default function HeroSection() {
       <div className="relative z-10 text-center px-8 max-w-4xl mx-auto">
         <ScrollReveal delay={0.2}>
           <div className="glass-effect rounded-3xl p-12">
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold text-white dark:text-gray-100 mb-6 leading-tight">
               {heroSection?.title?.split(' ').map((word, index) => 
                 word === 'магию' ? (
                   <span key={index} className="bg-gradient-to-r from-[hsl(340,100%,69%)] to-[hsl(252,100%,71%)] bg-clip-text text-transparent">
@@ -61,7 +61,7 @@ export default function HeroSection() {
                 ) : word + ' '
               )}
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-white/90 dark:text-gray-200/90 mb-8 leading-relaxed">
               {heroSection?.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

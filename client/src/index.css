@@ -24,7 +24,10 @@
   --ring: hsl(213, 27%, 19%);
   --radius: 0.5rem;
   --glass-bg: hsl(0, 0%, 100%, 0.1);
+  --glass-border: hsl(0, 0%, 100%, 0.2);
   --slate: hsl(213, 27%, 19%);
+  --gradient-primary: linear-gradient(135deg, hsl(252, 100%, 71%) 0%, hsl(252, 85%, 65%) 100%);
+  --gradient-secondary: linear-gradient(135deg, hsl(340, 100%, 69%) 0%, hsl(340, 85%, 60%) 100%);
 }
 
 .dark {
@@ -47,8 +50,11 @@
   --destructive: hsl(0, 62.8%, 30.6%);
   --destructive-foreground: hsl(0, 0%, 98%);
   --ring: hsl(240, 4.9%, 83.9%);
-  --glass-bg: hsl(0, 0%, 0%, 0.1);
+  --glass-bg: hsl(0, 0%, 10%, 0.8);
+  --glass-border: hsl(0, 0%, 100%, 0.1);
   --slate: hsl(0, 0%, 98%);
+  --gradient-primary: linear-gradient(135deg, hsl(252, 70%, 55%) 0%, hsl(252, 65%, 50%) 100%);
+  --gradient-secondary: linear-gradient(135deg, hsl(340, 75%, 55%) 0%, hsl(340, 70%, 50%) 100%);
 }
 
 @layer base {
@@ -67,7 +73,7 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     background: var(--glass-bg);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--glass-border);
   }
 
   .glass-hover {

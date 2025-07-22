@@ -45,14 +45,14 @@ export default function AboutSection() {
   }
 
   return (
-    <section id="about" className="py-32 relative overflow-hidden">
+    <section id="about" className="py-32 bg-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
         <ScrollReveal delay={0.1}>
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-bold text-[hsl(213,27%,19%)] mb-6">
+            <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
               {aboutSection?.title || "О нас"}
             </h2>
-            <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               {aboutSection?.description || "Более 15 лет мы создаем незабываемые цветочные композиции, воплощая ваши мечты в реальность"}
             </p>
           </div>

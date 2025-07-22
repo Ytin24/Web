@@ -62,12 +62,12 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-32 relative overflow-hidden">
+    <section id="contact" className="py-32 bg-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
         <ScrollReveal delay={0.1}>
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-bold text-[hsl(213,27%,19%)] mb-6">Свяжитесь с нами</h2>
-            <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
+            <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Свяжитесь с нами</h2>
+            <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Оставьте заявку, и наш флорист свяжется с вами в течение 15 минут
             </p>
           </div>

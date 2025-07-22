@@ -9,8 +9,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="py-20 bg-[hsl(213,27%,19%)] text-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(213,27%,19%)] to-[hsl(252,100%,71%)]/20"></div>
+    <footer className="py-20 bg-[hsl(213,27%,19%)] dark:bg-gray-900 text-white relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(213,27%,19%)] dark:from-gray-900 to-[hsl(252,100%,71%)]/20 dark:to-primary/20"></div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-8">
         <div className="grid md:grid-cols-4 gap-8">

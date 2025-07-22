@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Flower, Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,32 +31,35 @@ export default function Navigation() {
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center">
                 <Flower className="w-5 h-5 text-white" />
               </div>
-              <span className="text-2xl font-bold text-[hsl(213,27%,19%)]">Цветокрафт</span>
+              <span className="text-2xl font-bold text-foreground">Цветокрафт</span>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-6">
               {navigationLinks.map((link) => (
                 <button
                   key={link.id}
                   onClick={() => scrollToSection(link.id)}
-                  className="text-[hsl(213,27%,19%)] hover:text-[hsl(252,100%,71%)] transition-colors"
+                  className="text-foreground hover:text-primary transition-colors"
                 >
                   {link.label}
                 </button>
               ))}
-
+              <ThemeToggle />
             </div>
 
-            {/* Mobile Menu Button */}
-            <Button
-              variant="outline"
-              size="icon"
-              className="md:hidden glass-effect"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </Button>
+            {/* Mobile Menu Button and Theme Toggle */}
+            <div className="md:hidden flex items-center gap-2">
+              <ThemeToggle />
+              <Button
+                variant="outline"
+                size="icon"
+                className="glass-effect border-white/20 text-foreground hover:bg-white/20 dark:border-gray-700 dark:hover:bg-gray-800"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
@@ -64,12 +68,12 @@ export default function Navigation() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className="fixed right-0 top-0 h-full w-64 glass-effect p-6 space-y-4" style={{ marginTop: '80px' }}>
+          <div className="fixed right-0 top-0 h-full w-64 glass-effect p-6 space-y-4 bg-background/95 backdrop-blur-lg border-l border-border" style={{ marginTop: '80px' }}>
             {navigationLinks.map((link) => (
               <button
                 key={link.id}
                 onClick={() => scrollToSection(link.id)}
-                className="block w-full text-left py-3 px-4 text-[hsl(213,27%,19%)] hover:text-[hsl(252,100%,71%)] hover:bg-white/20 rounded-lg transition-colors"
+                className="block w-full text-left py-3 px-4 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
               >
                 {link.label}
               </button>

@@ -34,12 +34,12 @@ export default function PortfolioSection() {
   ) || [];
 
   return (
-    <section id="portfolio" className="py-32 relative overflow-hidden">
+    <section id="portfolio" className="py-32 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
         <ScrollReveal delay={0.1}>
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-bold text-[hsl(213,27%,19%)] mb-6">Наши работы</h2>
-            <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
+            <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Наши работы</h2>
+            <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Галерея наших лучших творений для разных событий и настроений
             </p>
           </div>
@@ -55,8 +55,8 @@ export default function PortfolioSection() {
                 variant={activeFilter === category.key ? "default" : "outline"}
                 className={`glass-effect px-6 py-3 rounded-full font-medium transition-all ${
                   activeFilter === category.key 
-                    ? 'bg-[hsl(252,85%,65%)] text-white shadow-lg' 
-                    : 'text-white/90 bg-white/20 backdrop-blur-md hover:bg-[hsl(252,85%,65%)] hover:text-white'
+                    ? 'bg-primary text-primary-foreground shadow-lg' 
+                    : 'text-foreground/90 bg-card/50 backdrop-blur-md hover:bg-primary hover:text-primary-foreground border border-border'
                 }`}
               >
                 {category.label}
@@ -70,7 +70,7 @@ export default function PortfolioSection() {
           {filteredItems.map((item, index) => (
             <ScrollReveal key={item.id} delay={0.3 + index * 0.1}>
               <div className="group">
-                <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer group" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
+                <div className="relative overflow-hidden rounded-2xl bg-card/80 backdrop-blur-sm border border-border shadow-xl hover:shadow-2xl hover:bg-card/90 transition-all duration-300 cursor-pointer group" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
                   <img 
                     src={item.imageUrl || ''} 
                     alt={item.title} 

@@ -28,12 +28,12 @@ export default function BlogSection() {
   };
 
   return (
-    <section id="blog" className="py-32 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
+    <section id="blog" className="py-32 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
         <ScrollReveal delay={0.1}>
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-bold text-[hsl(213,27%,19%)] mb-6">Советы по уходу</h2>
-            <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
+            <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Советы по уходу</h2>
+            <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Полезные советы от наших флористов для долгой жизни ваших цветов
             </p>
           </div>
@@ -42,7 +42,7 @@ export default function BlogSection() {
         <div className="grid md:grid-cols-3 gap-8">
           {blogPosts?.slice(0, 3).map((post, index) => (
             <ScrollReveal key={post.id} delay={0.2 + index * 0.1}>
-              <article className="bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl hover:bg-white/90 transition-all duration-300">
+              <article className="bg-card/80 backdrop-blur-sm border border-border shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl hover:bg-card/90 transition-all duration-300">
                 <div className="relative group">
                   <img 
                     src={post.imageUrl || '/api/images/blog-care-1.svg'} 
