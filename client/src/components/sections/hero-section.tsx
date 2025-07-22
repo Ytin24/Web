@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, Play, Phone } from "lucide-react";
 import FloatingElements from "@/components/animations/floating-elements";
 import ScrollReveal from "@/components/animations/scroll-reveal";
-import { AppleButton, AppleText, MagneticElement } from "@/components/animations/apple-interactions";
+
 import { useQuery } from "@tanstack/react-query";
 import type { Section } from "@shared/schema";
 
@@ -58,57 +58,49 @@ export default function HeroSection() {
 
       {/* Hero Content */}
       <div className="relative z-10 text-center px-8 max-w-4xl mx-auto">
-        <div className="glass-premium rounded-3xl p-12">
-          <AppleText>
-            <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
-              {heroSection?.title?.split(' ').map((word, index) => 
-                word === 'магию' ? (
-                  <span key={index} className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
-                    магию{' '}
-                  </span>
-                ) : word + ' '
-              )}
-            </h1>
-          </AppleText>
-          <AppleText className="delay-150">
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-              {heroSection?.description}
-            </p>
-          </AppleText>
-          <AppleText className="delay-300">
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <MagneticElement strength={0.2}>
-                <AppleButton 
-                  onClick={scrollToContact}
-                  variant="primary"
-                  className="px-10 py-4 text-lg font-bold shadow-2xl"
-                >
-                  <Phone className="w-5 h-5 mr-3" />
-                  Заказать звонок
-                </AppleButton>
-              </MagneticElement>
-              <MagneticElement strength={0.2}>
-                <AppleButton 
-                  onClick={scrollToPortfolio}
-                  variant="secondary"
-                  className="px-10 py-4 text-lg font-bold"
-                >
-                  <Play className="w-5 h-5 mr-3" />
-                  Смотреть работы
-                </AppleButton>
-              </MagneticElement>
-            </div>
-          </AppleText>
+        <div className="natural-card rounded-2xl p-12 bg-white/95 backdrop-blur-sm">
+          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight text-balance">
+            {heroSection?.title?.split(' ').map((word, index) => 
+              word === 'магию' ? (
+                <span key={index} className="gradient-text">
+                  магию{' '}
+                </span>
+              ) : word + ' '
+            )}
+          </h1>
+          
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto">
+            {heroSection?.description}
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button 
+              onClick={scrollToContact}
+              size="lg"
+              className="px-8 py-4 text-lg font-medium shadow-lg natural-hover"
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              Заказать звонок
+            </Button>
+            
+            <Button 
+              onClick={scrollToPortfolio}
+              variant="outline"
+              size="lg"
+              className="px-8 py-4 text-lg font-medium natural-hover"
+            >
+              <Play className="w-5 h-5 mr-2" />
+              Смотреть работы
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Enhanced Scroll Indicator */}
+      {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <MagneticElement strength={0.3}>
-          <div className="glass-premium rounded-full p-4 cursor-pointer group animate-gentle-float animate-subtle-pulse" onClick={() => scrollToSection('about')}>
-            <ChevronDown className="w-6 h-6 text-foreground group-hover:text-primary transition-colors" />
-          </div>
-        </MagneticElement>
+        <div className="natural-card rounded-full p-4 cursor-pointer natural-hover" onClick={() => scrollToSection('about')}>
+          <ChevronDown className="w-5 h-5 text-muted-foreground hover:text-primary transition-colors" />
+        </div>
       </div>
     </section>
   );
