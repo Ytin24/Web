@@ -13,6 +13,7 @@ import PortfolioManagement from "@/components/admin/portfolio-management";
 import SectionsManagement from "@/components/admin/sections-management";
 import CallbackRequests from "@/components/admin/callback-requests";
 import LoyaltyProgramManagement from "@/components/admin/loyalty-management";
+import TokenManagement from "@/components/admin/token-management";
 import { apiRequest } from "@/lib/queryClient";
 import type { Section, BlogPost, PortfolioItem, CallbackRequest, LoyaltyProgram } from "@shared/schema";
 
@@ -238,7 +239,7 @@ export default function Admin() {
       {/* Main Content */}
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 bg-white border">
+          <TabsList className="grid w-full grid-cols-8 bg-white border">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <Home className="w-4 h-4" />
               Главная
@@ -268,6 +269,10 @@ export default function Admin() {
                 </Badge>
               )}
             </TabsTrigger>
+            <TabsTrigger value="tokens" className="flex items-center gap-2">
+              <Code className="w-4 h-4" />
+              Токены
+            </TabsTrigger>
             <TabsTrigger value="api" className="flex items-center gap-2">
               <Code className="w-4 h-4" />
               API
@@ -296,6 +301,10 @@ export default function Admin() {
 
           <TabsContent value="requests">
             <CallbackRequests />
+          </TabsContent>
+
+          <TabsContent value="tokens">
+            <TokenManagement />
           </TabsContent>
 
           <TabsContent value="api">

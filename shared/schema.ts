@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -15,13 +15,19 @@ export const users = pgTable("users", {
 export const apiTokens = pgTable("api_tokens", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
-  token: text("token").notNull().unique(),
+  tokenHash: varchar("token_hash", { length: 64 }).notNull().unique(), // SHA-256 hash of token
+  tokenPrefix: varchar("token_prefix", { length: 12 }).notNull(), // First 8 chars for identification (tk_xxxxxxxx)
   name: text("name").notNull(), // Token description
   permissions: text("permissions").notNull(), // JSON array of permissions
   expiresAt: timestamp("expires_at"),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   lastUsed: timestamp("last_used"),
+  ipWhitelist: text("ip_whitelist"), // JSON array of allowed IPs (optional)
+  rateLimit: integer("rate_limit").default(1000), // requests per hour
+  usageCount: integer("usage_count").notNull().default(0),
+  revokedAt: timestamp("revoked_at"), // Timestamp when token was revoked
+  revokedBy: integer("revoked_by").references(() => users.id), // Who revoked the token
 });
 
 export const sections = pgTable("sections", {
@@ -101,11 +107,22 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export const insertApiTokenSchema = createInsertSchema(apiTokens).pick({
   userId: true,
-  token: true,
+  tokenHash: true,
+  tokenPrefix: true,
   name: true,
   permissions: true,
   expiresAt: true,
   isActive: true,
+  ipWhitelist: true,
+  rateLimit: true,
+});
+
+export const createTokenRequestSchema = z.object({
+  name: z.string().min(1).max(100),
+  permissions: z.array(z.enum(['read', 'write', 'admin'])).min(1),
+  expiresAt: z.string().datetime().optional(),
+  ipWhitelist: z.array(z.string().ip()).optional(),
+  rateLimit: z.number().min(1).max(10000).default(1000),
 });
 
 export const insertSectionSchema = createInsertSchema(sections).pick({

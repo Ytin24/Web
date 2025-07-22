@@ -6,7 +6,7 @@ import {
   type Image, type InsertImage, type ApiToken, type InsertApiToken
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -19,11 +19,13 @@ export interface IStorage {
 
   // API Tokens
   getApiTokenById(id: number): Promise<ApiToken | undefined>;
-  getApiTokenByToken(token: string): Promise<ApiToken | undefined>;
+  getApiTokenByHash(tokenHash: string): Promise<ApiToken | undefined>;
   getApiTokensByUserId(userId: number): Promise<ApiToken[]>;
+  getAllApiTokens(): Promise<ApiToken[]>;
   createApiToken(token: InsertApiToken): Promise<ApiToken>;
-  updateApiTokenLastUsed(id: number): Promise<void>;
-  revokeApiToken(id: number): Promise<void>;
+  updateApiTokenLastUsed(id: number, incrementUsage?: boolean): Promise<void>;
+  revokeApiToken(id: number, revokedBy: number): Promise<void>;
+  deactivateApiToken(id: number): Promise<void>;
 
   // Sections
   getAllSections(): Promise<Section[]>;
@@ -113,9 +115,13 @@ export class DatabaseStorage implements IStorage {
     return token || undefined;
   }
 
-  async getApiTokenByToken(token: string): Promise<ApiToken | undefined> {
-    const [apiToken] = await db.select().from(apiTokens).where(eq(apiTokens.token, token));
+  async getApiTokenByHash(tokenHash: string): Promise<ApiToken | undefined> {
+    const [apiToken] = await db.select().from(apiTokens).where(eq(apiTokens.tokenHash, tokenHash));
     return apiToken || undefined;
+  }
+
+  async getAllApiTokens(): Promise<ApiToken[]> {
+    return db.select().from(apiTokens);
   }
 
   async getApiTokensByUserId(userId: number): Promise<ApiToken[]> {
@@ -130,14 +136,37 @@ export class DatabaseStorage implements IStorage {
     return token;
   }
 
-  async updateApiTokenLastUsed(id: number): Promise<void> {
+  async updateApiTokenLastUsed(id: number, incrementUsage: boolean = true): Promise<void> {
+    const updateData: any = { lastUsed: new Date() };
+    if (incrementUsage) {
+      // Use SQL to increment usage count atomically
+      await db
+        .update(apiTokens)
+        .set({ 
+          lastUsed: new Date(),
+          usageCount: sql`${apiTokens.usageCount} + 1`
+        })
+        .where(eq(apiTokens.id, id));
+    } else {
+      await db
+        .update(apiTokens)
+        .set(updateData)
+        .where(eq(apiTokens.id, id));
+    }
+  }
+
+  async revokeApiToken(id: number, revokedBy: number): Promise<void> {
     await db
       .update(apiTokens)
-      .set({ lastUsed: new Date() })
+      .set({ 
+        isActive: false,
+        revokedAt: new Date(),
+        revokedBy: revokedBy
+      })
       .where(eq(apiTokens.id, id));
   }
 
-  async revokeApiToken(id: number): Promise<void> {
+  async deactivateApiToken(id: number): Promise<void> {
     await db
       .update(apiTokens)
       .set({ isActive: false })
@@ -587,9 +616,13 @@ export class MemStorage implements IStorage {
     return undefined;
   }
 
-  async getApiTokenByToken(token: string): Promise<ApiToken | undefined> {
+  async getApiTokenByHash(tokenHash: string): Promise<ApiToken | undefined> {
     // Not implemented in memory storage for simplicity
     return undefined;
+  }
+
+  async getAllApiTokens(): Promise<ApiToken[]> {
+    return [];
   }
 
   async getApiTokensByUserId(userId: number): Promise<ApiToken[]> {
@@ -597,14 +630,18 @@ export class MemStorage implements IStorage {
   }
 
   async createApiToken(token: InsertApiToken): Promise<ApiToken> {
-    throw new Error('Not implemented in memory storage');
+    throw new Error('API tokens not implemented in memory storage');
   }
 
-  async updateApiTokenLastUsed(id: number): Promise<void> {
+  async updateApiTokenLastUsed(id: number, incrementUsage?: boolean): Promise<void> {
     // Not implemented in memory storage
   }
 
-  async revokeApiToken(id: number): Promise<void> {
+  async revokeApiToken(id: number, revokedBy: number): Promise<void> {
+    // Not implemented in memory storage
+  }
+
+  async deactivateApiToken(id: number): Promise<void> {
     // Not implemented in memory storage
   }
 
