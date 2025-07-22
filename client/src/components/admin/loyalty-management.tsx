@@ -20,14 +20,16 @@ export default function LoyaltyProgramManagement() {
   const { toast } = useToast();
 
   const { data: loyaltyPrograms, isLoading } = useQuery<LoyaltyProgram[]>({
-    queryKey: ["/api/loyalty-program"]
+    queryKey: ["/api/loyalty-program"],
+    queryFn: () => fetch("/api/loyalty-program").then(res => res.json())
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: InsertLoyaltyProgram) => apiRequest("/api/loyalty-program", {
+    mutationFn: (data: InsertLoyaltyProgram) => fetch("/api/loyalty-program", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    }),
+    }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/loyalty-program"] });
       setIsCreateOpen(false);
@@ -37,10 +39,11 @@ export default function LoyaltyProgramManagement() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<LoyaltyProgram> }) => 
-      apiRequest(`/api/loyalty-program/${id}`, {
+      fetch(`/api/loyalty-program/${id}`, {
         method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      }),
+      }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/loyalty-program"] });
       setEditingProgram(null);
@@ -49,7 +52,7 @@ export default function LoyaltyProgramManagement() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/loyalty-program/${id}`, {
+    mutationFn: (id: number) => fetch(`/api/loyalty-program/${id}`, {
       method: "DELETE",
     }),
     onSuccess: () => {

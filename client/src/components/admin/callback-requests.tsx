@@ -15,12 +15,17 @@ export default function CallbackRequests() {
   const queryClient = useQueryClient();
 
   const { data: callbackRequests, isLoading } = useQuery<CallbackRequest[]>({
-    queryKey: ["/api/callback-requests"]
+    queryKey: ["/api/callback-requests"],
+    queryFn: () => fetch("/api/callback-requests").then(res => res.json())
   });
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
-      return apiRequest("PUT", `/api/callback-requests/${id}/status`, { status });
+      return fetch(`/api/callback-requests/${id}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+      }).then(res => res.json());
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/callback-requests"] });
@@ -33,7 +38,9 @@ export default function CallbackRequests() {
 
   const deleteRequestMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest("DELETE", `/api/callback-requests/${id}`, undefined);
+      return fetch(`/api/callback-requests/${id}`, {
+        method: "DELETE"
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/callback-requests"] });
@@ -64,13 +71,13 @@ export default function CallbackRequests() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Clock className="w-4 h-4 text-red-600" />;
+        return <Clock className="w-4 h-4 text-destructive" />;
       case 'contacted':
-        return <Phone className="w-4 h-4 text-blue-600" />;
+        return <Phone className="w-4 h-4 text-primary" />;
       case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
+        return <CheckCircle className="w-4 h-4 text-secondary" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-600" />;
+        return <Clock className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -103,50 +110,50 @@ export default function CallbackRequests() {
     <div className="space-y-6">
       {/* Statistics */}
       <div className="grid md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="glass-effect border-border/50">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Всего заявок</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Всего заявок</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[hsl(252,100%,71%)]">{callbackRequests?.length || 0}</div>
+            <div className="text-2xl font-bold text-primary">{callbackRequests?.length || 0}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass-effect border-border/50">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Ожидают</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Ожидают</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{pendingCount}</div>
+            <div className="text-2xl font-bold text-destructive">{pendingCount}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass-effect border-border/50">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Связались</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Связались</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{contactedCount}</div>
+            <div className="text-2xl font-bold text-secondary">{contactedCount}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass-effect border-border/50">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Завершены</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Завершены</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{completedCount}</div>
+            <div className="text-2xl font-bold text-accent">{completedCount}</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Main Content */}
-      <Card className="glass-effect">
+      <Card className="glass-effect border-border/50">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Заявки на обратный звонок</CardTitle>
+          <CardTitle className="text-foreground">Заявки на обратный звонок</CardTitle>
           <div className="flex items-center space-x-4">
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-48 glass-effect border-white/20">
+              <SelectTrigger className="w-48 glass-effect border-border/50">
                 <SelectValue placeholder="Фильтр по статусу" />
               </SelectTrigger>
               <SelectContent>
@@ -160,8 +167,8 @@ export default function CallbackRequests() {
         </CardHeader>
         <CardContent>
           {filteredRequests.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <Phone className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+            <div className="text-center py-12 text-muted-foreground">
+              <Phone className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
               <p className="text-lg">Заявки не найдены</p>
               <p className="text-sm">
                 {filterStatus === "all" 

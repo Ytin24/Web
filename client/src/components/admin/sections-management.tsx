@@ -16,15 +16,17 @@ export default function SectionsManagement() {
   const { toast } = useToast();
 
   const { data: sections, isLoading } = useQuery<Section[]>({
-    queryKey: ["/api/sections"]
+    queryKey: ["/api/sections"],
+    queryFn: () => fetch("/api/sections").then(res => res.json())
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Section> }) => 
-      apiRequest(`/api/sections/${id}`, {
+      fetch(`/api/sections/${id}`, {
         method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      }),
+      }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sections"] });
       setEditingSection(null);

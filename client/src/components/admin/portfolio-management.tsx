@@ -27,14 +27,16 @@ export default function PortfolioManagement() {
   const { toast } = useToast();
 
   const { data: portfolioItems, isLoading } = useQuery<PortfolioItem[]>({
-    queryKey: ["/api/portfolio-items"]
+    queryKey: ["/api/portfolio-items"],
+    queryFn: () => fetch("/api/portfolio-items").then(res => res.json())
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: InsertPortfolioItem) => apiRequest("/api/portfolio-items", {
+    mutationFn: (data: InsertPortfolioItem) => fetch("/api/portfolio-items", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    }),
+    }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio-items"] });
       setIsCreateOpen(false);
@@ -47,10 +49,11 @@ export default function PortfolioManagement() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<PortfolioItem> }) => 
-      apiRequest(`/api/portfolio-items/${id}`, {
+      fetch(`/api/portfolio-items/${id}`, {
         method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      }),
+      }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio-items"] });
       setEditingItem(null);
@@ -62,7 +65,7 @@ export default function PortfolioManagement() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/portfolio-items/${id}`, {
+    mutationFn: (id: number) => fetch(`/api/portfolio-items/${id}`, {
       method: "DELETE",
     }),
     onSuccess: () => {

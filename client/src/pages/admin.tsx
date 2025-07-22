@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   Home, BookOpen, Image, Star, Phone, Plus, Edit, Trash2, 
-  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock, Code
+  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock, Code, Flower
 } from "lucide-react";
 import BlogManagement from "@/components/admin/blog-management";
 import PortfolioManagement from "@/components/admin/portfolio-management";
@@ -14,32 +14,37 @@ import SectionsManagement from "@/components/admin/sections-management";
 import CallbackRequests from "@/components/admin/callback-requests";
 import LoyaltyProgramManagement from "@/components/admin/loyalty-management";
 import TokenManagement from "@/components/admin/token-management";
-import { apiRequest } from "@/lib/queryClient";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { Section, BlogPost, PortfolioItem, CallbackRequest, LoyaltyProgram } from "@shared/schema";
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const queryClient = useQueryClient();
 
-  // Queries for dashboard data
+  // Queries with proper fetcher functions
   const { data: sections } = useQuery<Section[]>({
-    queryKey: ["/api/sections"]
+    queryKey: ["/api/sections"],
+    queryFn: () => fetch("/api/sections").then(res => res.json())
   });
 
   const { data: callbackRequests } = useQuery<CallbackRequest[]>({
-    queryKey: ["/api/callback-requests"]
+    queryKey: ["/api/callback-requests"],
+    queryFn: () => fetch("/api/callback-requests").then(res => res.json())
   });
 
   const { data: blogPosts } = useQuery<BlogPost[]>({
-    queryKey: ["/api/blog-posts"]
+    queryKey: ["/api/blog-posts"],
+    queryFn: () => fetch("/api/blog-posts").then(res => res.json())
   });
 
   const { data: portfolioItems } = useQuery<PortfolioItem[]>({
-    queryKey: ["/api/portfolio-items"]
+    queryKey: ["/api/portfolio-items"],
+    queryFn: () => fetch("/api/portfolio-items").then(res => res.json())
   });
 
   const { data: loyaltyPrograms } = useQuery<LoyaltyProgram[]>({
-    queryKey: ["/api/loyalty-program"]
+    queryKey: ["/api/loyalty-program"],
+    queryFn: () => fetch("/api/loyalty-program").then(res => res.json())
   });
 
   // Dashboard statistics
@@ -52,64 +57,64 @@ export default function Admin() {
     <div className="space-y-8">
       {/* Stats Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+        <Card className="glass-effect border-border/50 bg-gradient-to-br from-destructive/10 to-destructive/20 dark:from-destructive/20 dark:to-destructive/30">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-red-700">Новые заявки</CardTitle>
-              <Phone className="w-5 h-5 text-red-600" />
+              <CardTitle className="text-sm font-medium text-destructive-foreground">Новые заявки</CardTitle>
+              <Phone className="w-5 h-5 text-destructive" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-red-600">{pendingRequests}</div>
-            <div className="text-sm text-red-600/70 mt-1">Требуют обработки</div>
+            <div className="text-3xl font-bold text-destructive">{pendingRequests}</div>
+            <div className="text-sm text-muted-foreground mt-1">Требуют обработки</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+        <Card className="glass-effect border-border/50 bg-gradient-to-br from-primary/10 to-primary/20 dark:from-primary/20 dark:to-primary/30">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-blue-700">Статьи блога</CardTitle>
-              <BookOpen className="w-5 h-5 text-blue-600" />
+              <CardTitle className="text-sm font-medium text-primary-foreground">Статьи блога</CardTitle>
+              <BookOpen className="w-5 h-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-blue-600">{publishedBlogs}</div>
-            <div className="text-sm text-blue-600/70 mt-1">Опубликовано</div>
+            <div className="text-3xl font-bold text-primary">{publishedBlogs}</div>
+            <div className="text-sm text-muted-foreground mt-1">Опубликовано</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+        <Card className="glass-effect border-border/50 bg-gradient-to-br from-secondary/10 to-secondary/20 dark:from-secondary/20 dark:to-secondary/30">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-green-700">Портфолио</CardTitle>
-              <Image className="w-5 h-5 text-green-600" />
+              <CardTitle className="text-sm font-medium text-secondary-foreground">Портфолио</CardTitle>
+              <Image className="w-5 h-5 text-secondary" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600">{activePortfolios}</div>
-            <div className="text-sm text-green-600/70 mt-1">Активных работ</div>
+            <div className="text-3xl font-bold text-secondary">{activePortfolios}</div>
+            <div className="text-sm text-muted-foreground mt-1">Активных работ</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+        <Card className="glass-effect border-border/50 bg-gradient-to-br from-accent/10 to-accent/20 dark:from-accent/20 dark:to-accent/30">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-purple-700">Лояльность</CardTitle>
-              <Star className="w-5 h-5 text-purple-600" />
+              <CardTitle className="text-sm font-medium text-accent-foreground">Лояльность</CardTitle>
+              <Star className="w-5 h-5 text-accent" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-purple-600">{totalLoyaltyLevels}</div>
-            <div className="text-sm text-purple-600/70 mt-1">Уровней программы</div>
+            <div className="text-3xl font-bold text-accent">{totalLoyaltyLevels}</div>
+            <div className="text-sm text-muted-foreground mt-1">Уровней программы</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Recent Activity */}
       <div className="grid lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="glass-effect border-border/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-foreground">
               <Activity className="w-5 h-5" />
               Последние заявки
             </CardTitle>
@@ -117,100 +122,103 @@ export default function Admin() {
           <CardContent>
             <div className="space-y-3">
               {callbackRequests?.slice(0, 5).map(request => (
-                <div key={request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={request.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border/30">
                   <div>
-                    <div className="font-medium">{request.name}</div>
-                    <div className="text-sm text-gray-600">{request.phone}</div>
+                    <div className="font-medium text-foreground">{request.name}</div>
+                    <div className="text-sm text-muted-foreground">{request.phone}</div>
                   </div>
                   <Badge variant={request.status === 'pending' ? 'destructive' : 'secondary'}>
-                    {request.status === 'pending' ? 'Ожидает' : 'Обработан'}
+                    {request.status === 'pending' ? 'Новая' : 'Обработана'}
                   </Badge>
                 </div>
               )) || (
-                <div className="text-center text-gray-500 py-4">
-                  Заявок пока нет
+                <div className="text-center py-6 text-muted-foreground">
+                  Нет заявок
                 </div>
               )}
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass-effect border-border/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-foreground">
               <TrendingUp className="w-5 h-5" />
-              Статистика контента
+              Последние статьи
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Всего статей:</span>
-                <span className="font-semibold">{blogPosts?.length || 0}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Черновики:</span>
-                <span className="font-semibold">{(blogPosts?.length || 0) - publishedBlogs}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Работы в портфолио:</span>
-                <span className="font-semibold">{portfolioItems?.length || 0}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Скрытых работ:</span>
-                <span className="font-semibold">{(portfolioItems?.length || 0) - activePortfolios}</span>
-              </div>
+            <div className="space-y-3">
+              {blogPosts?.slice(0, 5).map(post => (
+                <div key={post.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border/30">
+                  <div>
+                    <div className="font-medium text-foreground truncate max-w-48">{post.title}</div>
+                    <div className="text-sm text-muted-foreground">{post.category}</div>
+                  </div>
+                  <Badge variant={post.isPublished ? 'default' : 'secondary'}>
+                    {post.isPublished ? 'Опубликовано' : 'Черновик'}
+                  </Badge>
+                </div>
+              )) || (
+                <div className="text-center py-6 text-muted-foreground">
+                  Нет статей
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Quick Actions */}
-      <Card>
+      <Card className="glass-effect border-border/50">
         <CardHeader>
-          <CardTitle>Быстрые действия</CardTitle>
+          <CardTitle className="text-foreground">Быстрые действия</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
             <Button 
-              onClick={() => setActiveTab("blog")} 
-              className="h-20 flex flex-col gap-2"
+              onClick={() => setActiveTab("blog")}
+              className="h-20 flex-col gap-2 glass-hover"
               variant="outline"
             >
-              <Plus className="w-6 h-6" />
-              Новая статья
+              <BookOpen className="w-6 h-6" />
+              <span className="text-sm">Новая статья</span>
             </Button>
+            
             <Button 
-              onClick={() => setActiveTab("portfolio")} 
-              className="h-20 flex flex-col gap-2"
+              onClick={() => setActiveTab("portfolio")}
+              className="h-20 flex-col gap-2 glass-hover"
               variant="outline"
             >
               <Image className="w-6 h-6" />
-              Добавить работу
+              <span className="text-sm">Добавить работу</span>
             </Button>
+            
             <Button 
-              onClick={() => setActiveTab("requests")} 
-              className="h-20 flex flex-col gap-2"
+              onClick={() => setActiveTab("requests")}
+              className="h-20 flex-col gap-2 glass-hover"
               variant="outline"
             >
               <Phone className="w-6 h-6" />
-              Обработать заявки
+              <span className="text-sm">Заявки</span>
             </Button>
+            
             <Button 
-              onClick={() => setActiveTab("sections")} 
-              className="h-20 flex flex-col gap-2"
+              onClick={() => setActiveTab("loyalty")}
+              className="h-20 flex-col gap-2 glass-hover"
               variant="outline"
             >
-              <Edit className="w-6 h-6" />
-              Редактировать секции
+              <Star className="w-6 h-6" />
+              <span className="text-sm">Лояльность</span>
             </Button>
+            
             <Button 
-              onClick={() => setActiveTab("api")} 
-              className="h-20 flex flex-col gap-2"
+              onClick={() => setActiveTab("sections")}
+              className="h-20 flex-col gap-2 glass-hover"
               variant="outline"
             >
               <Code className="w-6 h-6" />
-              API Документация
+              <span className="text-sm">Секции</span>
             </Button>
           </div>
         </CardContent>
@@ -218,211 +226,116 @@ export default function Admin() {
     </div>
   );
 
+  const tabs = [
+    { id: "dashboard", label: "Панель управления", icon: Home },
+    { id: "blog", label: "Блог", icon: BookOpen },
+    { id: "portfolio", label: "Портфолио", icon: Image },
+    { id: "requests", label: "Заявки", icon: Phone },
+    { id: "loyalty", label: "Лояльность", icon: Star },
+    { id: "sections", label: "Секции", icon: Code },
+    { id: "tokens", label: "Токены", icon: Users },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Панель управления Цветокрафт</h1>
-            <p className="text-gray-600">Управление контентом и заявками</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              <Activity className="w-3 h-3 mr-1" />
-              Онлайн
-            </Badge>
+      <header className="glass-effect border-b border-border/50 sticky top-0 z-50 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <Flower className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold gradient-text">Цветокрафт</h1>
+                <p className="text-sm text-muted-foreground">Панель управления</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              <Button variant="outline" onClick={() => window.location.href = '/'}>
+                <Home className="w-4 h-4 mr-2" />
+                На сайт
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="p-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8 bg-white border">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
-              <Home className="w-4 h-4" />
-              Главная
-            </TabsTrigger>
-            <TabsTrigger value="sections" className="flex items-center gap-2">
-              <Edit className="w-4 h-4" />
-              Секции
-            </TabsTrigger>
-            <TabsTrigger value="blog" className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              Блог
-            </TabsTrigger>
-            <TabsTrigger value="portfolio" className="flex items-center gap-2">
-              <Image className="w-4 h-4" />
-              Портфолио
-            </TabsTrigger>
-            <TabsTrigger value="loyalty" className="flex items-center gap-2">
-              <Star className="w-4 h-4" />
-              Лояльность
-            </TabsTrigger>
-            <TabsTrigger value="requests" className="flex items-center gap-2 relative">
-              <Phone className="w-4 h-4" />
-              Заявки
-              {pendingRequests > 0 && (
-                <Badge className="absolute -top-2 -right-2 px-1.5 py-0.5 text-xs bg-red-500">
-                  {pendingRequests}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="tokens" className="flex items-center gap-2">
-              <Code className="w-4 h-4" />
-              Токены
-            </TabsTrigger>
-            <TabsTrigger value="api" className="flex items-center gap-2">
-              <Code className="w-4 h-4" />
-              API
-            </TabsTrigger>
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          {/* Tab Navigation */}
+          <TabsList className="glass-effect border border-border/50 bg-muted/30 p-2 h-auto flex-wrap justify-start gap-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <TabsTrigger 
+                  key={tab.id} 
+                  value={tab.id}
+                  className="flex items-center gap-2 px-4 py-3 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground glass-hover"
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
 
-          <TabsContent value="dashboard">
-            {renderDashboard()}
-          </TabsContent>
-
-          <TabsContent value="sections">
-            <SectionsManagement />
-          </TabsContent>
-
-          <TabsContent value="blog">
-            <BlogManagement />
-          </TabsContent>
-
-          <TabsContent value="portfolio">
-            <PortfolioManagement />
-          </TabsContent>
-
-          <TabsContent value="loyalty">
-            <LoyaltyProgramManagement />
-          </TabsContent>
-
-          <TabsContent value="requests">
-            <CallbackRequests />
-          </TabsContent>
-
-          <TabsContent value="tokens">
-            <TokenManagement />
-          </TabsContent>
-
-          <TabsContent value="api">
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Code className="w-5 h-5" />
-                    API Документация
-                  </CardTitle>
-                  <p className="text-gray-600">
-                    Полная OpenAPI документация для интеграции с внешними сервисами
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex gap-3">
-                    <Button 
-                      onClick={() => window.open('/api/docs', '_blank')}
-                      className="bg-blue-600 hover:bg-blue-700"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Открыть Swagger UI
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        fetch('/api/docs/json')
-                          .then(res => res.json())
-                          .then(spec => {
-                            const blob = new Blob([JSON.stringify(spec, null, 2)], { type: 'application/json' });
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = 'tsvetokraft-api-spec.json';
-                            a.click();
-                            URL.revokeObjectURL(url);
-                          });
-                      }}
-                    >
-                      <Save className="w-4 h-4 mr-2" />
-                      Скачать JSON
-                    </Button>
-                  </div>
-                  
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold mb-2">Основные эндпоинты:</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="font-mono">GET</Badge>
-                        <span className="font-mono text-blue-600">/api/sections</span>
-                        <span className="text-gray-600">- Получить секции сайта</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="font-mono">GET</Badge>
-                        <span className="font-mono text-blue-600">/api/blog-posts</span>
-                        <span className="text-gray-600">- Получить статьи блога</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="font-mono">GET</Badge>
-                        <span className="font-mono text-blue-600">/api/portfolio-items</span>
-                        <span className="text-gray-600">- Получить работы портфолио</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="font-mono">POST</Badge>
-                        <span className="font-mono text-green-600">/api/callback-requests</span>
-                        <span className="text-gray-600">- Создать заявку на звонок</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="font-mono">GET</Badge>
-                        <span className="font-mono text-blue-600">/api/loyalty-program</span>
-                        <span className="text-gray-600">- Получить уровни лояльности</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                    <h3 className="font-semibold text-yellow-800 mb-2">Аутентификация</h3>
-                    <p className="text-sm text-yellow-700 mb-3">
-                      Для защищенных эндпоинтов требуется JWT токен или API ключ в заголовке Authorization.
-                    </p>
-                    <div className="font-mono text-sm bg-yellow-100 p-2 rounded border">
-                      Authorization: Bearer &lt;your_token&gt;
-                    </div>
-                  </div>
-
-                  <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
-                    <h3 className="font-semibold text-green-800 mb-2">Webhook интеграция</h3>
-                    <p className="text-sm text-green-700">
-                      API поддерживает webhooks для интеграции с N8N и другими сервисами автоматизации.
-                      Настройте webhook для получения уведомлений о новых заявках и событиях.
-                    </p>
-                  </div>
+          {/* Tab Content */}
+          <div className="min-h-[600px]">
+            <TabsContent value="dashboard" className="mt-0">
+              {renderDashboard()}
+            </TabsContent>
+            
+            <TabsContent value="blog" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <BlogManagement />
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Статистика API</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">15</div>
-                      <div className="text-sm text-blue-600">Всего эндпоинтов</div>
-                    </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">7</div>
-                      <div className="text-sm text-green-600">Публичных API</div>
-                    </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <div className="text-2xl font-bold text-purple-600">8</div>
-                      <div className="text-sm text-purple-600">Защищенных API</div>
-                    </div>
-                  </div>
+            </TabsContent>
+            
+            <TabsContent value="portfolio" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <PortfolioManagement />
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
+            </TabsContent>
+            
+            <TabsContent value="requests" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <CallbackRequests />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="loyalty" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <LoyaltyProgramManagement />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="sections" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <SectionsManagement />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="tokens" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <TokenManagement />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </div>
         </Tabs>
       </div>
     </div>

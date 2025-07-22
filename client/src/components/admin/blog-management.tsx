@@ -27,7 +27,8 @@ export default function BlogManagement() {
   const { toast } = useToast();
 
   const { data: blogPosts, isLoading } = useQuery<BlogPost[]>({
-    queryKey: ["/api/blog-posts"]
+    queryKey: ["/api/blog-posts"],
+    queryFn: () => fetch("/api/blog-posts").then(res => res.json())
   });
 
   const createMutation = useMutation({
