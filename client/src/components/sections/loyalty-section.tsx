@@ -7,9 +7,12 @@ import { AppleCard, AppleText, AppleButton } from "@/components/animations/apple
 import GlassCard from "@/components/ui/glass-card";
 import LoyaltyModal from "@/components/loyalty-modal";
 import type { LoyaltyProgram } from "@shared/schema";
+import PlayfulTooltip from "@/components/ui/playful-tooltip";
+import { usePlayfulTooltips } from "@/hooks/use-playful-tooltips";
 
 export default function LoyaltySection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { getTooltip } = usePlayfulTooltips();
   const { data: loyaltyLevels } = useQuery<LoyaltyProgram[]>({
     queryKey: ["/api/loyalty-program"],
     queryFn: () => fetch("/api/loyalty-program?active=true").then(res => res.json())

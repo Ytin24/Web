@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, Play, Phone } from "lucide-react";
 import FloatingElements from "@/components/animations/floating-elements";
 import ScrollReveal from "@/components/animations/scroll-reveal";
+import PlayfulTooltip from "@/components/ui/playful-tooltip";
+import { usePlayfulTooltips } from "@/hooks/use-playful-tooltips";
 
 import { useQuery } from "@tanstack/react-query";
 import type { Section } from "@shared/schema";
 
 export default function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
+  const { getTooltip } = usePlayfulTooltips();
 
   const { data: heroSection } = useQuery<Section>({
     queryKey: ["/api/sections", "hero"]
@@ -74,24 +77,38 @@ export default function HeroSection() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              onClick={scrollToContact}
-              size="lg"
-              className="px-8 py-4 text-lg font-medium shadow-lg natural-hover"
+            <PlayfulTooltip
+              content={getTooltip('callback').text}
+              personality={getTooltip('callback').personality}
+              side="top"
+              delay={400}
             >
-              <Phone className="w-5 h-5 mr-2" />
-              Заказать звонок
-            </Button>
+              <Button 
+                onClick={scrollToContact}
+                size="lg"
+                className="px-8 py-4 text-lg font-medium shadow-lg natural-hover"
+              >
+                <Phone className="w-5 h-5 mr-2" />
+                Заказать звонок
+              </Button>
+            </PlayfulTooltip>
             
-            <Button 
-              onClick={scrollToPortfolio}
-              variant="outline"
-              size="lg"
-              className="px-8 py-4 text-lg font-medium natural-hover"
+            <PlayfulTooltip
+              content={getTooltip('portfolio').text}
+              personality={getTooltip('portfolio').personality}
+              side="top"
+              delay={400}
             >
-              <Play className="w-5 h-5 mr-2" />
-              Смотреть работы
-            </Button>
+              <Button 
+                onClick={scrollToPortfolio}
+                variant="outline"
+                size="lg"
+                className="px-8 py-4 text-lg font-medium natural-hover"
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Смотреть работы
+              </Button>
+            </PlayfulTooltip>
           </div>
         </div>
       </div>

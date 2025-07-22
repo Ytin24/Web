@@ -4,10 +4,13 @@ import { Flower, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppleButton, MagneticElement } from "@/components/animations/apple-interactions";
 import { useLocation } from "wouter";
+import PlayfulTooltip from "@/components/ui/playful-tooltip";
+import { usePlayfulTooltips } from "@/hooks/use-playful-tooltips";
 
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [location, setLocation] = useLocation();
+  const { getTooltip } = usePlayfulTooltips();
 
   const handleNavigation = (sectionId: string) => {
     setIsMobileMenuOpen(false);
@@ -46,34 +49,51 @@ export default function Navigation() {
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
             <MagneticElement strength={0.15}>
-              <button 
-                onClick={() => setLocation('/')}
-                className="flex items-center space-x-3 group"
+              <PlayfulTooltip
+                content={getTooltip('home').text}
+                personality={getTooltip('home').personality}
+                side="bottom"
+                delay={800}
               >
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-subtle-pulse">
-                  <Flower className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <span className="text-2xl font-bold gradient-text">Цветокрафт</span>
-              </button>
+                <button 
+                  onClick={() => setLocation('/')}
+                  className="flex items-center space-x-3 group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-subtle-pulse">
+                    <Flower className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                  <span className="text-2xl font-bold gradient-text">Цветокрафт</span>
+                </button>
+              </PlayfulTooltip>
             </MagneticElement>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-2">
-              {navigationLinks.map((link) => (
-                <button
-                  key={link.id}
-                  onClick={() => {
-                    if (link.type === 'page' && link.href) {
-                      setLocation(link.href);
-                    } else {
-                      handleNavigation(link.id);
-                    }
-                  }}
-                  className="nav-item text-foreground hover:text-primary font-medium"
-                >
-                  {link.label}
-                </button>
-              ))}
+              {navigationLinks.map((link) => {
+                const tooltip = getTooltip(link.id);
+                return (
+                  <PlayfulTooltip
+                    key={link.id}
+                    content={tooltip.text}
+                    personality={tooltip.personality}
+                    side="bottom"
+                    delay={600}
+                  >
+                    <button
+                      onClick={() => {
+                        if (link.type === 'page' && link.href) {
+                          setLocation(link.href);
+                        } else {
+                          handleNavigation(link.id);
+                        }
+                      }}
+                      className="nav-item text-foreground hover:text-primary font-medium"
+                    >
+                      {link.label}
+                    </button>
+                  </PlayfulTooltip>
+                );
+              })}
               <div className="ml-4">
                 <ThemeToggle />
               </div>

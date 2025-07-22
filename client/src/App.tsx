@@ -14,6 +14,7 @@ import AllBlog from "@/pages/all-blog";
 import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
 import Services from "@/pages/services";
+import TooltipsDemo from "@/pages/tooltips-demo";
 
 import ChatButton from "@/components/chatbot/chat-button";
 
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/blog" component={AllBlog} />
       <Route path="/all-blog" component={AllBlog} />
       <Route path="/services" component={Services} />
+      <Route path="/tooltips-demo" component={TooltipsDemo} />
 
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />

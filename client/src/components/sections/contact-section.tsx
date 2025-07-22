@@ -14,6 +14,8 @@ import ScrollReveal from "@/components/animations/scroll-reveal";
 import { AppleCard, AppleText, AppleButton, MagneticElement } from "@/components/animations/apple-interactions";
 import GlassCard from "@/components/ui/glass-card";
 import { apiRequest } from "@/lib/queryClient";
+import PlayfulTooltip from "@/components/ui/playful-tooltip";
+import { usePlayfulTooltips } from "@/hooks/use-playful-tooltips";
 
 const callbackSchema = z.object({
   name: z.string().min(2, "Имя должно содержать минимум 2 символа"),
@@ -25,6 +27,7 @@ const callbackSchema = z.object({
 
 export default function ContactSection() {
   const { toast } = useToast();
+  const { getTooltip } = usePlayfulTooltips();
   
   const form = useForm<z.infer<typeof callbackSchema>>({
     resolver: zodResolver(callbackSchema),
