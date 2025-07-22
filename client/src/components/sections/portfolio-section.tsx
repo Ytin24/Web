@@ -3,10 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import { Images } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/animations/scroll-reveal";
+import ImageModal from "@/components/image-modal";
 import type { PortfolioItem } from "@shared/schema";
 
 export default function PortfolioSection() {
   const [activeFilter, setActiveFilter] = useState("all");
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<{ url: string; alt: string }>({ url: '', alt: '' });
+
+  const openImageModal = (imageUrl: string, imageAlt: string) => {
+    setSelectedImage({ url: imageUrl, alt: imageAlt });
+    setIsImageModalOpen(true);
+  };
   
   const { data: portfolioItems } = useQuery<PortfolioItem[]>({
     queryKey: ["/api/portfolio-items"],
@@ -61,7 +69,7 @@ export default function PortfolioSection() {
           {filteredItems.map((item, index) => (
             <ScrollReveal key={item.id} delay={0.3 + index * 0.1}>
               <div className="group">
-                <div className="relative overflow-hidden rounded-2xl glass-effect">
+                <div className="relative overflow-hidden rounded-2xl glass-effect cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl || '', item.title)}>
                   <img 
                     src={item.imageUrl} 
                     alt={item.title} 
@@ -71,6 +79,11 @@ export default function PortfolioSection() {
                     <div className="absolute bottom-6 left-6 right-6">
                       <h3 className="text-xl font-semibold text-white mb-2">{item.title}</h3>
                       <p className="text-white/90 text-sm">{item.description}</p>
+                      <div className="mt-2">
+                        <Button variant="secondary" size="sm">
+                          Увеличить изображение
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -92,6 +105,14 @@ export default function PortfolioSection() {
       {/* Background Elements */}
       <div className="absolute top-32 left-20 w-40 h-40 rounded-full bg-gradient-to-br from-[hsl(340,100%,69%)]/10 to-[hsl(252,100%,71%)]/10 animate-float"></div>
       <div className="absolute bottom-32 right-20 w-28 h-28 rounded-full bg-gradient-to-br from-[hsl(74,64%,59%)]/10 to-[hsl(340,100%,69%)]/10 animate-float" style={{ animationDelay: '2s' }}></div>
+
+      {/* Image Modal */}
+      <ImageModal
+        isOpen={isImageModalOpen}
+        onClose={() => setIsImageModalOpen(false)}
+        imageUrl={selectedImage.url}
+        imageAlt={selectedImage.alt}
+      />
     </section>
   );
 }
