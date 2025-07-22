@@ -12,7 +12,6 @@ import {
   BookOpen, FileText, Bot, Sparkles, Loader2, Lightbulb
 } from "lucide-react";
 import ContentEditor from "./content-editor";
-import BlogAiAssistant from "./blog-ai-assistant";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { BlogPost, InsertBlogPost } from "@shared/schema";
@@ -229,8 +228,6 @@ export default function BlogManagement() {
           <p className="text-muted-foreground">Создание и редактирование статей</p>
         </div>
         <div className="flex gap-2">
-
-          <BlogAiAssistant />
           <Button onClick={() => { setIsCreateOpen(true); setShowEditor(true); }}>
             <Plus className="w-4 h-4 mr-2" />
             Новая статья
