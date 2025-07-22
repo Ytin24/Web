@@ -415,10 +415,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/images/:filename", async (req, res) => {
     try {
       const filename = req.params.filename;
-      const image = await storage.getImageByFilename(filename);
+      let image = await storage.getImageByFilename(filename);
       
+      // If image doesn't exist in database, create a fallback based on filename
       if (!image) {
-        return res.status(404).json({ message: "Image not found" });
+        // Determine category from filename
+        let category = 'general';
+        if (filename.includes('hero')) category = 'hero';
+        else if (filename.includes('blog')) category = 'blog';
+        else if (filename.includes('portfolio')) category = 'portfolio';
+        else if (filename.includes('loyalty')) category = 'loyalty';
+        else if (filename.includes('about')) category = 'about';
+        
+        // Generate appropriate alt text
+        let altText = 'Flower arrangement';
+        if (filename.includes('care')) altText = 'Flower care guide';
+        else if (filename.includes('water')) altText = 'Proper watering technique';
+        else if (filename.includes('seasonal')) altText = 'Seasonal flower composition';
+        else if (filename.includes('wedding')) altText = 'Wedding bouquet';
+        else if (filename.includes('corporate')) altText = 'Corporate flower arrangement';
+        else if (filename.includes('birthday')) altText = 'Birthday flower arrangement';
+        
+        image = { category, filename, altText, description: altText };
       }
 
       // Generate SVG based on category and filename
@@ -428,6 +446,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.setHeader('Cache-Control', 'public, max-age=3600');
       res.send(svg);
     } catch (error) {
+      console.error('Error serving image:', error);
       res.status(500).json({ message: "Failed to serve image" });
     }
   });
