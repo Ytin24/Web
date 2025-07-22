@@ -1,8 +1,9 @@
 import { 
-  users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram,
+  users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images,
   type User, type InsertUser, type Section, type InsertSection,
   type BlogPost, type InsertBlogPost, type PortfolioItem, type InsertPortfolioItem,
-  type CallbackRequest, type InsertCallbackRequest, type LoyaltyProgram, type InsertLoyaltyProgram
+  type CallbackRequest, type InsertCallbackRequest, type LoyaltyProgram, type InsertLoyaltyProgram,
+  type Image, type InsertImage
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -48,6 +49,16 @@ export interface IStorage {
   getActiveLoyaltyLevels(): Promise<LoyaltyProgram[]>;
   getLoyaltyLevel(id: number): Promise<LoyaltyProgram | undefined>;
   updateLoyaltyLevel(id: number, level: Partial<InsertLoyaltyProgram>): Promise<LoyaltyProgram>;
+
+  // Images
+  getAllImages(): Promise<Image[]>;
+  getImagesByCategory(category: string): Promise<Image[]>;
+  getActiveImages(): Promise<Image[]>;
+  getImage(id: number): Promise<Image | undefined>;
+  getImageByFilename(filename: string): Promise<Image | undefined>;
+  createImage(image: InsertImage): Promise<Image>;
+  updateImage(id: number, image: Partial<InsertImage>): Promise<Image>;
+  deleteImage(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -222,6 +233,50 @@ export class DatabaseStorage implements IStorage {
       .where(eq(loyaltyProgram.id, id))
       .returning();
     return updatedLevel;
+  }
+
+  // Images
+  async getAllImages(): Promise<Image[]> {
+    return await db.select().from(images);
+  }
+
+  async getImagesByCategory(category: string): Promise<Image[]> {
+    return await db.select().from(images).where(eq(images.category, category));
+  }
+
+  async getActiveImages(): Promise<Image[]> {
+    return await db.select().from(images).where(eq(images.isActive, true));
+  }
+
+  async getImage(id: number): Promise<Image | undefined> {
+    const [image] = await db.select().from(images).where(eq(images.id, id));
+    return image || undefined;
+  }
+
+  async getImageByFilename(filename: string): Promise<Image | undefined> {
+    const [image] = await db.select().from(images).where(eq(images.filename, filename));
+    return image || undefined;
+  }
+
+  async createImage(insertImage: InsertImage): Promise<Image> {
+    const [image] = await db
+      .insert(images)
+      .values(insertImage)
+      .returning();
+    return image;
+  }
+
+  async updateImage(id: number, imageData: Partial<InsertImage>): Promise<Image> {
+    const [updatedImage] = await db
+      .update(images)
+      .set(imageData)
+      .where(eq(images.id, id))
+      .returning();
+    return updatedImage;
+  }
+
+  async deleteImage(id: number): Promise<void> {
+    await db.delete(images).where(eq(images.id, id));
   }
 }
 

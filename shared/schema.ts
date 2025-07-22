@@ -33,7 +33,7 @@ export const portfolioItems = pgTable("portfolio_items", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description"),
-  imageUrl: text("image_url").notNull(),
+  imageUrl: text("image_url"),
   category: text("category").notNull(), // 'wedding', 'corporate', 'birthday', etc.
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
@@ -59,6 +59,20 @@ export const loyaltyProgram = pgTable("loyalty_program", {
   discount: integer("discount").notNull(),
   benefits: text("benefits"), // JSON array
   isActive: boolean("is_active").default(true),
+});
+
+export const images = pgTable("images", {
+  id: serial("id").primaryKey(),
+  filename: text("filename").notNull(),
+  originalName: text("original_name").notNull(),
+  mimeType: text("mime_type").notNull(),
+  size: integer("size").notNull(),
+  url: text("url").notNull(),
+  category: text("category").notNull(), // 'hero', 'about', 'portfolio', 'blog', 'general'
+  description: text("description"),
+  altText: text("alt_text"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Insert schemas
@@ -111,6 +125,18 @@ export const insertLoyaltyProgramSchema = createInsertSchema(loyaltyProgram).pic
   isActive: true,
 });
 
+export const insertImageSchema = createInsertSchema(images).pick({
+  filename: true,
+  originalName: true,
+  mimeType: true,
+  size: true,
+  url: true,
+  category: true,
+  description: true,
+  altText: true,
+  isActive: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -129,3 +155,6 @@ export type CallbackRequest = typeof callbackRequests.$inferSelect;
 
 export type InsertLoyaltyProgram = z.infer<typeof insertLoyaltyProgramSchema>;
 export type LoyaltyProgram = typeof loyaltyProgram.$inferSelect;
+
+export type InsertImage = z.infer<typeof insertImageSchema>;
+export type Image = typeof images.$inferSelect;
