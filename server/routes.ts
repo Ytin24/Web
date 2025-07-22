@@ -482,7 +482,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const filename = req.params.filename;
       let image = await storage.getImageByFilename(filename);
       
-      // If image doesn't exist in database, create a fallback based on filename
+      // If image doesn't exist in database, create a fallback with default flower image
       if (!image) {
         // Determine category from filename
         let category = 'general';
@@ -501,32 +501,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         else if (filename.includes('corporate')) altText = 'Corporate flower arrangement';
         else if (filename.includes('birthday')) altText = 'Birthday flower arrangement';
         
-        // Create a fallback image object for SVG generation
-        const fallbackImage = { 
-          category, 
-          filename, 
-          altText, 
-          description: altText,
-          id: 0,
-          originalName: filename,
-          mimeType: 'image/svg+xml',
-          size: 0,
-          url: `/api/images/${filename}`,
-          isActive: true,
-          createdAt: new Date()
-        };
-        image = fallbackImage;
+        // Use a default fallback flower image instead of SVG
+        const fallbackUrl = getFallbackImageUrl(category);
+        return res.redirect(302, fallbackUrl);
       }
 
-      // Generate SVG based on category and filename
-      const svg = generateSVG(image.category, filename, image.altText || image.description || '');
+      // If image exists in database, redirect to actual image URL
+      if (image.url.startsWith('http')) {
+        return res.redirect(302, image.url);
+      }
       
-      res.setHeader('Content-Type', 'image/svg+xml');
-      res.setHeader('Cache-Control', 'public, max-age=3600');
-      res.send(svg);
+      // For local files or other cases, fallback to default image
+      const fallbackUrl = getFallbackImageUrl(image.category);
+      res.redirect(302, fallbackUrl);
     } catch (error) {
       console.error('Error serving image:', error);
-      res.status(500).json({ message: "Failed to serve image" });
+      // Return fallback flower image on error
+      const fallbackUrl = 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600';
+      res.redirect(302, fallbackUrl);
     }
   });
 
@@ -534,229 +526,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   return httpServer;
 }
 
-// SVG generation function
-function generateSVG(category: string, filename: string, altText: string = ''): string {
-  const colors = {
-    hero: { primary: '#6B73FF', secondary: '#FF6B9D', accent: '#FFD93D' },
-    about: { primary: '#4F46E5', secondary: '#EC4899', accent: '#10B981' },
-    portfolio: { primary: '#8B5CF6', secondary: '#F59E0B', accent: '#EF4444' },
-    blog: { primary: '#059669', secondary: '#DC2626', accent: '#7C3AED' },
-    loyalty: { primary: '#8B5CF6', secondary: '#EC4899', accent: '#F59E0B' },
-    general: { primary: '#6B7280', secondary: '#9CA3AF', accent: '#D1D5DB' }
+// Fallback image URL function
+function getFallbackImageUrl(category: string): string {
+  const fallbackImages = {
+    hero: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600', // Beautiful flower arrangement
+    about: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600', // Florist at work
+    portfolio: 'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600', // Wedding bouquet
+    blog: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400', // Flower care
+    loyalty: 'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600', // Happy customers
+    general: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600' // Default flower arrangement
   };
 
-  const colorSet = colors[category as keyof typeof colors] || colors.general;
-  
-  if (filename.includes('hero')) {
-    return `
-      <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:${colorSet.primary};stop-opacity:0.8" />
-            <stop offset="100%" style="stop-color:${colorSet.secondary};stop-opacity:0.6" />
-          </linearGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#heroGrad)" />
-        
-        <!-- Flower petals -->
-        <g transform="translate(400,300)">
-          <ellipse cx="-80" cy="-40" rx="60" ry="20" fill="${colorSet.accent}" opacity="0.8" transform="rotate(-30)" />
-          <ellipse cx="80" cy="-40" rx="60" ry="20" fill="${colorSet.secondary}" opacity="0.8" transform="rotate(30)" />
-          <ellipse cx="0" cy="-80" rx="60" ry="20" fill="${colorSet.primary}" opacity="0.8" />
-          <ellipse cx="-40" cy="60" rx="60" ry="20" fill="${colorSet.accent}" opacity="0.8" transform="rotate(-60)" />
-          <ellipse cx="40" cy="60" rx="60" ry="20" fill="${colorSet.secondary}" opacity="0.8" transform="rotate(60)" />
-          <circle cx="0" cy="0" r="25" fill="#FFF" opacity="0.9" />
-        </g>
-        
-        <!-- Decorative elements -->
-        <circle cx="150" cy="100" r="8" fill="${colorSet.accent}" opacity="0.6" />
-        <circle cx="650" cy="500" r="12" fill="${colorSet.primary}" opacity="0.5" />
-        <circle cx="100" cy="450" r="6" fill="${colorSet.secondary}" opacity="0.7" />
-        
-        <text x="400" y="550" font-family="Arial" font-size="14" text-anchor="middle" fill="#333" opacity="0.6">${altText}</text>
-      </svg>
-    `;
-  } else if (filename.includes('portfolio-wedding')) {
-    return `
-      <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100%" height="100%" fill="#F8FAFC" />
-        
-        <!-- Wedding bouquet -->
-        <g transform="translate(400,350)">
-          <!-- Roses -->
-          <g>
-            <circle cx="-40" cy="-60" r="35" fill="${colorSet.primary}" opacity="0.9" />
-            <circle cx="40" cy="-60" r="35" fill="${colorSet.secondary}" opacity="0.9" />
-            <circle cx="0" cy="-20" r="40" fill="${colorSet.primary}" opacity="0.8" />
-            <circle cx="-70" cy="20" r="30" fill="${colorSet.accent}" opacity="0.9" />
-            <circle cx="70" cy="20" r="30" fill="${colorSet.secondary}" opacity="0.9" />
-          </g>
-          
-          <!-- Stems -->
-          <rect x="-5" y="60" width="10" height="120" fill="#10B981" />
-          
-          <!-- Leaves -->
-          <ellipse cx="-20" cy="80" rx="15" ry="8" fill="#059669" opacity="0.8" />
-          <ellipse cx="25" cy="100" rx="15" ry="8" fill="#059669" opacity="0.8" />
-          
-          <!-- Ribbon -->
-          <rect x="-30" y="140" width="60" height="20" fill="${colorSet.accent}" opacity="0.7" />
-        </g>
-        
-        <text x="400" y="570" font-family="Arial" font-size="14" text-anchor="middle" fill="#374151">${altText}</text>
-      </svg>
-    `;
-  } else if (filename.includes('portfolio-corporate')) {
-    return `
-      <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="corpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#F3F4F6;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#E5E7EB;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#corpGrad)" />
-        
-        <!-- Corporate arrangement -->
-        <g transform="translate(400,300)">
-          <!-- Geometric flower arrangement -->
-          <rect x="-100" y="-80" width="200" height="20" fill="${colorSet.primary}" opacity="0.8" />
-          <rect x="-80" y="-60" width="160" height="20" fill="${colorSet.secondary}" opacity="0.8" />
-          <rect x="-60" y="-40" width="120" height="20" fill="${colorSet.accent}" opacity="0.8" />
-          <rect x="-40" y="-20" width="80" height="20" fill="${colorSet.primary}" opacity="0.8" />
-          
-          <!-- Vase -->
-          <rect x="-30" y="0" width="60" height="80" fill="#374151" opacity="0.9" />
-        </g>
-        
-        <text x="400" y="570" font-family="Arial" font-size="14" text-anchor="middle" fill="#374151">${altText}</text>
-      </svg>
-    `;
-  } else if (filename.includes('portfolio-birthday')) {
-    return `
-      <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100%" height="100%" fill="#FEF3C7" />
-        
-        <!-- Birthday bouquet -->
-        <g transform="translate(400,300)">
-          <!-- Colorful flowers -->
-          <circle cx="-60" cy="-40" r="25" fill="#EF4444" />
-          <circle cx="60" cy="-40" r="25" fill="#8B5CF6" />
-          <circle cx="0" cy="-70" r="25" fill="#F59E0B" />
-          <circle cx="-30" cy="10" r="25" fill="#10B981" />
-          <circle cx="30" cy="10" r="25" fill="#3B82F6" />
-          
-          <!-- Centers -->
-          <circle cx="-60" cy="-40" r="8" fill="#FFF" />
-          <circle cx="60" cy="-40" r="8" fill="#FFF" />
-          <circle cx="0" cy="-70" r="8" fill="#FFF" />
-          <circle cx="-30" cy="10" r="8" fill="#FFF" />
-          <circle cx="30" cy="10" r="8" fill="#FFF" />
-          
-          <!-- Stems -->
-          <rect x="-3" y="35" width="6" height="100" fill="#10B981" />
-        </g>
-        
-        <!-- Confetti -->
-        <circle cx="150" cy="150" r="4" fill="#EF4444" />
-        <circle cx="650" cy="200" r="4" fill="#8B5CF6" />
-        <circle cx="200" cy="400" r="4" fill="#F59E0B" />
-        <circle cx="600" cy="450" r="4" fill="#10B981" />
-        
-        <text x="400" y="570" font-family="Arial" font-size="14" text-anchor="middle" fill="#374151">${altText}</text>
-      </svg>
-    `;
-  } else if (filename.includes('blog-care')) {
-    return `
-      <svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100%" height="100%" fill="#F0FDF4" />
-        
-        <!-- Flower care illustration -->
-        <g transform="translate(200,200)">
-          <!-- Flower being cut -->
-          <circle cx="0" cy="-80" r="30" fill="${colorSet.primary}" />
-          <rect x="-2" y="-50" width="4" height="80" fill="#10B981" />
-          
-          <!-- Scissors -->
-          <g transform="translate(0,30) rotate(45)">
-            <rect x="-20" y="-2" width="40" height="4" fill="#374151" />
-            <rect x="-15" y="-8" width="8" height="4" fill="#374151" />
-            <rect x="7" y="-8" width="8" height="4" fill="#374151" />
-          </g>
-        </g>
-        
-        <!-- Water droplets -->
-        <g transform="translate(500,150)">
-          <ellipse cx="0" cy="0" rx="8" ry="12" fill="#3B82F6" opacity="0.7" />
-          <ellipse cx="20" cy="30" rx="6" ry="9" fill="#3B82F6" opacity="0.7" />
-          <ellipse cx="-15" cy="25" rx="7" ry="10" fill="#3B82F6" opacity="0.7" />
-        </g>
-        
-        <text x="400" y="380" font-family="Arial" font-size="14" text-anchor="middle" fill="#374151">${altText}</text>
-      </svg>
-    `;
-  } else if (filename.includes('loyalty-happy-customers')) {
-    return `
-      <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="loyaltyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:${colorSet.primary};stop-opacity:0.2" />
-            <stop offset="100%" style="stop-color:${colorSet.secondary};stop-opacity:0.2" />
-          </linearGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#loyaltyGrad)" />
-        
-        <!-- Happy customers with flowers -->
-        <g transform="translate(400,300)">
-          <!-- Customer 1 -->
-          <g transform="translate(-150,0)">
-            <circle cx="0" cy="-60" r="25" fill="#FCD34D" />
-            <rect x="-15" y="-35" width="30" height="40" fill="${colorSet.primary}" opacity="0.8" />
-            <!-- Bouquet -->
-            <circle cx="20" cy="-20" r="12" fill="${colorSet.secondary}" />
-            <circle cx="25" cy="-25" r="8" fill="${colorSet.accent}" />
-            <rect x="22" y="-8" width="3" height="20" fill="#10B981" />
-          </g>
-          
-          <!-- Customer 2 -->
-          <g transform="translate(0,0)">
-            <circle cx="0" cy="-60" r="25" fill="#F87171" />
-            <rect x="-15" y="-35" width="30" height="40" fill="${colorSet.secondary}" opacity="0.8" />
-            <!-- Star rating -->
-            <text x="0" y="20" font-family="Arial" font-size="20" text-anchor="middle" fill="${colorSet.accent}">⭐⭐⭐⭐⭐</text>
-          </g>
-          
-          <!-- Customer 3 -->
-          <g transform="translate(150,0)">
-            <circle cx="0" cy="-60" r="25" fill="#A78BFA" />
-            <rect x="-15" y="-35" width="30" height="40" fill="${colorSet.accent}" opacity="0.8" />
-            <!-- Loyalty card -->
-            <rect x="-10" y="-10" width="20" height="15" fill="#FFF" stroke="${colorSet.primary}" stroke-width="2" />
-            <text x="0" y="0" font-family="Arial" font-size="8" text-anchor="middle" fill="${colorSet.primary}">VIP</text>
-          </g>
-          
-          <!-- Hearts and decorations -->
-          <text x="-75" y="-120" font-family="Arial" font-size="24" fill="${colorSet.secondary}">💖</text>
-          <text x="75" y="-120" font-family="Arial" font-size="24" fill="${colorSet.primary}">💖</text>
-          <text x="0" y="-140" font-family="Arial" font-size="24" fill="${colorSet.accent}">🌟</text>
-        </g>
-        
-        <text x="400" y="570" font-family="Arial" font-size="14" text-anchor="middle" fill="#374151">${altText}</text>
-      </svg>
-    `;
-  } else {
-    // Default flower SVG
-    return `
-      <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100%" height="100%" fill="#F9FAFB" />
-        
-        <g transform="translate(400,300)">
-          <circle cx="0" cy="0" r="40" fill="${colorSet.primary}" opacity="0.8" />
-          <circle cx="0" cy="0" r="20" fill="#FFF" opacity="0.9" />
-        </g>
-        
-        <text x="400" y="550" font-family="Arial" font-size="14" text-anchor="middle" fill="#374151">${altText}</text>
-      </svg>
-    `;
-  }
+  return fallbackImages[category as keyof typeof fallbackImages] || fallbackImages.general;
 }
