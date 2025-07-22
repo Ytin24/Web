@@ -141,10 +141,24 @@ export const images = pgTable("images", {
 });
 
 // Sales CRM Table
+// Products table for catalog management
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category").notNull(), // 'roses', 'tulips', 'arrangements', 'plants', etc.
+  description: text("description"),
+  basePrice: decimal("base_price", { precision: 10, scale: 2 }).notNull(),
+  imageUrl: text("image_url"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Keep existing sales table for backward compatibility, add new fields
 export const sales = pgTable("sales", {
   id: serial("id").primaryKey(),
   customerName: text("customer_name"),
   customerPhone: text("customer_phone"),
+  customerEmail: text("customer_email"), // New field
   productName: text("product_name").notNull(),
   quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(),
   unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
@@ -154,9 +168,45 @@ export const sales = pgTable("sales", {
   saleDate: timestamp("sale_date").defaultNow(),
   notes: text("notes"),
   paymentMethod: text("payment_method").notNull().default("cash"), // 'cash', 'card', 'transfer', 'other'
-  status: text("status").notNull().default("completed"), // 'pending', 'completed', 'cancelled'
+  status: text("status").notNull().default("completed"), // 'pending', 'completed', 'cancelled', 'refunded'
   createdAt: timestamp("created_at").defaultNow(),
+  // New field to link to multi-product sales
+  isMultiProduct: boolean("is_multi_product").default(false),
 });
+
+// Sale items table - many products per sale
+export const saleItems = pgTable("sale_items", {
+  id: serial("id").primaryKey(),
+  saleId: integer("sale_id").notNull().references(() => sales.id, { onDelete: "cascade" }),
+  productId: integer("product_id").references(() => products.id),
+  productName: text("product_name").notNull(), // Store name for historical data even if product is deleted
+  quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(),
+  unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
+  subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+  notes: text("notes"), // Item-specific notes
+});
+
+// Relations for the new multi-product sales system
+import { relations } from "drizzle-orm";
+
+export const salesRelations = relations(sales, ({ many }) => ({
+  items: many(saleItems),
+}));
+
+export const saleItemsRelations = relations(saleItems, ({ one }) => ({
+  sale: one(sales, {
+    fields: [saleItems.saleId],
+    references: [sales.id],
+  }),
+  product: one(products, {
+    fields: [saleItems.productId],
+    references: [products.id],
+  }),
+}));
+
+export const productsRelations = relations(products, ({ many }) => ({
+  saleItems: many(saleItems),
+}));
 
 // Settings Table for tax rates and other configurations
 export const settings = pgTable("settings", {
@@ -260,9 +310,30 @@ export const insertCustomerSchema = createInsertSchema(customers).pick({
   lastOrderDate: true,
 });
 
+// Updated insert schemas for new multi-product system
+export const insertProductSchema = createInsertSchema(products).pick({
+  name: true,
+  category: true,
+  description: true,
+  basePrice: true,
+  imageUrl: true,
+  isActive: true,
+});
+
+export const insertSaleItemSchema = createInsertSchema(saleItems).pick({
+  saleId: true,
+  productId: true,
+  productName: true,
+  quantity: true,
+  unitPrice: true,
+  subtotal: true,
+  notes: true,
+});
+
 export const insertSaleSchema = createInsertSchema(sales).pick({
   customerName: true,
   customerPhone: true,
+  customerEmail: true,
   productName: true,
   quantity: true,
   unitPrice: true,
@@ -273,6 +344,23 @@ export const insertSaleSchema = createInsertSchema(sales).pick({
   notes: true,
   paymentMethod: true,
   status: true,
+  isMultiProduct: true,
+});
+
+// Schema for creating multi-product sales
+export const createMultiProductSaleSchema = z.object({
+  customerName: z.string().optional(),
+  customerPhone: z.string().optional(),
+  customerEmail: z.string().optional(),
+  items: z.array(z.object({
+    productName: z.string().min(1),
+    quantity: z.number().min(0.01),
+    unitPrice: z.number().min(0),
+    notes: z.string().optional(),
+  })).min(1),
+  notes: z.string().optional(),
+  paymentMethod: z.enum(['cash', 'card', 'transfer', 'other']).default('cash'),
+  status: z.enum(['pending', 'completed', 'cancelled', 'refunded']).default('completed'),
 });
 
 export const insertSettingSchema = createInsertSchema(settings).pick({
@@ -312,8 +400,19 @@ export type Customer = typeof customers.$inferSelect;
 export type InsertSale = z.infer<typeof insertSaleSchema>;
 export type Sale = typeof sales.$inferSelect;
 
+export type InsertProduct = z.infer<typeof insertProductSchema>;
+export type Product = typeof products.$inferSelect;
+
+export type InsertSaleItem = z.infer<typeof insertSaleItemSchema>;
+export type SaleItem = typeof saleItems.$inferSelect;
+
 export type InsertSetting = z.infer<typeof insertSettingSchema>;
 export type Setting = typeof settings.$inferSelect;
+
+// Enhanced sale type with items included
+export type SaleWithItems = Sale & {
+  items: SaleItem[];
+};
 
 // New security schemas
 export const insertSecurityLogSchema = createInsertSchema(securityLogs).pick({

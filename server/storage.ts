@@ -1,12 +1,13 @@
 import { 
   users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images, apiTokens, customers, sales, settings,
-  securityLogs, userSessions,
+  securityLogs, userSessions, products, saleItems,
   type User, type InsertUser, type Section, type InsertSection,
   type BlogPost, type InsertBlogPost, type PortfolioItem, type InsertPortfolioItem,
   type CallbackRequest, type InsertCallbackRequest, type LoyaltyProgram, type InsertLoyaltyProgram,
   type Image, type InsertImage, type ApiToken, type InsertApiToken, type Customer, type InsertCustomer,
   type Sale, type InsertSale, type Setting, type InsertSetting,
-  type SecurityLog, type InsertSecurityLog, type UserSession, type InsertUserSession
+  type SecurityLog, type InsertSecurityLog, type UserSession, type InsertUserSession,
+  type Product, type InsertProduct, type SaleItem, type InsertSaleItem, type SaleWithItems
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, sql, and, desc, asc, gte, lte } from "drizzle-orm";
@@ -94,6 +95,39 @@ export interface IStorage {
   updateSale(id: number, sale: Partial<InsertSale>): Promise<Sale>;
   deleteSale(id: number): Promise<void>;
   getSalesStats(): Promise<{ totalSales: number, totalRevenue: number, avgOrderValue: number }>;
+  
+  // Multi-product sales support
+  getSaleWithItems(id: number): Promise<SaleWithItems | undefined>;
+  getAllSalesWithItems(): Promise<SaleWithItems[]>;
+  createMultiProductSale(saleData: { 
+    customerName?: string, 
+    customerPhone?: string, 
+    customerEmail?: string,
+    items: Array<{
+      productName: string,
+      quantity: number,
+      unitPrice: number,
+      notes?: string
+    }>,
+    notes?: string,
+    paymentMethod: string,
+    status: string 
+  }): Promise<SaleWithItems>;
+
+  // Products
+  getAllProducts(): Promise<Product[]>;
+  getActiveProducts(): Promise<Product[]>;
+  getProductsByCategory(category: string): Promise<Product[]>;
+  getProduct(id: number): Promise<Product | undefined>;
+  createProduct(product: InsertProduct): Promise<Product>;
+  updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product>;
+  deleteProduct(id: number): Promise<void>;
+
+  // Sale Items
+  getSaleItems(saleId: number): Promise<SaleItem[]>;
+  createSaleItem(item: InsertSaleItem): Promise<SaleItem>;
+  updateSaleItem(id: number, item: Partial<InsertSaleItem>): Promise<SaleItem>;
+  deleteSaleItem(id: number): Promise<void>;
 
   // Settings
   getAllSettings(): Promise<Setting[]>;
@@ -722,6 +756,164 @@ export class DatabaseStorage implements IStorage {
       
     // Also deactivate all user sessions
     await this.deactivateAllUserSessions(id);
+  }
+
+  // Products implementation
+  async getAllProducts(): Promise<Product[]> {
+    return await db.select().from(products).orderBy(products.name);
+  }
+
+  async getActiveProducts(): Promise<Product[]> {
+    return await db.select().from(products).where(eq(products.isActive, true)).orderBy(products.name);
+  }
+
+  async getProductsByCategory(category: string): Promise<Product[]> {
+    return await db.select().from(products)
+      .where(and(eq(products.category, category), eq(products.isActive, true)))
+      .orderBy(products.name);
+  }
+
+  async getProduct(id: number): Promise<Product | undefined> {
+    const [product] = await db.select().from(products).where(eq(products.id, id));
+    return product || undefined;
+  }
+
+  async createProduct(product: InsertProduct): Promise<Product> {
+    const [newProduct] = await db
+      .insert(products)
+      .values(product)
+      .returning();
+    return newProduct;
+  }
+
+  async updateProduct(id: number, productData: Partial<InsertProduct>): Promise<Product> {
+    const [updatedProduct] = await db
+      .update(products)
+      .set(productData)
+      .where(eq(products.id, id))
+      .returning();
+    return updatedProduct;
+  }
+
+  async deleteProduct(id: number): Promise<void> {
+    await db.delete(products).where(eq(products.id, id));
+  }
+
+  // Sale Items implementation
+  async getSaleItems(saleId: number): Promise<SaleItem[]> {
+    return await db.select().from(saleItems).where(eq(saleItems.saleId, saleId));
+  }
+
+  async createSaleItem(item: InsertSaleItem): Promise<SaleItem> {
+    const [newItem] = await db
+      .insert(saleItems)
+      .values(item)
+      .returning();
+    return newItem;
+  }
+
+  async updateSaleItem(id: number, itemData: Partial<InsertSaleItem>): Promise<SaleItem> {
+    const [updatedItem] = await db
+      .update(saleItems)
+      .set(itemData)
+      .where(eq(saleItems.id, id))
+      .returning();
+    return updatedItem;
+  }
+
+  async deleteSaleItem(id: number): Promise<void> {
+    await db.delete(saleItems).where(eq(saleItems.id, id));
+  }
+
+  // Multi-product sales implementation
+  async getSaleWithItems(id: number): Promise<SaleWithItems | undefined> {
+    const sale = await this.getSale(id);
+    if (!sale) return undefined;
+
+    const items = await this.getSaleItems(id);
+    return { ...sale, items };
+  }
+
+  async getAllSalesWithItems(): Promise<SaleWithItems[]> {
+    const allSales = await this.getAllSales();
+    const salesWithItems: SaleWithItems[] = [];
+
+    for (const sale of allSales) {
+      const items = await this.getSaleItems(sale.id);
+      salesWithItems.push({ ...sale, items });
+    }
+
+    return salesWithItems;
+  }
+
+  async createMultiProductSale(saleData: {
+    customerName?: string,
+    customerPhone?: string,
+    customerEmail?: string,
+    items: Array<{
+      productName: string,
+      quantity: number,
+      unitPrice: number,
+      notes?: string
+    }>,
+    notes?: string,
+    paymentMethod: string,
+    status: string
+  }): Promise<SaleWithItems> {
+    // Calculate totals
+    let subtotalAmount = 0;
+    for (const item of saleData.items) {
+      subtotalAmount += item.quantity * item.unitPrice;
+    }
+
+    // Get tax rate from settings (default to 0)
+    const taxSetting = await this.getSetting('tax_rate');
+    const taxRate = taxSetting ? parseFloat(taxSetting.value) / 100 : 0;
+    const taxAmount = subtotalAmount * taxRate;
+    const totalAmount = subtotalAmount + taxAmount;
+
+    // Create the sale with the first item for backward compatibility
+    const firstItem = saleData.items[0];
+    const sale: InsertSale = {
+      customerName: saleData.customerName,
+      customerPhone: saleData.customerPhone,
+      customerEmail: saleData.customerEmail,
+      productName: `${saleData.items.length} товаров`, // Multi-product indicator
+      quantity: saleData.items.length,
+      unitPrice: subtotalAmount / saleData.items.length,
+      subtotal: subtotalAmount,
+      taxAmount: taxAmount.toString(),
+      totalAmount: totalAmount.toString(),
+      notes: saleData.notes,
+      paymentMethod: saleData.paymentMethod,
+      status: saleData.status,
+      isMultiProduct: true,
+    };
+
+    const createdSale = await this.createSale(sale);
+
+    // Create sale items
+    const createdItems: SaleItem[] = [];
+    for (const itemData of saleData.items) {
+      const itemSubtotal = itemData.quantity * itemData.unitPrice;
+      const saleItem: InsertSaleItem = {
+        saleId: createdSale.id,
+        productId: null, // We'll handle product linking later
+        productName: itemData.productName,
+        quantity: itemData.quantity.toString(),
+        unitPrice: itemData.unitPrice.toString(),
+        subtotal: itemSubtotal.toString(),
+        notes: itemData.notes,
+      };
+
+      const createdItem = await this.createSaleItem(saleItem);
+      createdItems.push(createdItem);
+    }
+
+    return {
+      ...createdSale,
+      items: createdItems
+    };
   }
 }
 

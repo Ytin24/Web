@@ -14,7 +14,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { PlusIcon, PencilIcon, TrashIcon, TrendingUpIcon, DollarSignIcon, ShoppingCartIcon, SettingsIcon, CalculatorIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertSaleSchema, insertSettingSchema, type Sale, type InsertSale, type Setting } from "@shared/schema";
+import { insertSaleSchema, insertSettingSchema, createMultiProductSaleSchema, type Sale, type InsertSale, type Setting, type Product, type SaleWithItems } from "@shared/schema";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 
@@ -34,11 +34,13 @@ const statusOptions = [
 export default function CRMManagement() {
   const [activeTab, setActiveTab] = useState("sales");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isMultiProductDialogOpen, setIsMultiProductDialogOpen] = useState(false);
   const [editingSale, setEditingSale] = useState<Sale | null>(null);
   const [saleToDelete, setSaleToDelete] = useState<Sale | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [taxRate, setTaxRate] = useState<number>(20);
+  const [saleItems, setSaleItems] = useState([{ productName: "", quantity: 1, unitPrice: 0, notes: "" }]);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -53,6 +55,14 @@ export default function CRMManagement() {
 
   const { data: settings = [] } = useQuery<Setting[]>({
     queryKey: ["/api/settings"],
+  });
+
+  const { data: products = [] } = useQuery<Product[]>({
+    queryKey: ["/api/products"],
+  });
+
+  const { data: salesWithItems = [] } = useQuery<SaleWithItems[]>({
+    queryKey: ["/api/sales-with-items"],
   });
 
   // Load tax rate from settings
@@ -123,6 +133,36 @@ export default function CRMManagement() {
       setIsSettingsOpen(false);
     },
     onError: () => toast({ variant: "destructive", description: "Ошибка при сохранении настроек" }),
+  });
+
+  const createMultiProductMutation = useMutation({
+    mutationFn: (data: any) =>
+      fetch("/api/multi-product-sales", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }).then(res => res.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/sales"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sales-with-items"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sales/stats"] });
+      toast({ description: "Многотоварная продажа успешно добавлена" });
+      setIsMultiProductDialogOpen(false);
+      setSaleItems([{ productName: "", quantity: 1, unitPrice: 0, notes: "" }]);
+      multiProductForm.reset();
+    },
+    onError: () => toast({ variant: "destructive", description: "Ошибка при добавлении продажи" }),
+  });
+
+  const multiProductForm = useForm({
+    defaultValues: {
+      customerName: "",
+      customerPhone: "",
+      customerEmail: "",
+      notes: "",
+      paymentMethod: "cash",
+      status: "completed",
+    },
   });
 
   const form = useForm<InsertSale>({
@@ -211,6 +251,38 @@ export default function CRMManagement() {
     });
   };
 
+  const addSaleItem = () => {
+    setSaleItems([...saleItems, { productName: "", quantity: 1, unitPrice: 0, notes: "" }]);
+  };
+
+  const removeSaleItem = (index: number) => {
+    if (saleItems.length > 1) {
+      setSaleItems(saleItems.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateSaleItem = (index: number, field: string, value: any) => {
+    const updated = [...saleItems];
+    updated[index] = { ...updated[index], [field]: value };
+    setSaleItems(updated);
+  };
+
+  const calculateMultiProductTotals = () => {
+    const subtotal = saleItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+    const taxAmount = (subtotal * taxRate) / 100;
+    const totalAmount = subtotal + taxAmount;
+    return { subtotal, taxAmount, totalAmount };
+  };
+
+  const onSubmitMultiProduct = (formData: any) => {
+    const { subtotal, taxAmount, totalAmount } = calculateMultiProductTotals();
+    const saleData = {
+      ...formData,
+      items: saleItems.filter(item => item.productName && item.quantity > 0),
+    };
+    createMultiProductMutation.mutate(saleData);
+  };
+
   const statsCards = [
     {
       title: "Общий доход",
@@ -248,6 +320,7 @@ export default function CRMManagement() {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="natural-card">
           <TabsTrigger value="sales">Продажи</TabsTrigger>
+          <TabsTrigger value="multi-sales">Мультитоварные</TabsTrigger>
           <TabsTrigger value="stats">Статистика</TabsTrigger>
         </TabsList>
 
@@ -558,6 +631,329 @@ export default function CRMManagement() {
                                   className="natural-hover"
                                 >
                                   <PencilIcon className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setSaleToDelete(sale)}
+                                  className="natural-hover text-destructive hover:text-destructive"
+                                >
+                                  <TrashIcon className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="multi-sales">
+          <Card className="natural-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ShoppingCartIcon className="w-5 h-5 text-primary" />
+                Многотоварные продажи
+              </CardTitle>
+              <CardDescription>
+                Добавление продаж с несколькими товарами в одном чеке
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="font-medium">Список многотоварных продаж</h3>
+                <Dialog open={isMultiProductDialogOpen} onOpenChange={setIsMultiProductDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <PlusIcon className="w-4 h-4 mr-2" />
+                      Новая многотоварная продажа
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Добавить многотоварную продажу</DialogTitle>
+                      <DialogDescription>
+                        Создайте продажу с несколькими товарами. Добавьте товары в список, и итоги будут рассчитаны автоматически.
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    <Form {...multiProductForm}>
+                      <form onSubmit={multiProductForm.handleSubmit(onSubmitMultiProduct)} className="space-y-6">
+                        {/* Customer Information */}
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label htmlFor="customerName">Имя клиента</Label>
+                            <Input
+                              id="customerName"
+                              placeholder="Имя клиента"
+                              {...multiProductForm.register("customerName")}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="customerPhone">Телефон</Label>
+                            <Input
+                              id="customerPhone"
+                              placeholder="+7 (999) 123-45-67"
+                              {...multiProductForm.register("customerPhone")}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="customerEmail">Email</Label>
+                            <Input
+                              id="customerEmail"
+                              placeholder="email@example.com"
+                              {...multiProductForm.register("customerEmail")}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Sale Items */}
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center">
+                            <h4 className="font-medium">Товары в продаже</h4>
+                            <Button type="button" onClick={addSaleItem} variant="outline" size="sm">
+                              <PlusIcon className="w-4 h-4 mr-2" />
+                              Добавить товар
+                            </Button>
+                          </div>
+
+                          {saleItems.map((item, index) => (
+                            <Card key={index} className="p-4">
+                              <div className="grid grid-cols-12 gap-3 items-end">
+                                <div className="col-span-4">
+                                  <Label>Наименование товара</Label>
+                                  <Select
+                                    value={item.productName}
+                                    onValueChange={(value) => {
+                                      updateSaleItem(index, "productName", value);
+                                      // Auto-fill price if product exists
+                                      const product = products.find(p => p.name === value);
+                                      if (product) {
+                                        updateSaleItem(index, "unitPrice", parseFloat(product.basePrice));
+                                      }
+                                    }}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Выберите товар" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {products.map((product) => (
+                                        <SelectItem key={product.id} value={product.name}>
+                                          {product.name} - {formatCurrency(product.basePrice)}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="col-span-2">
+                                  <Label>Количество</Label>
+                                  <Input
+                                    type="number"
+                                    min="0.01"
+                                    step="0.01"
+                                    value={item.quantity}
+                                    onChange={(e) => updateSaleItem(index, "quantity", parseFloat(e.target.value) || 0)}
+                                  />
+                                </div>
+                                <div className="col-span-2">
+                                  <Label>Цена за ед.</Label>
+                                  <Input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value={item.unitPrice}
+                                    onChange={(e) => updateSaleItem(index, "unitPrice", parseFloat(e.target.value) || 0)}
+                                  />
+                                </div>
+                                <div className="col-span-2">
+                                  <Label>Сумма</Label>
+                                  <Input
+                                    value={formatCurrency(item.quantity * item.unitPrice)}
+                                    disabled
+                                  />
+                                </div>
+                                <div className="col-span-2">
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => removeSaleItem(index)}
+                                    disabled={saleItems.length === 1}
+                                    className="w-full"
+                                  >
+                                    <TrashIcon className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                              <div className="mt-3">
+                                <Label>Примечания к товару</Label>
+                                <Input
+                                  placeholder="Дополнительная информация..."
+                                  value={item.notes}
+                                  onChange={(e) => updateSaleItem(index, "notes", e.target.value)}
+                                />
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+
+                        {/* Totals */}
+                        <div className="bg-muted/30 p-4 rounded-lg space-y-2">
+                          <h4 className="font-medium flex items-center gap-2">
+                            <CalculatorIcon className="w-4 h-4" />
+                            Итоговые суммы
+                          </h4>
+                          {(() => {
+                            const { subtotal, taxAmount, totalAmount } = calculateMultiProductTotals();
+                            return (
+                              <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                  <Label className="text-sm">Подытог</Label>
+                                  <div className="font-medium">{formatCurrency(subtotal)}</div>
+                                </div>
+                                <div>
+                                  <Label className="text-sm">НДС ({taxRate}%)</Label>
+                                  <div className="font-medium">{formatCurrency(taxAmount)}</div>
+                                </div>
+                                <div>
+                                  <Label className="text-sm">К доплате</Label>
+                                  <div className="font-bold text-lg">{formatCurrency(totalAmount)}</div>
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+
+                        {/* Payment and Notes */}
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="paymentMethod">Способ оплаты</Label>
+                            <Select {...multiProductForm.register("paymentMethod")}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {paymentMethods.map((method) => (
+                                  <SelectItem key={method.value} value={method.value}>
+                                    {method.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="status">Статус</Label>
+                            <Select {...multiProductForm.register("status")}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {statusOptions.map((status) => (
+                                  <SelectItem key={status.value} value={status.value}>
+                                    {status.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="notes">Примечания к продаже</Label>
+                          <Textarea
+                            id="notes"
+                            placeholder="Дополнительная информация о продаже..."
+                            {...multiProductForm.register("notes")}
+                          />
+                        </div>
+
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setIsMultiProductDialogOpen(false)}
+                          >
+                            Отмена
+                          </Button>
+                          <Button
+                            type="submit"
+                            disabled={createMultiProductMutation.isPending || saleItems.every(item => !item.productName)}
+                          >
+                            {createMultiProductMutation.isPending ? "Создание..." : "Создать продажу"}
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              {/* Multi-product sales list */}
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Дата</TableHead>
+                      <TableHead>Клиент</TableHead>
+                      <TableHead>Количество товаров</TableHead>
+                      <TableHead>Общая сумма</TableHead>
+                      <TableHead>Способ оплаты</TableHead>
+                      <TableHead>Статус</TableHead>
+                      <TableHead>Действия</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {isLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-8">
+                          Загрузка продаж...
+                        </TableCell>
+                      </TableRow>
+                    ) : salesWithItems.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-8">
+                          Пока нет многотоварных продаж
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      salesWithItems.map((sale) => {
+                        const statusBadge = getStatusBadge(sale.status);
+                        const paymentMethodLabel = paymentMethods.find(p => p.value === sale.paymentMethod)?.label || sale.paymentMethod;
+                        
+                        return (
+                          <TableRow key={sale.id}>
+                            <TableCell>{new Date(sale.saleDate || '').toLocaleDateString('ru-RU')}</TableCell>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{sale.customerName || "Без имени"}</div>
+                                <div className="text-sm text-muted-foreground">{sale.customerPhone || "Без телефона"}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell>{sale.items.length} товар(ов)</TableCell>
+                            <TableCell className="font-medium">{formatCurrency(sale.totalAmount)}</TableCell>
+                            <TableCell>{paymentMethodLabel}</TableCell>
+                            <TableCell>
+                              <Badge className={statusBadge.color}>
+                                {statusBadge.label}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    // TODO: Implement view sale details
+                                    toast({ description: "Просмотр деталей будет добавлен позже" });
+                                  }}
+                                  className="natural-hover"
+                                >
+                                  Подробно
                                 </Button>
                                 <Button
                                   variant="outline"
