@@ -270,6 +270,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Quick post generation endpoint
+  app.post("/api/blog-posts/quick-generate", async (req, res) => {
+    try {
+      const { generateQuickPost } = await import('./openai-service');
+      const postData = await generateQuickPost();
+      
+      // Create the blog post with the generated data
+      const validatedData = insertBlogPostSchema.parse({
+        ...postData,
+        isPublished: false // Keep as draft initially
+      });
+      
+      const blogPost = await storage.createBlogPost(validatedData);
+      res.status(201).json(blogPost);
+    } catch (error) {
+      console.error("Quick post generation error:", error);
+      res.status(500).json({ 
+        message: "Failed to generate quick post",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Portfolio items routes
   app.get("/api/portfolio-items", async (req, res) => {
     try {

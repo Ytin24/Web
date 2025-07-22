@@ -81,6 +81,24 @@ export default function BlogManagement() {
     }
   });
 
+  const quickPostMutation = useMutation({
+    mutationFn: () => apiRequest("POST", "/api/blog-posts/quick-generate").then(res => res.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      toast({ 
+        title: "Быстрый пост создан!", 
+        description: "Статья с автоматически подобранным контентом добавлена в блог" 
+      });
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Ошибка при создании поста", 
+        description: error.message || "Попробуйте еще раз",
+        variant: "destructive" 
+      });
+    }
+  });
+
   const categories = ["care", "seasonal", "water", "pruning", "fertilizer", "arrangement"];
 
   const filteredPosts = blogPosts?.filter(post => {
@@ -227,6 +245,19 @@ export default function BlogManagement() {
           <p className="text-muted-foreground">Создание и редактирование статей</p>
         </div>
         <div className="flex gap-2">
+          <Button 
+            onClick={() => quickPostMutation.mutate()}
+            disabled={quickPostMutation.isPending}
+            variant="outline"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
+          >
+            {quickPostMutation.isPending ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Sparkles className="w-4 h-4 mr-2" />
+            )}
+            {quickPostMutation.isPending ? "Создаю..." : "Быстрый пост"}
+          </Button>
           <BlogAiAssistant />
           <Button onClick={() => { setIsCreateOpen(true); setShowEditor(true); }}>
             <Plus className="w-4 h-4 mr-2" />

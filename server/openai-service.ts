@@ -400,3 +400,83 @@ export const blogAssistant = new BlogAssistantService();
 export async function getBlogAssistantResponse(prompt: string): Promise<string> {
   return blogAssistant.getBlogContent(prompt);
 }
+
+// Quick post generation with automatic topic selection
+export async function generateQuickPost(): Promise<{
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  imageUrl: string;
+}> {
+  const topics = [
+    "Уход за розами зимой",
+    "Как продлить жизнь срезанных цветов",
+    "Популярные цветы для весенних букетов",
+    "Символика цветов в разных культурах",
+    "Модные тренды в флористике",
+    "Полив комнатных растений",
+    "Правильная обрезка цветущих растений",
+    "Цветы для особых случаев",
+    "Создание цветочных композиций",
+    "Сезонные растения для дома"
+  ];
+  
+  const categories = ["care", "seasonal", "water", "pruning", "fertilizer", "arrangement"];
+  const imageCategories = ["care", "seasonal", "portfolio", "blog"];
+  
+  // Random selections
+  const selectedTopic = topics[Math.floor(Math.random() * topics.length)];
+  const selectedCategory = categories[Math.floor(Math.random() * categories.length)];
+  const imageCategory = imageCategories[Math.floor(Math.random() * imageCategories.length)];
+  const imageId = Math.floor(Math.random() * 3) + 1;
+  
+  try {
+    console.log(`Generating quick post about: ${selectedTopic}`);
+    
+    // Generate content using our existing function
+    const content = await generateBlogContent(`Напиши профессиональную статью для цветочного магазина на тему: "${selectedTopic}". 
+    Статья должна быть практичной, информативной и содержать полезные советы для читателей. 
+    Используй Markdown форматирование и структурируй текст заголовками.`);
+    
+    // Extract title from content (first heading) or generate one
+    let title = selectedTopic;
+    const titleMatch = content.match(/^#\s+(.+)$/m) || content.match(/^##\s+(.+)$/m);
+    if (titleMatch) {
+      title = titleMatch[1].replace(/\*\*/g, '').trim();
+    }
+    
+    // Generate excerpt (first meaningful paragraph)
+    const paragraphs = content.split('\n\n').filter(p => 
+      p.trim() && 
+      !p.startsWith('#') && 
+      !p.startsWith('##') && 
+      !p.startsWith('###') &&
+      p.length > 50
+    );
+    
+    let excerpt = `Узнайте все о том, как ${selectedTopic.toLowerCase()}`;
+    if (paragraphs.length > 0) {
+      excerpt = paragraphs[0]
+        .replace(/\*\*/g, '')
+        .replace(/\*/g, '')
+        .replace(/\[.*?\]/g, '')
+        .trim();
+      if (excerpt.length > 180) {
+        excerpt = excerpt.substring(0, 180).trim() + '...';
+      }
+    }
+    
+    return {
+      title,
+      excerpt,
+      content,
+      category: selectedCategory,
+      imageUrl: `/api/images/${imageCategory}-${selectedCategory}-${imageId}.svg`
+    };
+    
+  } catch (error) {
+    console.error('Error generating quick post:', error);
+    throw new Error('Failed to generate quick post');
+  }
+}
