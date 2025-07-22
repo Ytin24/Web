@@ -26,20 +26,42 @@ export default function Footer() {
               Создаем магию из цветов для ваших особенных моментов. Более 15 лет опыта в цветочном искусстве.
             </p>
             <div className="flex space-x-3">
-              {[
-                { href: "#", icon: "fab fa-instagram" },
-                { href: "#", icon: "fab fa-vk" },
-                { href: "#", icon: "fab fa-telegram" },
-                { href: "#", icon: "fab fa-whatsapp" },
-              ].map((social, index) => (
-                <a
-                  key={index}
-                  href={social.href}
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(252,100%,71%)] transition-colors"
-                >
-                  <i className={social.icon}></i>
-                </a>
-              ))}
+              <a
+                href="https://instagram.com/tsvetokraft"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(252,100%,71%)] transition-colors"
+                title="Instagram"
+              >
+                📷
+              </a>
+              <a
+                href="https://vk.com/tsvetokraft"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(252,100%,71%)] transition-colors"
+                title="VKontakte"
+              >
+                🌐
+              </a>
+              <a
+                href="https://t.me/tsvetokraft"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(252,100%,71%)] transition-colors"
+                title="Telegram"
+              >
+                ✈️
+              </a>
+              <a
+                href="https://wa.me/78001234567"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(252,100%,71%)] transition-colors"
+                title="WhatsApp"
+              >
+                💬
+              </a>
             </div>
           </div>
 
@@ -69,21 +91,36 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">Услуги</h4>
             <nav className="space-y-3">
-              {[
-                "Свадебные букеты",
-                "Корпоративное оформление",
-                "Доставка цветов",
-                "Мастер-классы",
-                "Уход за растениями",
-              ].map((service) => (
-                <a
-                  key={service}
-                  href="#"
-                  className="block text-white/70 hover:text-white transition-colors"
-                >
-                  {service}
-                </a>
-              ))}
+              <a 
+                href="/services"
+                className="block text-white/70 hover:text-white transition-colors"
+              >
+                Все услуги
+              </a>
+              <button
+                onClick={() => scrollToSection("portfolio")}
+                className="block text-left w-full text-white/70 hover:text-white transition-colors"
+              >
+                Свадебные букеты
+              </button>
+              <button
+                onClick={() => scrollToSection("portfolio")}
+                className="block text-left w-full text-white/70 hover:text-white transition-colors"
+              >
+                Корпоративное оформление
+              </button>
+              <button
+                onClick={() => scrollToSection("contact")}
+                className="block text-left w-full text-white/70 hover:text-white transition-colors"
+              >
+                Доставка цветов
+              </button>
+              <a
+                href="mailto:info@tsvetokraft.ru?subject=Мастер-классы"
+                className="block text-white/70 hover:text-white transition-colors"
+              >
+                Мастер-классы
+              </a>
             </nav>
           </div>
 
@@ -93,11 +130,15 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center">
                 <Phone className="w-5 h-5 mr-3 text-[hsl(252,100%,71%)]" />
-                <span className="text-white/70">8 (800) 123-45-67</span>
+                <a href="tel:88001234567" className="text-white/70 hover:text-white transition-colors">
+                  8 (800) 123-45-67
+                </a>
               </div>
               <div className="flex items-center">
                 <Mail className="w-5 h-5 mr-3 text-[hsl(252,100%,71%)]" />
-                <span className="text-white/70">info@tsvetokraft.ru</span>
+                <a href="mailto:info@tsvetokraft.ru" className="text-white/70 hover:text-white transition-colors">
+                  info@tsvetokraft.ru
+                </a>
               </div>
               <div className="flex items-center">
                 <MapPin className="w-5 h-5 mr-3 text-[hsl(252,100%,71%)]" />
@@ -114,11 +155,11 @@ export default function Footer() {
         <div className="border-t border-white/20 mt-12 pt-8 text-center">
           <p className="text-white/70">
             © 2024 Цветокрафт. Все права защищены. |{" "}
-            <a href="#" className="hover:text-white transition-colors">
+            <a href="/privacy" className="hover:text-white transition-colors">
               Политика конфиденциальности
             </a>{" "}
             |{" "}
-            <a href="#" className="hover:text-white transition-colors">
+            <a href="/terms" className="hover:text-white transition-colors">
               Условия использования
             </a>
           </p>

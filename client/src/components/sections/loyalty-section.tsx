@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Star, Gift, Calendar, Users, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/animations/scroll-reveal";
 import GlassCard from "@/components/ui/glass-card";
+import LoyaltyModal from "@/components/loyalty-modal";
 import type { LoyaltyProgram } from "@shared/schema";
 
 export default function LoyaltySection() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: loyaltyLevels } = useQuery<LoyaltyProgram[]>({
     queryKey: ["/api/loyalty-program"],
     queryFn: () => fetch("/api/loyalty-program?active=true").then(res => res.json())
@@ -123,12 +126,15 @@ export default function LoyaltySection() {
               
               <div className="text-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+                  src="/api/images/loyalty-happy-customers.svg" 
                   alt="Happy customers with flower bouquets" 
                   className="rounded-2xl shadow-2xl mb-8 w-full h-auto"
                 />
                 
-                <Button className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                <Button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                >
                   <Star className="w-5 h-5 mr-2" />
                   Присоединиться к программе
                 </Button>
@@ -141,6 +147,12 @@ export default function LoyaltySection() {
       {/* Floating Elements */}
       <div className="absolute top-20 left-10 w-36 h-36 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)]/10 to-[hsl(340,100%,69%)]/10 animate-float"></div>
       <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full bg-gradient-to-br from-[hsl(74,64%,59%)]/10 to-[hsl(252,100%,71%)]/10 animate-float" style={{ animationDelay: '1s' }}></div>
+      
+      {/* Loyalty Modal */}
+      <LoyaltyModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </section>
   );
 }

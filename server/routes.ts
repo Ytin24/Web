@@ -439,6 +439,7 @@ function generateSVG(category: string, filename: string, altText: string = ''): 
     about: { primary: '#4F46E5', secondary: '#EC4899', accent: '#10B981' },
     portfolio: { primary: '#8B5CF6', secondary: '#F59E0B', accent: '#EF4444' },
     blog: { primary: '#059669', secondary: '#DC2626', accent: '#7C3AED' },
+    loyalty: { primary: '#8B5CF6', secondary: '#EC4899', accent: '#F59E0B' },
     general: { primary: '#6B7280', secondary: '#9CA3AF', accent: '#D1D5DB' }
   };
 
@@ -590,6 +591,55 @@ function generateSVG(category: string, filename: string, altText: string = ''): 
         </g>
         
         <text x="400" y="380" font-family="Arial" font-size="14" text-anchor="middle" fill="#374151">${altText}</text>
+      </svg>
+    `;
+  } else if (filename.includes('loyalty-happy-customers')) {
+    return `
+      <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="loyaltyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:${colorSet.primary};stop-opacity:0.2" />
+            <stop offset="100%" style="stop-color:${colorSet.secondary};stop-opacity:0.2" />
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#loyaltyGrad)" />
+        
+        <!-- Happy customers with flowers -->
+        <g transform="translate(400,300)">
+          <!-- Customer 1 -->
+          <g transform="translate(-150,0)">
+            <circle cx="0" cy="-60" r="25" fill="#FCD34D" />
+            <rect x="-15" y="-35" width="30" height="40" fill="${colorSet.primary}" opacity="0.8" />
+            <!-- Bouquet -->
+            <circle cx="20" cy="-20" r="12" fill="${colorSet.secondary}" />
+            <circle cx="25" cy="-25" r="8" fill="${colorSet.accent}" />
+            <rect x="22" y="-8" width="3" height="20" fill="#10B981" />
+          </g>
+          
+          <!-- Customer 2 -->
+          <g transform="translate(0,0)">
+            <circle cx="0" cy="-60" r="25" fill="#F87171" />
+            <rect x="-15" y="-35" width="30" height="40" fill="${colorSet.secondary}" opacity="0.8" />
+            <!-- Star rating -->
+            <text x="0" y="20" font-family="Arial" font-size="20" text-anchor="middle" fill="${colorSet.accent}">⭐⭐⭐⭐⭐</text>
+          </g>
+          
+          <!-- Customer 3 -->
+          <g transform="translate(150,0)">
+            <circle cx="0" cy="-60" r="25" fill="#A78BFA" />
+            <rect x="-15" y="-35" width="30" height="40" fill="${colorSet.accent}" opacity="0.8" />
+            <!-- Loyalty card -->
+            <rect x="-10" y="-10" width="20" height="15" fill="#FFF" stroke="${colorSet.primary}" stroke-width="2" />
+            <text x="0" y="0" font-family="Arial" font-size="8" text-anchor="middle" fill="${colorSet.primary}">VIP</text>
+          </g>
+          
+          <!-- Hearts and decorations -->
+          <text x="-75" y="-120" font-family="Arial" font-size="24" fill="${colorSet.secondary}">💖</text>
+          <text x="75" y="-120" font-family="Arial" font-size="24" fill="${colorSet.primary}">💖</text>
+          <text x="0" y="-140" font-family="Arial" font-size="24" fill="${colorSet.accent}">🌟</text>
+        </g>
+        
+        <text x="400" y="570" font-family="Arial" font-size="14" text-anchor="middle" fill="#374151">${altText}</text>
       </svg>
     `;
   } else {

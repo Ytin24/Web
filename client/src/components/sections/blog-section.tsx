@@ -95,7 +95,10 @@ export default function BlogSection() {
 
         <ScrollReveal delay={0.6}>
           <div className="text-center mt-12">
-            <Button className="glass-effect text-[hsl(213,27%,19%)] px-8 py-4 rounded-full font-semibold hover:bg-white/20 transition-all">
+            <Button 
+              onClick={() => window.location.href = '/blog'}
+              className="glass-effect text-[hsl(213,27%,19%)] px-8 py-4 rounded-full font-semibold hover:bg-white/20 transition-all"
+            >
               <Plus className="w-5 h-5 mr-2" />
               Больше советов
             </Button>
