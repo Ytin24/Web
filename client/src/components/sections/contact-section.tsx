@@ -77,7 +77,7 @@ export default function ContactSection() {
           {/* Contact Form */}
           <ScrollReveal delay={0.2}>
             <GlassCard className="p-8">
-              <h3 className="text-2xl font-bold text-[hsl(213,27%,19%)] mb-6">Заказать обратный звонок</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-6">Заказать обратный звонок</h3>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <FormField
@@ -85,11 +85,11 @@ export default function ContactSection() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[hsl(213,27%,19%)] font-semibold">Ваше имя</FormLabel>
+                        <FormLabel className="text-foreground font-semibold">Ваше имя</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="Введите ваше имя" 
-                            className="glass-effect border-white/20 focus:border-[hsl(252,100%,71%)]"
+                            className="glass-effect border-border focus:border-primary"
                             {...field} 
                           />
                         </FormControl>
@@ -103,12 +103,12 @@ export default function ContactSection() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[hsl(213,27%,19%)] font-semibold">Номер телефона *</FormLabel>
+                        <FormLabel className="text-foreground font-semibold">Номер телефона *</FormLabel>
                         <FormControl>
                           <Input 
                             type="tel" 
                             placeholder="+7 (___) ___-__-__" 
-                            className="glass-effect border-white/20 focus:border-[hsl(252,100%,71%)]"
+                            className="glass-effect border-border focus:border-primary"
                             {...field} 
                           />
                         </FormControl>
@@ -122,12 +122,12 @@ export default function ContactSection() {
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[hsl(213,27%,19%)] font-semibold">Сообщение</FormLabel>
+                        <FormLabel className="text-foreground font-semibold">Сообщение</FormLabel>
                         <FormControl>
                           <Textarea 
                             rows={4} 
                             placeholder="Опишите ваши пожелания..."
-                            className="glass-effect border-white/20 focus:border-[hsl(252,100%,71%)] resize-none"
+                            className="glass-effect border-border focus:border-primary resize-none"
                             {...field} 
                           />
                         </FormControl>
@@ -141,10 +141,10 @@ export default function ContactSection() {
                     name="callTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[hsl(213,27%,19%)] font-semibold">Когда удобно позвонить?</FormLabel>
+                        <FormLabel className="text-foreground font-semibold">Когда удобно позвонить?</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger className="glass-effect border-white/20 focus:border-[hsl(252,100%,71%)]">
+                            <SelectTrigger className="glass-effect border-border focus:border-primary">
                               <SelectValue placeholder="Выберите время" />
                             </SelectTrigger>
                           </FormControl>
@@ -172,7 +172,7 @@ export default function ContactSection() {
                           />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel className="text-sm text-[hsl(213,27%,19%)]/70 leading-relaxed">
+                          <FormLabel className="text-sm text-muted-foreground leading-relaxed">
                             Я согласен на обработку персональных данных и получение информационных сообщений
                           </FormLabel>
                           <FormMessage />
@@ -203,8 +203,8 @@ export default function ContactSection() {
                     )}
                   </Button>
                   
-                  <p className="text-center text-sm text-[hsl(213,27%,19%)]/60">
-                    Или позвоните нам прямо сейчас: <a href="tel:+78001234567" className="text-[hsl(252,100%,71%)] font-semibold">8 (800) 123-45-67</a>
+                  <p className="text-center text-sm text-muted-foreground">
+                    Или позвоните нам прямо сейчас: <a href="tel:+78001234567" className="text-primary font-semibold">8 (800) 123-45-67</a>
                   </p>
                 </form>
               </Form>
@@ -218,30 +218,30 @@ export default function ContactSection() {
                 icon: MapPin,
                 title: "Наш адрес",
                 description: "г. Москва, ул. Цветочная, д. 15",
-                gradient: "from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)]"
+                gradient: "from-primary to-secondary"
               },
               {
                 icon: Clock,
                 title: "Часы работы",
                 description: "Пн-Вс: 8:00 - 22:00",
-                gradient: "from-[hsl(340,100%,69%)] to-[hsl(74,64%,59%)]"
+                gradient: "from-secondary to-accent"
               },
               {
                 icon: Truck,
                 title: "Доставка",
                 description: "Бесплатно от 3000₽, иначе 300₽",
-                gradient: "from-[hsl(74,64%,59%)] to-[hsl(252,100%,71%)]"
+                gradient: "from-accent to-primary"
               }
             ].map((item, index) => (
               <ScrollReveal key={index} delay={0.3 + index * 0.1}>
                 <GlassCard className="p-6 glass-hover">
                   <div className="flex items-center mb-4">
                     <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.gradient} flex items-center justify-center mr-4`}>
-                      <item.icon className="w-6 h-6 text-white" />
+                      <item.icon className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-[hsl(213,27%,19%)] text-lg">{item.title}</h4>
-                      <p className="text-[hsl(213,27%,19%)]/70">{item.description}</p>
+                      <h4 className="font-semibold text-foreground text-lg">{item.title}</h4>
+                      <p className="text-muted-foreground">{item.description}</p>
                     </div>
                   </div>
                 </GlassCard>
@@ -251,7 +251,7 @@ export default function ContactSection() {
             {/* Social Media */}
             <ScrollReveal delay={0.6}>
               <GlassCard className="p-6">
-                <h4 className="font-semibold text-[hsl(213,27%,19%)] text-lg mb-4">Мы в социальных сетях</h4>
+                <h4 className="font-semibold text-foreground text-lg mb-4">Мы в социальных сетях</h4>
                 <div className="flex space-x-4">
                   {[
                     { icon: Instagram, href: "#" },
@@ -261,7 +261,7 @@ export default function ContactSection() {
                     <a
                       key={index}
                       href={social.href}
-                      className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center text-white hover:scale-110 transition-transform"
+                      className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground hover:scale-110 transition-transform"
                     >
                       <social.icon className="w-5 h-5" />
                     </a>
@@ -273,23 +273,23 @@ export default function ContactSection() {
             {/* Quick Stats */}
             <ScrollReveal delay={0.7}>
               <GlassCard className="p-6">
-                <h4 className="font-semibold text-[hsl(213,27%,19%)] text-lg mb-4">Наши достижения</h4>
+                <h4 className="font-semibold text-foreground text-lg mb-4">Наши достижения</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[hsl(252,100%,71%)] mb-1">5000+</div>
-                    <div className="text-sm text-[hsl(213,27%,19%)]/70">Довольных клиентов</div>
+                    <div className="text-2xl font-bold text-primary mb-1">5000+</div>
+                    <div className="text-sm text-muted-foreground">Довольных клиентов</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[hsl(340,100%,69%)] mb-1">15</div>
-                    <div className="text-sm text-[hsl(213,27%,19%)]/70">Лет опыта</div>
+                    <div className="text-2xl font-bold text-secondary mb-1">15</div>
+                    <div className="text-sm text-muted-foreground">Лет опыта</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[hsl(74,64%,59%)] mb-1">24/7</div>
-                    <div className="text-sm text-[hsl(213,27%,19%)]/70">Поддержка</div>
+                    <div className="text-2xl font-bold text-accent mb-1">24/7</div>
+                    <div className="text-sm text-muted-foreground">Поддержка</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[hsl(252,100%,71%)] mb-1">2ч</div>
-                    <div className="text-sm text-[hsl(213,27%,19%)]/70">Время доставки</div>
+                    <div className="text-2xl font-bold text-primary mb-1">2ч</div>
+                    <div className="text-sm text-muted-foreground">Время доставки</div>
                   </div>
                 </div>
               </GlassCard>
@@ -299,8 +299,8 @@ export default function ContactSection() {
       </div>
 
       {/* Background Elements */}
-      <div className="absolute top-40 right-20 w-32 h-32 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)]/10 to-[hsl(340,100%,69%)]/10 animate-float"></div>
-      <div className="absolute bottom-40 left-20 w-28 h-28 rounded-full bg-gradient-to-br from-[hsl(74,64%,59%)]/10 to-[hsl(252,100%,71%)]/10 animate-float" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-40 right-20 w-32 h-32 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 animate-float"></div>
+      <div className="absolute bottom-40 left-20 w-28 h-28 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 animate-float" style={{ animationDelay: '2s' }}></div>
     </section>
   );
 }

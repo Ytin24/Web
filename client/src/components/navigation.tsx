@@ -24,12 +24,12 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 glass-effect border-b border-white/10 dark:border-gray-700/30">
+      <nav className="fixed top-0 w-full z-50 glass-effect border-b border-border">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 group">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center pulse-glow transition-all duration-300 group-hover:scale-110">
-                <Flower className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center pulse-glow transition-all duration-300 group-hover:scale-110">
+                <Flower className="w-6 h-6 text-primary-foreground" />
               </div>
               <span className="text-2xl font-bold gradient-text">Цветокрафт</span>
             </div>
@@ -56,7 +56,7 @@ export default function Navigation() {
               <Button
                 variant="outline"
                 size="icon"
-                className="glass-effect border-white/20 text-foreground hover:bg-white/20 dark:border-gray-700 dark:hover:bg-gray-800"
+                className="glass-effect border-border text-foreground hover:bg-glass-bg"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
                 {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}

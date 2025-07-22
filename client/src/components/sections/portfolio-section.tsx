@@ -92,7 +92,7 @@ export default function PortfolioSection() {
                           <Maximize2 className="w-4 h-4 mr-1" />
                           Нажмите для увеличения
                         </Button>
-                        <Badge className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white">
+                        <Badge className="bg-gradient-to-r from-primary to-secondary text-primary-foreground">
                           {item.category}
                         </Badge>
                       </div>
@@ -108,7 +108,7 @@ export default function PortfolioSection() {
           <div className="text-center mt-12">
             <Button 
               onClick={() => window.location.href = '/portfolio'}
-              className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+              className="bg-gradient-to-r from-primary to-secondary text-primary-foreground px-8 py-4 rounded-full font-semibold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
             >
               <Images className="w-5 h-5 mr-2" />
               Посмотреть все работы
@@ -118,8 +118,8 @@ export default function PortfolioSection() {
       </div>
 
       {/* Background Elements */}
-      <div className="absolute top-32 left-20 w-40 h-40 rounded-full bg-gradient-to-br from-[hsl(340,100%,69%)]/10 to-[hsl(252,100%,71%)]/10 animate-float"></div>
-      <div className="absolute bottom-32 right-20 w-28 h-28 rounded-full bg-gradient-to-br from-[hsl(74,64%,59%)]/10 to-[hsl(340,100%,69%)]/10 animate-float" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-32 left-20 w-40 h-40 rounded-full bg-gradient-to-br from-secondary/20 to-primary/20 animate-float"></div>
+      <div className="absolute bottom-32 right-20 w-28 h-28 rounded-full bg-gradient-to-br from-accent/20 to-secondary/20 animate-float" style={{ animationDelay: '2s' }}></div>
 
       {/* Image Modal */}
       <ImageModal

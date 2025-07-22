@@ -25,24 +25,24 @@ export default function LoyaltySection() {
 
   const getGradient = (level: string) => {
     switch (level) {
-      case 'beginner': return 'from-[hsl(74,64%,59%)] to-[hsl(252,100%,71%)]';
-      case 'connoisseur': return 'from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)]';
-      case 'vip': return 'from-[hsl(340,100%,69%)] to-[hsl(74,64%,59%)]';
-      default: return 'from-[hsl(74,64%,59%)] to-[hsl(252,100%,71%)]';
+      case 'beginner': return 'from-accent to-primary';
+      case 'connoisseur': return 'from-primary to-secondary';
+      case 'vip': return 'from-secondary to-accent';
+      default: return 'from-accent to-primary';
     }
   };
 
   const getTextColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'text-[hsl(74,64%,59%)]';
-      case 'connoisseur': return 'text-[hsl(252,100%,71%)]';
-      case 'vip': return 'text-[hsl(340,100%,69%)]';
-      default: return 'text-[hsl(74,64%,59%)]';
+      case 'beginner': return 'text-accent';
+      case 'connoisseur': return 'text-primary';
+      case 'vip': return 'text-secondary';
+      default: return 'text-accent';
     }
   };
 
   return (
-    <section id="loyalty" className="py-32 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
+    <section id="loyalty" className="py-32 bg-gradient-to-br from-muted to-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
         <ScrollReveal delay={0.1}>
           <div className="text-center mb-20">
@@ -60,17 +60,17 @@ export default function LoyaltySection() {
             
             return (
               <ScrollReveal key={level.id} delay={0.2 + index * 0.1}>
-                <GlassCard className={`p-8 text-center glass-hover ${isHighlighted ? 'border-2 border-[hsl(252,100%,71%)]/20' : ''}`}>
+                <GlassCard className={`p-8 text-center glass-hover ${isHighlighted ? 'border-2 border-primary/30' : ''}`}>
                   <div className={`w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br ${getGradient(level.level)} flex items-center justify-center`}>
-                    <Icon className="w-8 h-8 text-white" />
+                    <Icon className="w-8 h-8 text-primary-foreground" />
                   </div>
                   <h3 className="text-2xl font-bold text-foreground mb-4">{level.title}</h3>
-                  <p className="text-foreground/70 mb-6 leading-relaxed">
+                  <p className="text-muted-foreground mb-6 leading-relaxed">
                     {level.description}
                   </p>
                   <ul className="space-y-3 mb-6">
                     {level.benefits && JSON.parse(level.benefits).map((benefit: string, idx: number) => (
-                      <li key={idx} className="flex items-center text-[hsl(213,27%,19%)]/70">
+                      <li key={idx} className="flex items-center text-muted-foreground">
                         <Star className={`w-4 h-4 mr-3 ${getTextColor(level.level)}`} />
                         {benefit}
                       </li>
@@ -90,35 +90,35 @@ export default function LoyaltySection() {
           <GlassCard className="p-12">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-3xl font-bold text-[hsl(213,27%,19%)] mb-6">Дополнительные преимущества</h3>
+                <h3 className="text-3xl font-bold text-foreground mb-6">Дополнительные преимущества</h3>
                 <div className="space-y-6">
                   <div className="flex items-start">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center mr-4 flex-shrink-0 mt-1">
-                      <Gift className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                      <Gift className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-[hsl(213,27%,19%)] text-lg mb-2">Накопительная система</h4>
-                      <p className="text-[hsl(213,27%,19%)]/70 leading-relaxed">За каждый рубль получайте 1 бонусный балл. 100 баллов = 100 рублей скидки.</p>
+                      <h4 className="font-semibold text-foreground text-lg mb-2">Накопительная система</h4>
+                      <p className="text-muted-foreground leading-relaxed">За каждый рубль получайте 1 бонусный балл. 100 баллов = 100 рублей скидки.</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(340,100%,69%)] to-[hsl(74,64%,59%)] flex items-center justify-center mr-4 flex-shrink-0 mt-1">
-                      <Calendar className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                      <Calendar className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-[hsl(213,27%,19%)] text-lg mb-2">Напоминания о событиях</h4>
-                      <p className="text-[hsl(213,27%,19%)]/70 leading-relaxed">Мы запомним важные даты и напомним о них за 3 дня до события.</p>
+                      <h4 className="font-semibold text-foreground text-lg mb-2">Напоминания о событиях</h4>
+                      <p className="text-muted-foreground leading-relaxed">Мы запомним важные даты и напомним о них за 3 дня до события.</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(74,64%,59%)] to-[hsl(252,100%,71%)] flex items-center justify-center mr-4 flex-shrink-0 mt-1">
-                      <Users className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                      <Users className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-[hsl(213,27%,19%)] text-lg mb-2">Программа рефералов</h4>
-                      <p className="text-[hsl(213,27%,19%)]/70 leading-relaxed">Приводите друзей и получайте 500 бонусных баллов за каждого нового клиента.</p>
+                      <h4 className="font-semibold text-foreground text-lg mb-2">Программа рефералов</h4>
+                      <p className="text-muted-foreground leading-relaxed">Приводите друзей и получайте 500 бонусных баллов за каждого нового клиента.</p>
                     </div>
                   </div>
                 </div>
@@ -146,8 +146,8 @@ export default function LoyaltySection() {
       </div>
 
       {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-36 h-36 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)]/10 to-[hsl(340,100%,69%)]/10 animate-float"></div>
-      <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full bg-gradient-to-br from-[hsl(74,64%,59%)]/10 to-[hsl(252,100%,71%)]/10 animate-float" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-20 left-10 w-36 h-36 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 animate-float"></div>
+      <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 animate-float" style={{ animationDelay: '1s' }}></div>
       
       {/* Loyalty Modal */}
       <LoyaltyModal 

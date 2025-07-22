@@ -57,21 +57,21 @@ export default function BlogSection() {
                     </svg>
                   </div>
                 </div>
-                <div className="p-6 bg-white/95 backdrop-blur-sm">
+                <div className="p-6 bg-card/95 backdrop-blur-sm">
                   <div className="flex items-center mb-3">
-                    <Badge className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white">
+                    <Badge className="bg-gradient-to-r from-primary to-secondary text-primary-foreground">
                       {post.category}
                     </Badge>
                   </div>
-                  <h3 className="text-xl font-semibold text-[hsl(213,27%,19%)] mb-3 hover:text-[hsl(252,100%,71%)] transition-colors cursor-pointer" onClick={() => openBlogPost(post.id)}>
+                  <h3 className="text-xl font-semibold text-foreground mb-3 hover:text-primary transition-colors cursor-pointer" onClick={() => openBlogPost(post.id)}>
                     {post.title}
                   </h3>
-                  <p className="text-[hsl(213,27%,19%)]/70 mb-4 leading-relaxed">
+                  <p className="text-muted-foreground mb-4 leading-relaxed">
                     {post.excerpt}
                   </p>
                   <button 
                     onClick={() => openBlogPost(post.id)}
-                    className="inline-flex items-center text-[hsl(252,100%,71%)] font-semibold hover:text-[hsl(340,100%,69%)] transition-colors cursor-pointer group"
+                    className="inline-flex items-center text-primary font-semibold hover:text-secondary transition-colors cursor-pointer group"
                   >
                     Читать далее 
                     <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
@@ -86,7 +86,7 @@ export default function BlogSection() {
           <div className="text-center mt-12">
             <Button 
               onClick={() => window.location.href = '/blog'}
-              className="glass-effect text-[hsl(213,27%,19%)] px-8 py-4 rounded-full font-semibold hover:bg-white/20 transition-all"
+              className="glass-effect text-foreground px-8 py-4 rounded-full font-semibold hover:bg-glass-bg transition-all"
             >
               <Plus className="w-5 h-5 mr-2" />
               Больше советов

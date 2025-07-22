@@ -72,12 +72,12 @@ export default function AboutSection() {
               <ScrollReveal key={index} delay={0.3 + index * 0.1}>
                 <GlassCard className="p-8 glass-hover">
                   <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center mr-4">
-                      <feature.icon className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-4">
+                      <feature.icon className="w-6 h-6 text-primary-foreground" />
                     </div>
-                    <h3 className="text-2xl font-semibold text-[hsl(213,27%,19%)]">{feature.title}</h3>
+                    <h3 className="text-2xl font-semibold text-foreground">{feature.title}</h3>
                   </div>
-                  <p className="text-[hsl(213,27%,19%)]/70 leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </GlassCard>
@@ -88,8 +88,8 @@ export default function AboutSection() {
       </div>
 
       {/* Floating Background Elements */}
-      <div className="absolute top-20 right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)]/10 to-[hsl(340,100%,69%)]/10 animate-float"></div>
-      <div className="absolute bottom-20 left-10 w-24 h-24 rounded-full bg-gradient-to-br from-[hsl(74,64%,59%)]/10 to-[hsl(252,100%,71%)]/10 animate-float" style={{ animationDelay: '3s' }}></div>
+      <div className="absolute top-20 right-10 w-32 h-32 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 animate-float"></div>
+      <div className="absolute bottom-20 left-10 w-24 h-24 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 animate-float" style={{ animationDelay: '3s' }}></div>
     </section>
   );
 }

@@ -3,58 +3,64 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(213, 27%, 19%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(213, 27%, 19%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(213, 27%, 19%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(252, 85%, 65%);
+  /* Светлая тема - мягкие, естественные тона */
+  --background: hsl(45, 20%, 98%); /* Молочно-белый с теплым оттенком */
+  --foreground: hsl(340, 15%, 25%); /* Мягкий темно-розоватый вместо черного */
+  --muted: hsl(45, 15%, 94%); /* Светло-кремовый */
+  --muted-foreground: hsl(340, 10%, 45%); /* Приглушенный розово-серый */
+  --popover: hsl(45, 25%, 97%);
+  --popover-foreground: hsl(340, 15%, 30%);
+  --card: hsl(0, 0%, 100%, 0.8); /* Полупрозрачный белый */
+  --card-foreground: hsl(340, 15%, 25%);
+  --border: hsl(340, 20%, 88%); /* Мягкий розово-серый */
+  --input: hsl(45, 15%, 92%);
+  --primary: hsl(320, 60%, 65%); /* Элегантный розовый */
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(340, 85%, 60%);
+  --secondary: hsl(260, 50%, 70%); /* Мягкий фиолетовый */
   --secondary-foreground: hsl(0, 0%, 100%);
-  --accent: hsl(74, 64%, 59%);
-  --accent-foreground: hsl(213, 27%, 19%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(213, 27%, 19%);
-  --radius: 0.5rem;
-  --glass-bg: hsl(0, 0%, 100%, 0.1);
-  --glass-border: hsl(0, 0%, 100%, 0.2);
-  --slate: hsl(213, 27%, 19%);
-  --gradient-primary: linear-gradient(135deg, hsl(252, 100%, 71%) 0%, hsl(252, 85%, 65%) 100%);
-  --gradient-secondary: linear-gradient(135deg, hsl(340, 100%, 69%) 0%, hsl(340, 85%, 60%) 100%);
+  --accent: hsl(80, 40%, 65%); /* Приглушенный зеленый */
+  --accent-foreground: hsl(340, 15%, 25%);
+  --destructive: hsl(0, 70%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(320, 60%, 65%);
+  --radius: 1rem;
+  /* Стеклянный эффект для светлой темы */
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: rgba(200, 180, 200, 0.15);
+  --slate: hsl(340, 15%, 25%);
+  --gradient-primary: linear-gradient(135deg, hsl(320, 60%, 65%) 0%, hsl(260, 50%, 70%) 100%);
+  --gradient-secondary: linear-gradient(135deg, hsl(260, 50%, 70%) 0%, hsl(80, 40%, 65%) 100%);
 }
 
 .dark {
-  --background: hsl(240, 10%, 3.9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(252, 85%, 65%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(340, 85%, 60%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --accent: hsl(74, 64%, 59%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --glass-bg: hsl(0, 0%, 10%, 0.8);
-  --glass-border: hsl(0, 0%, 100%, 0.1);
-  --slate: hsl(0, 0%, 98%);
-  --gradient-primary: linear-gradient(135deg, hsl(252, 70%, 55%) 0%, hsl(252, 65%, 50%) 100%);
-  --gradient-secondary: linear-gradient(135deg, hsl(340, 75%, 55%) 0%, hsl(340, 70%, 50%) 100%);
+  /* Темная тема - глубокие, насыщенные тона */
+  --background: hsl(260, 15%, 8%); /* Глубокий темно-фиолетовый */
+  --foreground: hsl(45, 25%, 92%); /* Мягкий кремовый белый */
+  --muted: hsl(260, 10%, 15%); /* Приглушенный темно-фиолетовый */
+  --muted-foreground: hsl(45, 15%, 70%); /* Теплый светло-серый */
+  --popover: hsl(260, 15%, 12%);
+  --popover-foreground: hsl(45, 25%, 90%);
+  --card: hsl(260, 20%, 10%, 0.8); /* Полупрозрачный темный */
+  --card-foreground: hsl(45, 25%, 88%);
+  --border: hsl(260, 15%, 20%); /* Мягкий темно-фиолетовый */
+  --input: hsl(260, 10%, 18%);
+  --primary: hsl(320, 70%, 75%); /* Яркий розовый */
+  --primary-foreground: hsl(260, 15%, 8%);
+  --secondary: hsl(260, 60%, 80%); /* Светло-фиолетовый */
+  --secondary-foreground: hsl(260, 15%, 8%);
+  --accent: hsl(80, 50%, 75%); /* Яркий зеленый */
+  --accent-foreground: hsl(260, 15%, 8%);
+  --destructive: hsl(0, 80%, 70%);
+  --destructive-foreground: hsl(260, 15%, 8%);
+  --ring: hsl(320, 70%, 75%);
+  /* Стеклянный эффект для темной темы */
+  --glass-bg: rgba(60, 40, 80, 0.3);
+  --glass-border: rgba(180, 120, 200, 0.2);
+  --glass-shadow: rgba(120, 80, 140, 0.25);
+  --slate: hsl(45, 25%, 88%);
+  --gradient-primary: linear-gradient(135deg, hsl(320, 70%, 75%) 0%, hsl(260, 60%, 80%) 100%);
+  --gradient-secondary: linear-gradient(135deg, hsl(260, 60%, 80%) 0%, hsl(80, 50%, 75%) 100%);
 }
 
 @layer base {
@@ -74,7 +80,7 @@
     -webkit-backdrop-filter: blur(20px);
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    box-shadow: 0 8px 32px var(--glass-shadow);
   }
 
   .glass-hover {
@@ -86,16 +92,16 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    background: linear-gradient(135deg, var(--glass-border), transparent);
     border-radius: inherit;
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
   .glass-hover:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 25px 50px rgba(107, 115, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 20px 40px var(--glass-shadow), 0 0 0 1px var(--glass-border);
   }
 
   .glass-hover:hover::before {
@@ -137,7 +143,7 @@
     left: 50%;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, hsl(252, 100%, 71%), hsl(340, 100%, 69%));
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
     transition: all 0.3s ease;
     transform: translateX(-50%);
   }
@@ -147,7 +153,7 @@
   }
 
   .nav-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--glass-bg);
     transform: translateY(-1px);
   }
 
@@ -167,7 +173,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, hsl(252, 100%, 71%) 0%, hsl(340, 100%, 69%) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

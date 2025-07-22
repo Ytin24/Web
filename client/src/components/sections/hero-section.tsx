@@ -59,16 +59,16 @@ export default function HeroSection() {
       <div className="relative z-10 text-center px-8 max-w-4xl mx-auto">
         <ScrollReveal delay={0.2}>
           <div className="glass-effect rounded-3xl p-12">
-            <h1 className="text-5xl md:text-7xl font-bold text-white dark:text-gray-100 mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
               {heroSection?.title?.split(' ').map((word, index) => 
                 word === 'магию' ? (
-                  <span key={index} className="bg-gradient-to-r from-[hsl(340,100%,69%)] to-[hsl(252,100%,71%)] bg-clip-text text-transparent">
+                  <span key={index} className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
                     магию{' '}
                   </span>
                 ) : word + ' '
               )}
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 dark:text-gray-200/90 mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
               {heroSection?.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -84,7 +84,7 @@ export default function HeroSection() {
                 onClick={scrollToPortfolio}
                 variant="outline"
                 size="xl"
-                className="bg-white/10 border-white/30 text-white px-10 py-4 text-lg font-bold hover:bg-white/20 backdrop-blur-sm shadow-lg hover:shadow-xl group"
+                className="border-border/30 text-foreground px-10 py-4 text-lg font-bold hover:bg-glass-bg backdrop-blur-sm shadow-lg hover:shadow-xl group"
               >
                 <Play className="w-5 h-5 mr-3 transition-transform group-hover:scale-110 group-hover:translate-x-1" />
                 <span>Смотреть работы</span>
@@ -97,7 +97,7 @@ export default function HeroSection() {
       {/* Enhanced Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
         <div className="glass-effect rounded-full p-4 cursor-pointer group hover:scale-110 transition-all duration-300 pulse-glow" onClick={() => scrollToSection('about')}>
-          <ChevronDown className="w-6 h-6 text-white group-hover:text-primary transition-colors" />
+          <ChevronDown className="w-6 h-6 text-foreground group-hover:text-primary transition-colors" />
         </div>
       </div>
     </section>
