@@ -14,6 +14,7 @@ import SectionsManagement from "@/components/admin/sections-management";
 import CallbackRequests from "@/components/admin/callback-requests";
 import LoyaltyProgramManagement from "@/components/admin/loyalty-management";
 import TokenManagement from "@/components/admin/token-management";
+import ApiDocumentation from "@/components/admin/api-documentation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Section, BlogPost, PortfolioItem, CallbackRequest, LoyaltyProgram } from "@shared/schema";
 
@@ -329,11 +330,19 @@ export default function Admin() {
             </TabsContent>
             
             <TabsContent value="tokens" className="mt-0">
-              <Card className="glass-effect border-border/50">
-                <CardContent className="p-6">
-                  <TokenManagement />
-                </CardContent>
-              </Card>
+              <div className="space-y-6">
+                <Card className="glass-effect border-border/50">
+                  <CardContent className="p-6">
+                    <TokenManagement />
+                  </CardContent>
+                </Card>
+                
+                <Card className="glass-effect border-border/50">
+                  <CardContent className="p-6">
+                    <ApiDocumentation />
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </div>
         </Tabs>
