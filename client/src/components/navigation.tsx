@@ -33,7 +33,7 @@ export default function Navigation() {
   const navigationLinks = [
     { id: "about", label: "О нас", type: "section" },
     { id: "services", label: "Услуги", type: "page", href: "/services" },
-    { id: "flower-ai", label: "AI Флорист", type: "page", href: "/flower-ai" },
+
     { id: "blog", label: "Советы", type: "page", href: "/all-blog" },
     { id: "portfolio", label: "Портфолио", type: "page", href: "/portfolio" },
     { id: "loyalty", label: "Лояльность", type: "section" },

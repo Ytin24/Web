@@ -127,13 +127,22 @@ The application is designed for easy deployment on platforms like Replit while m
 - Added beautiful pink-to-purple gradient design theme for chatbot interface
 - Configured fallback responses when API is unavailable
 - Added sentiment analysis for customer feedback monitoring
-- Created dedicated /flower-ai page with advanced recommendation system
-- Updated navigation to include AI Florist section
+- Enhanced Flora chatbot with built-in flower recommendation system and quick command buttons
+- Removed separate /flower-ai page and integrated all AI florist functionality into Flora chat
+- Updated navigation by removing redundant AI Florist link
 - Added proper error handling and JSON parsing for API responses
 - Added Markdown support for beautifully formatted chat responses (react-markdown + remark-gfm)
-- Implemented informational tooltip with auto-show/hide functionality for AI assistant discovery
+- Added quick suggestion buttons for common flower requests (букет для мамы, романтический, свадебный)
 
 ## Recent Changes
+
+### Admin Panel Improvement - Products Management (2025-01-22)
+- Replaced redundant "Секции" management with comprehensive "Управление товарами" (Products Management)
+- Added complete product catalog with categories, search, and filtering functionality
+- Integrated product statistics dashboard (total products, active products, average price)
+- Created CRUD operations for product management with form validation
+- Added product categories: букеты, растения, композиции, свадебные, траурные, корпоративные
+- Enhanced admin interface organization and usability
 
 ### Complete UI Redesign - Natural Floral Aesthetics (2025-01-22)
 - Migrated from Apple-style design to harmonious, natural floral aesthetics

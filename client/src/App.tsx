@@ -14,7 +14,7 @@ import AllBlog from "@/pages/all-blog";
 import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
 import Services from "@/pages/services";
-import FlowerAI from "@/pages/flower-ai";
+
 import ChatButton from "@/components/chatbot/chat-button";
 
 function Router() {
@@ -28,7 +28,7 @@ function Router() {
       <Route path="/blog" component={AllBlog} />
       <Route path="/all-blog" component={AllBlog} />
       <Route path="/services" component={Services} />
-      <Route path="/flower-ai" component={FlowerAI} />
+
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
       <Route component={NotFound} />
