@@ -120,6 +120,19 @@ The application is designed for easy deployment on platforms like Replit while m
 
 ## Recent Changes
 
+### AI-Powered Chatbot "Флора" Implementation (2025-01-22)
+- Integrated DeepSeek API for intelligent flower recommendations and consultations
+- Created personalized chatbot character "Флора" with clear boundaries and professional guidelines
+- Implemented smart conversation flow: consultation → recommendation → order direction
+- Added beautiful pink-to-purple gradient design theme for chatbot interface
+- Configured fallback responses when API is unavailable
+- Added sentiment analysis for customer feedback monitoring
+- Created dedicated /flower-ai page with advanced recommendation system
+- Updated navigation to include AI Florist section
+- Added proper error handling and JSON parsing for API responses
+
+## Recent Changes
+
 ### Enhanced Modal System and Navigation (2025-01-22)
 - Added individual blog post pages with SEO-friendly URLs (/blog/:id) for shareable links
 - Replaced blog post modal with navigation to dedicated blog pages with proper meta tags

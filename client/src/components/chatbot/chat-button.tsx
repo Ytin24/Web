@@ -11,12 +11,18 @@ export default function ChatButton() {
       {/* Floating Chat Button */}
       <Button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-4 left-4 w-14 h-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:scale-110 shadow-xl transition-all duration-300 z-50 ${isOpen ? 'hidden' : 'flex'}`}
+        className={`fixed bottom-4 left-4 w-16 h-16 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 hover:scale-110 hover:from-pink-500 hover:to-purple-600 shadow-xl transition-all duration-300 z-50 ${isOpen ? 'hidden' : 'flex'} flex-col items-center justify-center pulse-glow`}
         size="sm"
+        title="Чат с Флорой"
       >
-        <div className="relative">
-          <MessageCircle className="w-6 h-6 text-white" />
-          <Sparkles className="w-3 h-3 text-white absolute -top-1 -right-1 animate-pulse" />
+        <div className="relative flex flex-col items-center">
+          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 backdrop-blur-sm">
+            <span className="text-white font-bold text-sm">Ф</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <MessageCircle className="w-3 h-3 text-white/90" />
+            <Sparkles className="w-2 h-2 text-white/90 animate-pulse" />
+          </div>
         </div>
       </Button>
 

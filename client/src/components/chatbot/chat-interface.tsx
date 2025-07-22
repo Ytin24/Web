@@ -33,7 +33,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: 'Привет! Я ваш личный консультант по цветам. Расскажите мне о случае, для которого нужны цветы, и я помогу подобрать идеальный букет! 🌺',
+      content: 'Привет! Меня зовут Флора 🌸 Я помогаю подобрать идеальный букет для любого повода!\n\nРасскажите:\n• Для кого букет?\n• Какой повод?\n• Есть ли предпочтения по цветам?\n\nЯ подберу несколько вариантов, а потом помогу оформить заказ!',
       timestamp: new Date(),
     }
   ]);
@@ -130,11 +130,11 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   };
 
   const quickSuggestions = [
-    'Нужен букет на день рождения',
-    'Свадебный букет для невесты',
+    'Букет маме на день рождения',
+    'Романтические цветы девушке',  
     'Цветы для извинения',
-    'Композиция для офиса',
-    'Букет на 8 марта'
+    'Букет коллеге на праздник',
+    'Композиция для дома'
   ];
 
   if (!isOpen) return null;
@@ -145,16 +145,16 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
       <CardHeader className="flex-row items-center justify-between py-3 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Avatar className="w-8 h-8 bg-gradient-to-r from-primary to-secondary">
-              <AvatarFallback>
-                <Bot className="w-4 h-4 text-white" />
+            <Avatar className="w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-400">
+              <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold">
+                Ф
               </AvatarFallback>
             </Avatar>
             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-background"></div>
           </div>
           <div>
-            <CardTitle className="text-sm font-semibold">Флорист AI</CardTitle>
-            <p className="text-xs text-muted-foreground">Онлайн</p>
+            <CardTitle className="text-sm font-semibold">Флора</CardTitle>
+            <p className="text-xs text-muted-foreground bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">Консультант по цветам</p>
           </div>
           <Sparkles className="w-4 h-4 text-primary ml-1" />
         </div>
@@ -194,12 +194,12 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                     key={index}
                     className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
                   >
-                    <Avatar className={`w-8 h-8 ${message.role === 'user' ? 'bg-secondary' : 'bg-gradient-to-r from-primary to-secondary'}`}>
-                      <AvatarFallback>
+                    <Avatar className={`w-8 h-8 ${message.role === 'user' ? 'bg-secondary' : 'bg-gradient-to-r from-pink-400 to-purple-400'}`}>
+                      <AvatarFallback className={message.role === 'user' ? 'bg-secondary text-white' : 'bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold'}>
                         {message.role === 'user' ? (
                           <User className="w-4 h-4 text-white" />
                         ) : (
-                          <Bot className="w-4 h-4 text-white" />
+                          'Ф'
                         )}
                       </AvatarFallback>
                     </Avatar>
@@ -237,15 +237,15 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                 
                 {chatMutation.isPending && (
                   <div className="flex gap-3">
-                    <Avatar className="w-8 h-8 bg-gradient-to-r from-primary to-secondary">
-                      <AvatarFallback>
-                        <Bot className="w-4 h-4 text-white" />
+                    <Avatar className="w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-400">
+                      <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold">
+                        Ф
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-2">
                       <div className="flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-sm text-muted-foreground">Печатает...</span>
+                        <Loader2 className="w-4 h-4 animate-spin text-pink-500" />
+                        <span className="text-sm text-muted-foreground">Флора подбирает букет...</span>
                       </div>
                     </div>
                   </div>
@@ -289,7 +289,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Расскажите о ваших потребностях в цветах..."
+                placeholder="Расскажите Флоре о букете, который нужен..."
                 disabled={chatMutation.isPending}
                 className="flex-1"
               />
