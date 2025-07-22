@@ -7,11 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   Home, BookOpen, Image, Star, Phone, Plus, Edit, Trash2, 
-  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock, Code, Flower, LogOut, Loader2
+  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock, Code, Flower, LogOut, Loader2, Package
 } from "lucide-react";
 import BlogManagement from "@/components/admin/blog-management";
 import PortfolioManagement from "@/components/admin/portfolio-management";
-import SectionsManagement from "@/components/admin/sections-management";
+import ProductsManagement from "@/components/admin/products-management";
 import CallbackRequests from "@/components/admin/callback-requests";
 import LoyaltyProgramManagement from "@/components/admin/loyalty-management";
 import TokenManagement from "@/components/admin/token-management";
@@ -315,12 +315,12 @@ export default function Admin() {
             </Button>
             
             <Button 
-              onClick={() => setActiveTab("sections")}
+              onClick={() => setActiveTab("products")}
               className="h-20 flex-col gap-2 glass-hover"
               variant="outline"
             >
-              <Code className="w-6 h-6" />
-              <span className="text-sm">Секции</span>
+              <Package className="w-6 h-6" />
+              <span className="text-sm">Товары</span>
             </Button>
           </div>
         </CardContent>
@@ -336,7 +336,7 @@ export default function Admin() {
     { id: "customers", label: "Клиенты", icon: Users },
     { id: "crm", label: "CRM", icon: TrendingUp },
     { id: "loyalty", label: "Лояльность", icon: Star },
-    { id: "sections", label: "Секции", icon: Code },
+    { id: "products", label: "Товары", icon: Package },
     { id: "tokens", label: "API", icon: Code },
   ];
 
@@ -439,10 +439,10 @@ export default function Admin() {
               </Card>
             </TabsContent>
             
-            <TabsContent value="sections" className="mt-0">
+            <TabsContent value="products" className="mt-0">
               <Card className="glass-effect border-border/50">
                 <CardContent className="p-6">
-                  <SectionsManagement />
+                  <ProductsManagement />
                 </CardContent>
               </Card>
             </TabsContent>
