@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import ScrollReveal from "@/components/animations/scroll-reveal";
+import { AppleCard, AppleText, AppleButton } from "@/components/animations/apple-interactions";
 import FlowerRecommendation from "@/components/chatbot/flower-recommendation";
 import { useLocation } from "wouter";
 
@@ -27,25 +28,27 @@ export default function FlowerAI() {
               </Button>
             </div>
             
-            <ScrollReveal delay={0.1}>
-              <div className="text-center mb-12">
+            <div className="text-center mb-12">
+              <AppleText>
                 <h1 className="text-5xl md:text-7xl font-bold text-[hsl(213,27%,19%)] mb-6">
                   AI Флорист
                 </h1>
+              </AppleText>
+              <AppleText className="delay-100">
                 <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
                   Персональные рекомендации букетов на основе искусственного интеллекта
                 </p>
-              </div>
-            </ScrollReveal>
+              </AppleText>
+            </div>
           </div>
         </section>
 
         {/* Flower Recommendation Component */}
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-8">
-            <ScrollReveal delay={0.2}>
+            <AppleCard>
               <FlowerRecommendation />
-            </ScrollReveal>
+            </AppleCard>
           </div>
         </section>
       </main>

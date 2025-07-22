@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Star, Gift, Calendar, Users, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/animations/scroll-reveal";
+import { AppleCard, AppleText, AppleButton } from "@/components/animations/apple-interactions";
 import GlassCard from "@/components/ui/glass-card";
 import LoyaltyModal from "@/components/loyalty-modal";
 import type { LoyaltyProgram } from "@shared/schema";
@@ -44,14 +45,16 @@ export default function LoyaltySection() {
   return (
     <section id="loyalty" className="py-32 bg-gradient-to-br from-muted to-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
-        <ScrollReveal delay={0.1}>
-          <div className="text-center mb-20">
+        <div className="text-center mb-20">
+          <AppleText>
             <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Программа лояльности</h2>
+          </AppleText>
+          <AppleText className="delay-100">
             <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Становитесь частью нашей цветочной семьи и получайте особые привилегии
             </p>
-          </div>
-        </ScrollReveal>
+          </AppleText>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           {loyaltyLevels?.map((level, index) => {
@@ -59,8 +62,8 @@ export default function LoyaltySection() {
             const isHighlighted = level.level === 'connoisseur';
             
             return (
-              <ScrollReveal key={level.id} delay={0.2 + index * 0.1}>
-                <GlassCard className={`p-8 text-center glass-hover ${isHighlighted ? 'border-2 border-primary/30' : ''}`}>
+              <AppleCard key={level.id}>
+                <GlassCard className={`p-8 text-center glass-hover transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] ${isHighlighted ? 'border-2 border-primary/30' : ''}`}>
                   <div className={`w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br ${getGradient(level.level)} flex items-center justify-center`}>
                     <Icon className="w-8 h-8 text-primary-foreground" />
                   </div>
@@ -87,14 +90,14 @@ export default function LoyaltySection() {
                     {level.minAmount} - {level.maxAmount ? `${level.maxAmount}₽` : 'Безлимит'}
                   </div>
                 </GlassCard>
-              </ScrollReveal>
+              </AppleCard>
             );
           })}
         </div>
 
         {/* Additional Features */}
-        <ScrollReveal delay={0.6}>
-          <GlassCard className="p-12">
+        <AppleCard>
+          <GlassCard className="p-12 transition-all duration-500 hover:shadow-2xl hover:scale-[1.01]">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <h3 className="text-3xl font-bold text-foreground mb-6">Дополнительные преимущества</h3>
@@ -138,18 +141,20 @@ export default function LoyaltySection() {
                   className="rounded-2xl shadow-2xl mb-8 w-full h-auto"
                 />
                 
-                <Button 
-                  onClick={() => setIsModalOpen(true)}
-                  size="lg"
-                  className="floating-action px-10 py-4 text-lg font-bold shadow-2xl group"
-                >
-                  <Star className="w-5 h-5 mr-3 transition-transform group-hover:scale-110" />
-                  <span>Присоединиться к программе</span>
-                </Button>
+                <AppleButton>
+                  <Button 
+                    onClick={() => setIsModalOpen(true)}
+                    size="lg"
+                    className="floating-action px-10 py-4 text-lg font-bold shadow-2xl group transition-all duration-500 hover:shadow-3xl hover:scale-105"
+                  >
+                    <Star className="w-5 h-5 mr-3 transition-transform group-hover:scale-110" />
+                    <span>Присоединиться к программе</span>
+                  </Button>
+                </AppleButton>
               </div>
             </div>
           </GlassCard>
-        </ScrollReveal>
+        </AppleCard>
       </div>
 
       {/* Floating Elements */}

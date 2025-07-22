@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import ScrollReveal from "@/components/animations/scroll-reveal";
+import { AppleCard, AppleText, AppleButton, MagneticElement } from "@/components/animations/apple-interactions";
 import GlassCard from "@/components/ui/glass-card";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -64,20 +65,24 @@ export default function ContactSection() {
   return (
     <section id="contact" className="py-32 bg-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
-        <ScrollReveal delay={0.1}>
-          <div className="text-center mb-20">
+        <div className="text-center mb-20">
+          <AppleText>
             <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Свяжитесь с нами</h2>
+          </AppleText>
+          <AppleText className="delay-100">
             <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Оставьте заявку, и наш флорист свяжется с вами в течение 15 минут
             </p>
-          </div>
-        </ScrollReveal>
+          </AppleText>
+        </div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Contact Form */}
-          <ScrollReveal delay={0.2}>
-            <GlassCard className="p-8">
-              <h3 className="text-2xl font-bold text-foreground mb-6">Заказать обратный звонок</h3>
+          <AppleCard>
+            <GlassCard className="p-8 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
+              <AppleText>
+                <h3 className="text-2xl font-bold text-foreground mb-6">Заказать обратный звонок</h3>
+              </AppleText>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <FormField
@@ -209,7 +214,7 @@ export default function ContactSection() {
                 </form>
               </Form>
             </GlassCard>
-          </ScrollReveal>
+          </AppleCard>
 
           {/* Contact Info */}
           <div className="space-y-8">
@@ -233,8 +238,8 @@ export default function ContactSection() {
                 gradient: "from-accent to-primary"
               }
             ].map((item, index) => (
-              <ScrollReveal key={index} delay={0.3 + index * 0.1}>
-                <GlassCard className="p-6 glass-hover">
+              <AppleCard key={index}>
+                <GlassCard className="p-6 glass-hover transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
                   <div className="flex items-center mb-4">
                     <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.gradient} flex items-center justify-center mr-4`}>
                       <item.icon className="w-6 h-6 text-primary-foreground" />
@@ -245,13 +250,15 @@ export default function ContactSection() {
                     </div>
                   </div>
                 </GlassCard>
-              </ScrollReveal>
+              </AppleCard>
             ))}
             
             {/* Social Media */}
-            <ScrollReveal delay={0.6}>
-              <GlassCard className="p-6">
-                <h4 className="font-semibold text-foreground text-lg mb-4">Мы в социальных сетях</h4>
+            <AppleCard>
+              <GlassCard className="p-6 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
+                <AppleText>
+                  <h4 className="font-semibold text-foreground text-lg mb-4">Мы в социальных сетях</h4>
+                </AppleText>
                 <div className="flex space-x-4">
                   {[
                     { icon: Instagram, href: "#" },
@@ -268,11 +275,11 @@ export default function ContactSection() {
                   ))}
                 </div>
               </GlassCard>
-            </ScrollReveal>
+            </AppleCard>
             
             {/* Quick Stats */}
-            <ScrollReveal delay={0.7}>
-              <GlassCard className="p-6">
+            <AppleCard>
+              <GlassCard className="p-6 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
                 <h4 className="font-semibold text-foreground text-lg mb-4">Наши достижения</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
@@ -293,7 +300,7 @@ export default function ContactSection() {
                   </div>
                 </div>
               </GlassCard>
-            </ScrollReveal>
+            </AppleCard>
           </div>
         </div>
       </div>

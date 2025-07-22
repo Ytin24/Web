@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import ScrollReveal from "@/components/animations/scroll-reveal";
+import { AppleCard, AppleText, AppleButton } from "@/components/animations/apple-interactions";
 import ImageModal from "@/components/image-modal";
 import type { BlogPost } from "@shared/schema";
 
@@ -88,18 +89,19 @@ export default function AllBlog() {
               </Button>
             </div>
             
-            <ScrollReveal delay={0.1}>
-              <div className="text-center mb-12">
+            <div className="text-center mb-12">
+              <AppleText>
                 <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6">Все советы по уходу</h1>
+              </AppleText>
+              <AppleText className="delay-100">
                 <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                   Полная коллекция полезных советов от наших флористов для долгой жизни ваших цветов
                 </p>
-              </div>
-            </ScrollReveal>
+              </AppleText>
+            </div>
 
             {/* Search and Filter Section */}
-            <ScrollReveal delay={0.2}>
-              <div className="space-y-6 mb-12">
+            <div className="space-y-6 mb-12">
                 {/* Search Bar */}
                 <div className="max-w-md mx-auto">
                   <div className="relative">
@@ -143,7 +145,6 @@ export default function AllBlog() {
                   </p>
                 </div>
               </div>
-            </ScrollReveal>
           </div>
         </section>
 
@@ -152,8 +153,8 @@ export default function AllBlog() {
           <div className="max-w-7xl mx-auto px-8">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {paginatedPosts.map((post, index) => (
-                <ScrollReveal key={post.id} delay={0.1 + (index % 6) * 0.1}>
-                  <article className="bg-card/80 backdrop-blur-sm border border-border shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl hover:bg-card/90 transition-all duration-300 glass-hover">
+                <AppleCard key={post.id}>
+                  <article className="bg-card/80 backdrop-blur-sm border border-border shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl hover:bg-card/90 transition-all duration-500 glass-hover hover:scale-[1.02]">
                     <div className="relative group">
                       <img 
                         src={post.imageUrl || '/api/images/blog-care-1.svg'} 
@@ -206,7 +207,7 @@ export default function AllBlog() {
                       </button>
                     </div>
                   </article>
-                </ScrollReveal>
+                </AppleCard>
               ))}
             </div>
 

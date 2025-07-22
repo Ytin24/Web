@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import ScrollReveal from "@/components/animations/scroll-reveal";
+import { AppleCard, AppleText, AppleButton } from "@/components/animations/apple-interactions";
 import ImageModal from "@/components/image-modal";
 import type { PortfolioItem } from "@shared/schema";
 import { useLocation } from "wouter";
@@ -55,18 +56,19 @@ export default function Portfolio() {
               </Button>
             </div>
             
-            <ScrollReveal delay={0.1}>
-              <div className="text-center mb-12">
+            <div className="text-center mb-12">
+              <AppleText>
                 <h1 className="text-5xl md:text-7xl font-bold text-[hsl(213,27%,19%)] mb-6">Все наши работы</h1>
+              </AppleText>
+              <AppleText className="delay-100">
                 <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
                   Полная галерея наших творений для разных событий и настроений
                 </p>
-              </div>
-            </ScrollReveal>
+              </AppleText>
+            </div>
 
             {/* Portfolio Filter */}
-            <ScrollReveal delay={0.2}>
-              <div className="flex flex-wrap justify-center gap-4 mb-12">
+            <div className="flex flex-wrap justify-center gap-4 mb-12">
                 {categories.map((category) => (
                   <Button
                     key={category.key}
@@ -82,7 +84,6 @@ export default function Portfolio() {
                   </Button>
                 ))}
               </div>
-            </ScrollReveal>
           </div>
         </section>
 
@@ -91,7 +92,7 @@ export default function Portfolio() {
           <div className="max-w-7xl mx-auto px-8">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredItems.map((item, index) => (
-                <ScrollReveal key={item.id} delay={0.1 + (index % 8) * 0.1}>
+                <AppleCard key={item.id}>
                   <div className="group">
                     <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-border/50 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
                       <img 
@@ -117,7 +118,7 @@ export default function Portfolio() {
                       </div>
                     </div>
                   </div>
-                </ScrollReveal>
+                </AppleCard>
               ))}
             </div>
 
