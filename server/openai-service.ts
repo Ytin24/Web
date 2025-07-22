@@ -74,10 +74,32 @@ export class FlowerChatbotService {
       }
 
       const data = await response.json();
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        console.error("Invalid DeepSeek API response:", data);
+        return "Извините, произошла ошибка при получении ответа. Попробуйте еще раз.";
+      }
+      
       return data.choices[0].message.content || "Извините, произошла ошибка. Попробуйте еще раз.";
     } catch (error) {
       console.error("DeepSeek API error:", error);
-      throw new Error("Не удалось получить ответ от AI. Проверьте настройки API.");
+      
+      // Fallback response for when API is not available
+      return `Привет! К сожалению, AI-помощник временно недоступен, но я могу предложить несколько популярных вариантов букетов:
+
+🌹 **Классический букет роз** (от 2500 руб)
+- Красные или розовые розы
+- Идеально для романтических поводов
+
+🌻 **Солнечная композиция** (от 2000 руб)
+- Подсолнухи, герберы, хризантемы
+- Отлично поднимает настроение
+
+💐 **Смешанный букет** (от 1800 руб)
+- Сезонные цветы разных видов
+- Универсальный вариант для любого повода
+
+Для персональной консультации свяжитесь с нами по телефону или через форму обратной связи!`;
     }
   }
 
@@ -174,7 +196,23 @@ ${colors ? `Предпочитаемые цвета: ${colors.join(', ')}` : ''}
       }
 
       const data = await response.json();
-      const result = JSON.parse(data.choices[0].message.content || '{"rating": 3, "confidence": 0.5}');
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        return { rating: 3, confidence: 0.5 };
+      }
+      
+      let content = data.choices[0].message.content || '{"rating": 3, "confidence": 0.5}';
+      
+      // Clean up the content if it contains markdown code blocks
+      content = content.replace(/```json\s*/, '').replace(/```\s*$/, '').trim();
+      
+      let result;
+      try {
+        result = JSON.parse(content);
+      } catch (parseError) {
+        console.warn('Failed to parse sentiment JSON:', content);
+        return { rating: 3, confidence: 0.5 };
+      }
 
       return {
         rating: Math.max(1, Math.min(5, Math.round(result.rating || 3))),

@@ -140,7 +140,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   if (!isOpen) return null;
 
   return (
-    <Card className={`fixed bottom-4 right-4 w-96 max-w-[calc(100vw-2rem)] h-[32rem] flex flex-col shadow-2xl border-2 border-primary/20 bg-background/95 backdrop-blur-sm z-50 ${className}`}>
+    <Card className={`fixed bottom-4 right-4 w-96 max-w-[calc(100vw-2rem)] ${isMinimized ? 'h-auto' : 'h-[32rem]'} flex flex-col shadow-2xl border-2 border-primary/20 bg-background/95 backdrop-blur-sm z-50 transition-all duration-300 ${className}`}>
       {/* Header */}
       <CardHeader className="flex-row items-center justify-between py-3 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
@@ -163,8 +163,12 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setIsMinimized(!isMinimized)}
-            className="w-8 h-8 p-0"
+            onClick={() => {
+              console.log('Minimize button clicked, current state:', isMinimized);
+              setIsMinimized(!isMinimized);
+            }}
+            className="w-8 h-8 p-0 hover:bg-muted"
+            title={isMinimized ? "Развернуть" : "Свернуть"}
           >
             {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
           </Button>

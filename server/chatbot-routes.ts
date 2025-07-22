@@ -78,11 +78,17 @@ router.post('/chat', async (req, res) => {
       .filter(msg => msg.role === 'user')
       .pop()?.content || '';
 
-    // Get chatbot response and sentiment analysis in parallel
-    const [response, sentiment] = await Promise.all([
-      flowerChatbot.getChatResponse(messages),
-      flowerChatbot.analyzeSentiment(lastUserMessage)
-    ]);
+    // Get chatbot response first, then sentiment analysis
+    const response = await flowerChatbot.getChatResponse(messages);
+    
+    // Try to get sentiment analysis, but don't fail if it doesn't work
+    let sentiment;
+    try {
+      sentiment = await flowerChatbot.analyzeSentiment(lastUserMessage);
+    } catch (error) {
+      console.warn('Sentiment analysis failed:', error);
+      sentiment = { rating: 3, confidence: 0.5 }; // Default neutral sentiment
+    }
 
     res.json({ 
       response,
