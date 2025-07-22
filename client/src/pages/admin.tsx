@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   Home, BookOpen, Image, Star, Phone, Plus, Edit, Trash2, 
-  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock
+  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock, Code
 } from "lucide-react";
 import BlogManagement from "@/components/admin/blog-management";
 import PortfolioManagement from "@/components/admin/portfolio-management";
@@ -170,7 +170,7 @@ export default function Admin() {
           <CardTitle>Быстрые действия</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
             <Button 
               onClick={() => setActiveTab("blog")} 
               className="h-20 flex flex-col gap-2"
@@ -203,6 +203,14 @@ export default function Admin() {
               <Edit className="w-6 h-6" />
               Редактировать секции
             </Button>
+            <Button 
+              onClick={() => setActiveTab("api")} 
+              className="h-20 flex flex-col gap-2"
+              variant="outline"
+            >
+              <Code className="w-6 h-6" />
+              API Документация
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -230,7 +238,7 @@ export default function Admin() {
       {/* Main Content */}
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 bg-white border">
+          <TabsList className="grid w-full grid-cols-7 bg-white border">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <Home className="w-4 h-4" />
               Главная
@@ -260,6 +268,10 @@ export default function Admin() {
                 </Badge>
               )}
             </TabsTrigger>
+            <TabsTrigger value="api" className="flex items-center gap-2">
+              <Code className="w-4 h-4" />
+              API
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard">
@@ -284,6 +296,123 @@ export default function Admin() {
 
           <TabsContent value="requests">
             <CallbackRequests />
+          </TabsContent>
+
+          <TabsContent value="api">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Code className="w-5 h-5" />
+                    API Документация
+                  </CardTitle>
+                  <p className="text-gray-600">
+                    Полная OpenAPI документация для интеграции с внешними сервисами
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-3">
+                    <Button 
+                      onClick={() => window.open('/api/docs', '_blank')}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Открыть Swagger UI
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        fetch('/api/docs/json')
+                          .then(res => res.json())
+                          .then(spec => {
+                            const blob = new Blob([JSON.stringify(spec, null, 2)], { type: 'application/json' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'tsvetokraft-api-spec.json';
+                            a.click();
+                            URL.revokeObjectURL(url);
+                          });
+                      }}
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      Скачать JSON
+                    </Button>
+                  </div>
+                  
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-semibold mb-2">Основные эндпоинты:</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="font-mono">GET</Badge>
+                        <span className="font-mono text-blue-600">/api/sections</span>
+                        <span className="text-gray-600">- Получить секции сайта</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="font-mono">GET</Badge>
+                        <span className="font-mono text-blue-600">/api/blog-posts</span>
+                        <span className="text-gray-600">- Получить статьи блога</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="font-mono">GET</Badge>
+                        <span className="font-mono text-blue-600">/api/portfolio-items</span>
+                        <span className="text-gray-600">- Получить работы портфолио</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="font-mono">POST</Badge>
+                        <span className="font-mono text-green-600">/api/callback-requests</span>
+                        <span className="text-gray-600">- Создать заявку на звонок</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="font-mono">GET</Badge>
+                        <span className="font-mono text-blue-600">/api/loyalty-program</span>
+                        <span className="text-gray-600">- Получить уровни лояльности</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                    <h3 className="font-semibold text-yellow-800 mb-2">Аутентификация</h3>
+                    <p className="text-sm text-yellow-700 mb-3">
+                      Для защищенных эндпоинтов требуется JWT токен или API ключ в заголовке Authorization.
+                    </p>
+                    <div className="font-mono text-sm bg-yellow-100 p-2 rounded border">
+                      Authorization: Bearer &lt;your_token&gt;
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                    <h3 className="font-semibold text-green-800 mb-2">Webhook интеграция</h3>
+                    <p className="text-sm text-green-700">
+                      API поддерживает webhooks для интеграции с N8N и другими сервисами автоматизации.
+                      Настройте webhook для получения уведомлений о новых заявках и событиях.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Статистика API</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">15</div>
+                      <div className="text-sm text-blue-600">Всего эндпоинтов</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">7</div>
+                      <div className="text-sm text-green-600">Публичных API</div>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">8</div>
+                      <div className="text-sm text-purple-600">Защищенных API</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
