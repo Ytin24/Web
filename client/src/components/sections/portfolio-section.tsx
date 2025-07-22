@@ -70,7 +70,7 @@ export default function PortfolioSection() {
           {filteredItems.map((item, index) => (
             <ScrollReveal key={item.id} delay={0.3 + index * 0.1}>
               <div className="group">
-                <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl || '', item.title)}>
+                <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 cursor-pointer" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
                   <img 
                     src={item.imageUrl} 
                     alt={item.title} 
