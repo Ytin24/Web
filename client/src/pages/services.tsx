@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import ScrollReveal from "@/components/animations/scroll-reveal";
+import { AppleCard, AppleButton, AppleText, MagneticElement } from "@/components/animations/apple-interactions";
 import { useLocation } from "wouter";
 
 export default function Services() {
@@ -176,14 +177,16 @@ export default function Services() {
               </Button>
             </div>
             
-            <ScrollReveal delay={0.1}>
-              <div className="text-center mb-12">
+            <div className="text-center mb-12">
+              <AppleText>
                 <h1 className="text-5xl md:text-7xl font-bold text-[hsl(213,27%,19%)] mb-6">Наши услуги</h1>
+              </AppleText>
+              <AppleText className="delay-100">
                 <p className="text-xl text-[hsl(213,27%,19%)]/70 max-w-3xl mx-auto leading-relaxed">
                   Профессиональные флористические услуги для любых событий и случаев жизни
                 </p>
-              </div>
-            </ScrollReveal>
+              </AppleText>
+            </div>
           </div>
         </section>
 
@@ -192,7 +195,8 @@ export default function Services() {
           <div className="max-w-7xl mx-auto px-8">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service, index) => (
-                <ScrollReveal key={service.title} delay={0.1 + index * 0.1}>
+                <AppleCard key={service.title} className="delay-100"
+                          style={{ '--delay': `${0.1 + index * 0.1}s` } as any}>
                   <Card className="relative bg-white/80 backdrop-blur-sm border border-border/50 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300 h-full overflow-hidden">
                     {service.popular && (
                       <div className="absolute -top-3 left-4 z-10">
@@ -255,7 +259,7 @@ export default function Services() {
                       </div>
                     </CardContent>
                   </Card>
-                </ScrollReveal>
+                </AppleCard>
               ))}
             </div>
           </div>

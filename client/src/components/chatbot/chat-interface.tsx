@@ -143,7 +143,8 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   if (!isOpen) return null;
 
   return (
-    <Card className={`fixed bottom-4 right-4 w-96 max-w-[calc(100vw-2rem)] ${isMinimized ? 'h-auto' : 'h-[32rem]'} flex flex-col shadow-2xl border-2 border-primary/20 bg-background/95 backdrop-blur-sm z-50 transition-all duration-300 ${className}`}>
+    <Card className={`fixed bottom-4 right-4 w-96 sm:w-[28rem] lg:w-[36rem] xl:w-[42rem] max-w-[calc(100vw-2rem)] ${isMinimized ? 'h-auto' : 'h-[32rem] sm:h-[36rem] lg:h-[42rem]'} flex flex-col shadow-2xl border-2 border-primary/20 bg-background/95 backdrop-blur-sm z-50 transition-all duration-300 ${className}`}
+         style={{ resize: 'both', overflow: 'auto', minWidth: '24rem', minHeight: '24rem', maxWidth: 'calc(100vw - 2rem)', maxHeight: 'calc(100vh - 2rem)' }}>
       {/* Header */}
       <CardHeader className="flex-row items-center justify-between py-3 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
@@ -207,15 +208,15 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                       </AvatarFallback>
                     </Avatar>
                     
-                    <div className={`flex flex-col max-w-[75%] ${message.role === 'user' ? 'items-end' : ''}`}>
+                    <div className={`flex flex-col max-w-[90%] ${message.role === 'user' ? 'items-end' : ''}`}>
                       <div
-                        className={`rounded-2xl px-4 py-2 ${
+                        className={`rounded-2xl px-6 py-4 ${
                           message.role === 'user'
                             ? 'bg-primary text-primary-foreground rounded-br-md'
                             : 'bg-muted text-foreground rounded-bl-md'
                         }`}
                       >
-                        <div className="text-sm leading-relaxed">
+                        <div className="text-base leading-relaxed">
                           {message.role === 'assistant' ? (
                             <ReactMarkdown
                               remarkPlugins={[remarkGfm]}
