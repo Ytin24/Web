@@ -517,17 +517,28 @@ export default function ContentEditor({ post, onSave, onCancel, isLoading }: Con
                   <Label>Ответ Профессора Ботаникуса:</Label>
                   <div className="mt-2 p-4 bg-purple-50 dark:bg-purple-950 rounded-lg border border-purple-200 dark:border-purple-800">
                     <div 
-                      className="max-h-60 overflow-y-auto border border-purple-200 dark:border-purple-700 rounded p-3 scrollable-content"
+                      className="border border-purple-200 dark:border-purple-700 rounded p-3"
+                      style={{
+                        height: '240px',
+                        overflow: 'auto',
+                        overflowY: 'scroll',
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: '#d8b4fe #f3e8ff'
+                      }}
                     >
                       <div 
-                        className="text-sm whitespace-pre-wrap leading-relaxed prose prose-sm max-w-none text-foreground"
+                        className="text-sm whitespace-pre-wrap leading-relaxed"
+                        style={{ 
+                          wordBreak: 'break-word',
+                          overflowWrap: 'break-word'
+                        }}
                         dangerouslySetInnerHTML={{ 
                           __html: aiResponse
                             .replace(/\n/g, '<br>')
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 600;">$1</strong>')
                             .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                            .replace(/##\s+(.*?)(<br>|$)/g, '<h2 class="text-lg font-bold mt-4 mb-2 text-purple-700 dark:text-purple-300">$1</h2>')
-                            .replace(/###\s+(.*?)(<br>|$)/g, '<h3 class="text-md font-semibold mt-3 mb-2 text-purple-600 dark:text-purple-400">$1</h3>')
+                            .replace(/##\s+(.*?)(<br>|$)/g, '<h2 style="font-size: 1.125rem; font-weight: bold; margin-top: 1rem; margin-bottom: 0.5rem; color: #7c3aed;">$1</h2>')
+                            .replace(/###\s+(.*?)(<br>|$)/g, '<h3 style="font-size: 1rem; font-weight: 600; margin-top: 0.75rem; margin-bottom: 0.5rem; color: #8b5cf6;">$1</h3>')
                         }}
                       />
                     </div>
