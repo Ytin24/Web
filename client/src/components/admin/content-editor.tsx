@@ -70,6 +70,32 @@ export default function ContentEditor({ post, onSave, onCancel, isLoading }: Con
     }
   });
 
+  const quickPostMutation = useMutation({
+    mutationFn: () => apiRequest("POST", "/api/blog-posts/quick-generate").then(res => res.json()),
+    onSuccess: (data) => {
+      // Fill the editor with generated content
+      setEditorState({
+        title: data.title || '',
+        excerpt: data.excerpt || '',
+        content: data.content || '',
+        category: data.category || 'care',
+        imageUrl: data.imageUrl || '',
+        isPublished: false, // Always start as draft
+      });
+      toast({ 
+        title: "Быстрый пост создан!", 
+        description: "Профессор Ботаникус подготовил для вас статью" 
+      });
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Ошибка создания поста", 
+        description: error.message || "Попробуйте еще раз",
+        variant: "destructive" 
+      });
+    }
+  });
+
   const categories = [
     { value: 'care', label: 'Уход за цветами' },
     { value: 'seasonal', label: 'Сезонные советы' },
@@ -335,6 +361,35 @@ export default function ContentEditor({ post, onSave, onCancel, isLoading }: Con
                 >
                   <Image className="w-4 h-4" />
                 </Button>
+                
+                <Separator orientation="vertical" className="h-6" />
+                
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAiAssistant(!showAiAssistant)}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
+                >
+                  <Bot className="w-4 h-4 mr-1" />
+                  Профессор Ботаникус
+                </Button>
+                
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => quickPostMutation.mutate()}
+                  disabled={quickPostMutation.isPending}
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0"
+                >
+                  {quickPostMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                  ) : (
+                    <Wand2 className="w-4 h-4 mr-1" />
+                  )}
+                  Быстрый пост
+                </Button>
               </div>
             )}
           </CardHeader>
@@ -368,6 +423,130 @@ export default function ContentEditor({ post, onSave, onCancel, isLoading }: Con
             )}
           </CardContent>
         </Card>
+
+        {/* AI Assistant Panel */}
+        {showAiAssistant && (
+          <Card className="border-purple-200 dark:border-purple-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                <Bot className="w-5 h-5" />
+                Профессор Ботаникус
+                <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                  AI-помощник
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Что нужно сделать?</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setAiPrompt("Улучши заголовок этой статьи")}
+                    className="text-sm"
+                  >
+                    <Lightbulb className="w-3 h-3 mr-1" />
+                    Улучшить заголовок
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setAiPrompt("Добавь введение к статье")}
+                    className="text-sm"
+                  >
+                    <Type className="w-3 h-3 mr-1" />
+                    Написать введение
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setAiPrompt("Создай краткое описание для этой статьи")}
+                    className="text-sm"
+                  >
+                    <AlignLeft className="w-3 h-3 mr-1" />
+                    Краткое описание
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setAiPrompt("Добавь заключение к статье")}
+                    className="text-sm"
+                  >
+                    <AlignCenter className="w-3 h-3 mr-1" />
+                    Добавить заключение
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="ai-prompt">Или задайте свой вопрос:</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="ai-prompt"
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    placeholder="Как улучшить эту статью о цветах?"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && aiPrompt.trim()) {
+                        aiAssistantMutation.mutate(aiPrompt + '\n\nКонтекст статьи:\nЗаголовок: ' + editorState.title + '\nСодержание: ' + editorState.content);
+                      }
+                    }}
+                  />
+                  <Button
+                    onClick={() => {
+                      if (aiPrompt.trim()) {
+                        aiAssistantMutation.mutate(aiPrompt + '\n\nКонтекст статьи:\nЗаголовок: ' + editorState.title + '\nСодержание: ' + editorState.content);
+                      }
+                    }}
+                    disabled={!aiPrompt.trim() || aiAssistantMutation.isPending}
+                    size="sm"
+                    className="bg-purple-600 hover:bg-purple-700"
+                  >
+                    {aiAssistantMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {aiResponse && (
+                <div className="mt-4">
+                  <Label>Ответ Профессора Ботаникуса:</Label>
+                  <div className="mt-2 p-4 bg-purple-50 dark:bg-purple-950 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <ScrollArea className="max-h-40">
+                      <p className="text-sm whitespace-pre-wrap">{aiResponse}</p>
+                    </ScrollArea>
+                    <div className="flex gap-2 mt-3">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          // Insert AI response into content
+                          const textArea = document.getElementById('content-editor') as HTMLTextAreaElement;
+                          if (textArea) {
+                            insertTextAtCursor(textArea, aiResponse);
+                          }
+                        }}
+                      >
+                        Вставить в статью
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setAiResponse('')}
+                      >
+                        Очистить
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Actions */}
         <div className="flex justify-end gap-4">
