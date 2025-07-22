@@ -183,11 +183,24 @@ export default function ContactSection() {
                   
                   <Button 
                     type="submit" 
+                    size="lg"
+                    className="w-full floating-action font-bold py-4 text-lg shadow-xl group" 
                     disabled={createCallbackMutation.isPending}
-                    className="w-full bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white py-4 rounded-xl font-semibold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
                   >
-                    <Phone className="w-5 h-5 mr-2" />
-                    {createCallbackMutation.isPending ? "Отправка..." : "Заказать звонок"}
+                    {createCallbackMutation.isPending ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Отправка...
+                      </>
+                    ) : (
+                      <>
+                        <Phone className="w-5 h-5 mr-3 transition-transform group-hover:scale-110" />
+                        <span>Заказать звонок</span>
+                      </>
+                    )}
                   </Button>
                   
                   <p className="text-center text-sm text-[hsl(213,27%,19%)]/60">

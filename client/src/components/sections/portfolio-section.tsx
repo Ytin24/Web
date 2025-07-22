@@ -70,11 +70,11 @@ export default function PortfolioSection() {
           {filteredItems.map((item, index) => (
             <ScrollReveal key={item.id} delay={0.3 + index * 0.1}>
               <div className="group">
-                <div className="relative overflow-hidden rounded-2xl bg-card/80 backdrop-blur-sm border border-border shadow-xl hover:shadow-2xl hover:bg-card/90 transition-all duration-300 cursor-pointer group" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
+                <div className="relative overflow-hidden rounded-2xl bg-card/80 backdrop-blur-sm border border-border shadow-xl interactive-card glass-hover cursor-pointer group" onClick={() => item.imageUrl && openImageModal(item.imageUrl, item.title)}>
                   <img 
                     src={item.imageUrl || ''} 
                     alt={item.title} 
-                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   
                   {/* Always visible expand button */}

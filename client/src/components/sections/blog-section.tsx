@@ -42,31 +42,20 @@ export default function BlogSection() {
         <div className="grid md:grid-cols-3 gap-8">
           {blogPosts?.slice(0, 3).map((post, index) => (
             <ScrollReveal key={post.id} delay={0.2 + index * 0.1}>
-              <article className="bg-card/80 backdrop-blur-sm border border-border shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl hover:bg-card/90 transition-all duration-300">
-                <div className="relative group">
+              <article className="interactive-card glass-hover bg-card/80 backdrop-blur-sm border border-border shadow-xl rounded-2xl overflow-hidden group">
+                <div className="relative overflow-hidden">
                   <img 
                     src={post.imageUrl || '/api/images/blog-care-1.svg'} 
                     alt={post.title} 
-                    className="w-full h-64 object-cover transition-all duration-300 group-hover:scale-105 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openImageModal(post.imageUrl || '/api/images/blog-care-1.svg', post.title);
-                    }}
+                    className="w-full h-64 object-cover cursor-pointer transition-transform duration-500 group-hover:scale-110" 
+                    onClick={() => openImageModal(post.imageUrl || '', post.title)}
                   />
-                  <div className="absolute top-3 right-3">
-                    <Button 
-                      variant="secondary" 
-                      size="sm"
-                      className="bg-white/90 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openImageModal(post.imageUrl || '/api/images/blog-care-1.svg', post.title);
-                      }}
-                    >
-                      <Maximize2 className="w-4 h-4" />
-                    </Button>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/30 cursor-pointer" onClick={() => openImageModal(post.imageUrl || '', post.title)}>
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 <div className="p-6 bg-white/95 backdrop-blur-sm">
                   <div className="flex items-center mb-3">

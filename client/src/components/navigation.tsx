@@ -24,28 +24,30 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 glass-effect">
+      <nav className="fixed top-0 w-full z-50 glass-effect border-b border-white/10 dark:border-gray-700/30">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center">
-                <Flower className="w-5 h-5 text-white" />
+            <div className="flex items-center space-x-3 group">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] flex items-center justify-center pulse-glow transition-all duration-300 group-hover:scale-110">
+                <Flower className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold text-foreground">Цветокрафт</span>
+              <span className="text-2xl font-bold gradient-text">Цветокрафт</span>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-6">
+            <div className="hidden md:flex items-center space-x-2">
               {navigationLinks.map((link) => (
                 <button
                   key={link.id}
                   onClick={() => scrollToSection(link.id)}
-                  className="text-foreground hover:text-primary transition-colors"
+                  className="nav-item text-foreground hover:text-primary font-medium"
                 >
                   {link.label}
                 </button>
               ))}
-              <ThemeToggle />
+              <div className="ml-4">
+                <ThemeToggle />
+              </div>
             </div>
 
             {/* Mobile Menu Button and Theme Toggle */}

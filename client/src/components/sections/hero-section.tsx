@@ -33,6 +33,13 @@ export default function HeroSection() {
     }
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
       {/* Parallax Background */}
@@ -64,31 +71,33 @@ export default function HeroSection() {
             <p className="text-xl md:text-2xl text-white/90 dark:text-gray-200/90 mb-8 leading-relaxed">
               {heroSection?.description}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Button 
                 onClick={scrollToContact}
-                className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                size="xl"
+                className="floating-action group relative overflow-hidden px-10 py-4 text-lg font-bold shadow-2xl"
               >
-                <Phone className="w-5 h-5 mr-2" />
-                Заказать звонок
+                <Phone className="w-5 h-5 mr-3 transition-transform group-hover:scale-110" />
+                <span className="relative z-10">Заказать звонок</span>
               </Button>
               <Button 
-                variant="outline"
                 onClick={scrollToPortfolio}
-                className="border-white/30 bg-white/10 backdrop-blur-md text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/30 hover:text-white transition-all duration-300"
+                variant="outline"
+                size="xl"
+                className="bg-white/10 border-white/30 text-white px-10 py-4 text-lg font-bold hover:bg-white/20 backdrop-blur-sm shadow-lg hover:shadow-xl group"
               >
-                <Play className="w-5 h-5 mr-2" />
-                Смотреть портфолио
+                <Play className="w-5 h-5 mr-3 transition-transform group-hover:scale-110 group-hover:translate-x-1" />
+                <span>Смотреть работы</span>
               </Button>
             </div>
           </div>
         </ScrollReveal>
       </div>
 
-      {/* Scroll Indicator */}
+      {/* Enhanced Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="glass-effect rounded-full p-4">
-          <ChevronDown className="w-6 h-6 text-white" />
+        <div className="glass-effect rounded-full p-4 cursor-pointer group hover:scale-110 transition-all duration-300 pulse-glow" onClick={() => scrollToSection('about')}>
+          <ChevronDown className="w-6 h-6 text-white group-hover:text-primary transition-colors" />
         </div>
       </div>
     </section>
