@@ -5,11 +5,18 @@ import { z } from "zod";
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
+  email: text("email").unique(),
   password: text("password").notNull(),
-  role: text("role").notNull().default("manager"), // 'super_admin', 'manager'
+  role: text("role").notNull().default("employee"), // 'super_admin', 'admin', 'manager', 'employee'
+  permissions: text("permissions").default("[]"), // JSON array of specific permissions
   isActive: boolean("is_active").default(true),
+  mustChangePassword: boolean("must_change_password").default(false),
+  failedLoginAttempts: integer("failed_login_attempts").default(0),
+  lastFailedLogin: timestamp("last_failed_login"),
+  accountLockedUntil: timestamp("account_locked_until"),
   createdAt: timestamp("created_at").defaultNow(),
   lastLogin: timestamp("last_login"),
+  createdBy: integer("created_by").references(() => users.id),
 });
 
 export const apiTokens = pgTable("api_tokens", {
@@ -19,15 +26,40 @@ export const apiTokens = pgTable("api_tokens", {
   tokenPrefix: varchar("token_prefix", { length: 12 }).notNull(), // First 8 chars for identification (tk_xxxxxxxx)
   name: text("name").notNull(), // Token description
   permissions: text("permissions").notNull(), // JSON array of permissions
-  expiresAt: timestamp("expires_at"),
+  expiresAt: timestamp("expires_at").notNull(), // All tokens must have expiration
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   lastUsed: timestamp("last_used"),
   ipWhitelist: text("ip_whitelist"), // JSON array of allowed IPs (optional)
-  rateLimit: integer("rate_limit").default(1000), // requests per hour
+  rateLimit: integer("rate_limit").default(100), // Reduced default rate limit
   usageCount: integer("usage_count").notNull().default(0),
   revokedAt: timestamp("revoked_at"), // Timestamp when token was revoked
   revokedBy: integer("revoked_by").references(() => users.id), // Who revoked the token
+});
+
+// Security audit log table
+export const securityLogs = pgTable("security_logs", {
+  id: serial("id").primaryKey(),
+  event: text("event").notNull(), // 'login', 'logout', 'failed_login', 'token_created', etc.
+  userId: integer("user_id").references(() => users.id),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  details: text("details"), // JSON string with additional details
+  severity: text("severity").notNull().default("info"), // 'info', 'warning', 'error', 'critical'
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// User sessions table
+export const userSessions = pgTable("user_sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  sessionToken: varchar("session_token", { length: 64 }).notNull().unique(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  expiresAt: timestamp("expires_at").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  lastActivity: timestamp("last_activity").defaultNow(),
 });
 
 export const sections = pgTable("sections", {
@@ -282,3 +314,124 @@ export type Sale = typeof sales.$inferSelect;
 
 export type InsertSetting = z.infer<typeof insertSettingSchema>;
 export type Setting = typeof settings.$inferSelect;
+
+// New security schemas
+export const insertSecurityLogSchema = createInsertSchema(securityLogs).pick({
+  event: true,
+  userId: true,
+  ipAddress: true,
+  userAgent: true,
+  details: true,
+  severity: true,
+});
+
+export const insertUserSessionSchema = createInsertSchema(userSessions).pick({
+  userId: true,
+  sessionToken: true,
+  ipAddress: true,
+  userAgent: true,
+  expiresAt: true,
+  isActive: true,
+});
+
+// Enhanced user schema with security validations
+export const insertUserSchemaSecure = createInsertSchema(users).extend({
+  password: z.string().min(8, "Пароль должен содержать минимум 8 символов")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 
+      "Пароль должен содержать: строчные и заглавные буквы, цифры, специальные символы"),
+  email: z.string().email("Неверный формат email").optional(),
+  username: z.string().min(3, "Имя пользователя должно содержать минимум 3 символа")
+    .regex(/^[a-zA-Z0-9_]+$/, "Имя пользователя может содержать только буквы, цифры и подчеркивания"),
+}).pick({
+  username: true,
+  email: true,
+  password: true,
+  role: true,
+  permissions: true,
+  isActive: true,
+  mustChangePassword: true,
+  createdBy: true,
+});
+
+// Login schema
+export const loginSchema = z.object({
+  username: z.string().min(1, "Имя пользователя обязательно"),
+  password: z.string().min(1, "Пароль обязателен"),
+});
+
+// Change password schema
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Текущий пароль обязателен"),
+  newPassword: z.string().min(8, "Новый пароль должен содержать минимум 8 символов")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 
+      "Пароль должен содержать: строчные и заглавные буквы, цифры, специальные символы"),
+  confirmPassword: z.string(),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Пароли не совпадают",
+  path: ["confirmPassword"],
+});
+
+// New types
+export type SecurityLog = typeof securityLogs.$inferSelect;
+export type InsertSecurityLog = z.infer<typeof insertSecurityLogSchema>;
+export type UserSession = typeof userSessions.$inferSelect;
+export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;
+
+// Permission constants
+export const PERMISSIONS = {
+  BLOG_READ: 'blog:read',
+  BLOG_WRITE: 'blog:write',
+  BLOG_DELETE: 'blog:delete',
+  PORTFOLIO_READ: 'portfolio:read',
+  PORTFOLIO_WRITE: 'portfolio:write',
+  PORTFOLIO_DELETE: 'portfolio:delete',
+  CUSTOMERS_READ: 'customers:read',
+  CUSTOMERS_WRITE: 'customers:write',
+  CUSTOMERS_DELETE: 'customers:delete',
+  CRM_READ: 'crm:read',
+  CRM_WRITE: 'crm:write',
+  USERS_READ: 'users:read',
+  USERS_WRITE: 'users:write',
+  USERS_DELETE: 'users:delete',
+  TOKENS_READ: 'tokens:read',
+  TOKENS_WRITE: 'tokens:write',
+  TOKENS_DELETE: 'tokens:delete',
+  SETTINGS_READ: 'settings:read',
+  SETTINGS_WRITE: 'settings:write',
+  SECURITY_READ: 'security:read',
+} as const;
+
+// Role definitions
+export const ROLES = {
+  SUPER_ADMIN: 'super_admin',
+  ADMIN: 'admin', 
+  MANAGER: 'manager',
+  EMPLOYEE: 'employee'
+} as const;
+
+// Role permissions mapping
+export const ROLE_PERMISSIONS = {
+  [ROLES.SUPER_ADMIN]: Object.values(PERMISSIONS),
+  [ROLES.ADMIN]: [
+    PERMISSIONS.BLOG_READ, PERMISSIONS.BLOG_WRITE, PERMISSIONS.BLOG_DELETE,
+    PERMISSIONS.PORTFOLIO_READ, PERMISSIONS.PORTFOLIO_WRITE, PERMISSIONS.PORTFOLIO_DELETE,
+    PERMISSIONS.CUSTOMERS_READ, PERMISSIONS.CUSTOMERS_WRITE,
+    PERMISSIONS.CRM_READ, PERMISSIONS.CRM_WRITE,
+    PERMISSIONS.USERS_READ, PERMISSIONS.USERS_WRITE,
+    PERMISSIONS.TOKENS_READ, PERMISSIONS.TOKENS_WRITE,
+    PERMISSIONS.SETTINGS_READ, PERMISSIONS.SETTINGS_WRITE,
+  ],
+  [ROLES.MANAGER]: [
+    PERMISSIONS.BLOG_READ, PERMISSIONS.BLOG_WRITE,
+    PERMISSIONS.PORTFOLIO_READ, PERMISSIONS.PORTFOLIO_WRITE,
+    PERMISSIONS.CUSTOMERS_READ, PERMISSIONS.CUSTOMERS_WRITE,
+    PERMISSIONS.CRM_READ, PERMISSIONS.CRM_WRITE,
+    PERMISSIONS.SETTINGS_READ,
+  ],
+  [ROLES.EMPLOYEE]: [
+    PERMISSIONS.BLOG_READ,
+    PERMISSIONS.PORTFOLIO_READ,
+    PERMISSIONS.CUSTOMERS_READ,
+    PERMISSIONS.CRM_READ,
+  ]
+} as const;

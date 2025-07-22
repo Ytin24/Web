@@ -15,7 +15,7 @@ import {
   securityHeaders,
   type AuthRequest 
 } from "./auth";
-import { setupAuthRoutes } from "./auth-routes";
+
 import { createTokenRoutes, apiTokenAuth } from "./token-routes";
 import { 
   registerWebhookEndpoint, 
@@ -33,8 +33,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(securityHeaders);
   app.use(injectYandexScripts);
   
-  // Setup authentication routes
-  setupAuthRoutes(app);
+
   
   // Setup token management routes (protected by JWT auth)
   app.use('/api', createTokenRoutes(storage));

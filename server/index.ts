@@ -1,6 +1,9 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import authRoutes from "./auth-routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { initializeRootUser, initializeSettings, cleanupExpiredSessions } from './init-root-user';
+import { securityHeaders } from "./auth";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +40,19 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize security features
+  console.log('Initializing security system...');
+  await initializeRootUser();
+  await initializeSettings();
+  await cleanupExpiredSessions();
+  console.log('Security system initialized successfully');
+
+  // Apply security headers to all routes
+  app.use(securityHeaders);
+  
+  // Register authentication routes
+  app.use('/api/auth', authRoutes);
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

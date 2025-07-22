@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   Home, BookOpen, Image, Star, Phone, Plus, Edit, Trash2, 
-  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock, Code, Flower
+  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock, Code, Flower, LogOut, Loader2
 } from "lucide-react";
 import BlogManagement from "@/components/admin/blog-management";
 import PortfolioManagement from "@/components/admin/portfolio-management";
@@ -22,7 +23,91 @@ import type { Section, BlogPost, PortfolioItem, CallbackRequest, LoyaltyProgram 
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      if (!token) {
+        setLocation('/admin-login');
+        return;
+      }
+
+      const response = await fetch('/api/auth/status', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+      
+      if (response.ok && result.authenticated) {
+        setIsAuthenticated(true);
+        setCurrentUser(result.user);
+      } else {
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
+        setLocation('/admin-login');
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
+      setLocation('/admin-login');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const sessionToken = localStorage.getItem('admin_session');
+
+      if (token) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Session-Token': sessionToken || '',
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
+      localStorage.removeItem('admin_session');
+      setLocation('/admin-login');
+    }
+  };
+
+  // Show loading screen while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-cream-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-green-600 dark:text-green-400" />
+          <p className="text-green-700 dark:text-green-300">Проверка авторизации...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return null; // Component will be unmounted as we redirect
+  }
 
   // Queries with proper fetcher functions
   const { data: sections } = useQuery<Section[]>({
@@ -267,10 +352,17 @@ export default function Admin() {
             </div>
             
             <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                Вошел как: <span className="font-medium text-foreground">{currentUser?.username}</span>
+              </div>
               <ThemeToggle />
               <Button variant="outline" onClick={() => window.location.href = '/'}>
                 <Home className="w-4 h-4 mr-2" />
                 На сайт
+              </Button>
+              <Button variant="destructive" onClick={handleLogout}>
+                <LogOut className="w-4 h-4 mr-2" />
+                Выход
               </Button>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Admin from "@/pages/admin";
+import AdminLogin from "@/pages/admin-login";
 import BlogPost from "@/pages/blog-post";
 import Portfolio from "@/pages/portfolio";
 import AllBlog from "@/pages/all-blog";
@@ -20,6 +21,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/admin-login" component={AdminLogin} />
       <Route path="/admin" component={Admin} />
       <Route path="/blog/:id" component={BlogPost} />
       <Route path="/portfolio" component={Portfolio} />

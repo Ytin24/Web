@@ -1,10 +1,12 @@
 import { 
   users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images, apiTokens, customers, sales, settings,
+  securityLogs, userSessions,
   type User, type InsertUser, type Section, type InsertSection,
   type BlogPost, type InsertBlogPost, type PortfolioItem, type InsertPortfolioItem,
   type CallbackRequest, type InsertCallbackRequest, type LoyaltyProgram, type InsertLoyaltyProgram,
   type Image, type InsertImage, type ApiToken, type InsertApiToken, type Customer, type InsertCustomer,
-  type Sale, type InsertSale, type Setting, type InsertSetting
+  type Sale, type InsertSale, type Setting, type InsertSetting,
+  type SecurityLog, type InsertSecurityLog, type UserSession, type InsertUserSession
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, sql, and, desc, asc, gte, lte } from "drizzle-orm";
@@ -99,6 +101,31 @@ export interface IStorage {
   setSetting(key: string, value: string, description?: string): Promise<Setting>;
   updateSetting(id: number, setting: Partial<InsertSetting>): Promise<Setting>;
   deleteSetting(id: number): Promise<void>;
+
+  // Security Logs
+  getAllSecurityLogs(): Promise<SecurityLog[]>;
+  getSecurityLogsByUserId(userId: number): Promise<SecurityLog[]>;
+  getSecurityLogsByEvent(event: string): Promise<SecurityLog[]>;
+  createSecurityLog(log: InsertSecurityLog): Promise<SecurityLog>;
+
+  // User Sessions
+  getAllUserSessions(): Promise<UserSession[]>;
+  getActiveUserSessions(): Promise<UserSession[]>;
+  getUserSession(sessionToken: string): Promise<UserSession | undefined>;
+  getUserSessionsByUserId(userId: number): Promise<UserSession[]>;
+  createUserSession(session: InsertUserSession): Promise<UserSession>;
+  updateUserSessionLastActivity(sessionToken: string): Promise<void>;
+  deactivateUserSession(sessionToken: string): Promise<void>;
+  deactivateAllUserSessions(userId: number): Promise<void>;
+  cleanExpiredSessions(): Promise<void>;
+
+  // Enhanced User methods for security
+  updateUserFailedLogin(id: number, increment?: boolean): Promise<void>;
+  updateUserPassword(id: number, passwordHash: string): Promise<void>;
+  lockUserAccount(id: number, lockUntil: Date): Promise<void>;
+  unlockUserAccount(id: number): Promise<void>;
+  updateUser(id: number, user: Partial<User>): Promise<User>;
+  deactivateUser(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -539,6 +566,162 @@ export class DatabaseStorage implements IStorage {
 
   async deleteSetting(id: number): Promise<void> {
     await db.delete(settings).where(eq(settings.id, id));
+  }
+
+  // Security Logs implementation
+  async getAllSecurityLogs(): Promise<SecurityLog[]> {
+    return db.select().from(securityLogs).orderBy(desc(securityLogs.createdAt));
+  }
+
+  async getSecurityLogsByUserId(userId: number): Promise<SecurityLog[]> {
+    return db.select().from(securityLogs)
+      .where(eq(securityLogs.userId, userId))
+      .orderBy(desc(securityLogs.createdAt));
+  }
+
+  async getSecurityLogsByEvent(event: string): Promise<SecurityLog[]> {
+    return db.select().from(securityLogs)
+      .where(eq(securityLogs.event, event))
+      .orderBy(desc(securityLogs.createdAt));
+  }
+
+  async createSecurityLog(log: InsertSecurityLog): Promise<SecurityLog> {
+    const [securityLog] = await db
+      .insert(securityLogs)
+      .values(log)
+      .returning();
+    return securityLog;
+  }
+
+  // User Sessions implementation
+  async getAllUserSessions(): Promise<UserSession[]> {
+    return db.select().from(userSessions).orderBy(desc(userSessions.createdAt));
+  }
+
+  async getActiveUserSessions(): Promise<UserSession[]> {
+    return db.select().from(userSessions)
+      .where(and(
+        eq(userSessions.isActive, true),
+        gte(userSessions.expiresAt, new Date())
+      ))
+      .orderBy(desc(userSessions.lastActivity));
+  }
+
+  async getUserSession(sessionToken: string): Promise<UserSession | undefined> {
+    const [session] = await db.select().from(userSessions)
+      .where(eq(userSessions.sessionToken, sessionToken));
+    return session || undefined;
+  }
+
+  async getUserSessionsByUserId(userId: number): Promise<UserSession[]> {
+    return db.select().from(userSessions)
+      .where(eq(userSessions.userId, userId))
+      .orderBy(desc(userSessions.lastActivity));
+  }
+
+  async createUserSession(session: InsertUserSession): Promise<UserSession> {
+    const [userSession] = await db
+      .insert(userSessions)
+      .values(session)
+      .returning();
+    return userSession;
+  }
+
+  async updateUserSessionLastActivity(sessionToken: string): Promise<void> {
+    await db
+      .update(userSessions)
+      .set({ lastActivity: new Date() })
+      .where(eq(userSessions.sessionToken, sessionToken));
+  }
+
+  async deactivateUserSession(sessionToken: string): Promise<void> {
+    await db
+      .update(userSessions)
+      .set({ isActive: false })
+      .where(eq(userSessions.sessionToken, sessionToken));
+  }
+
+  async deactivateAllUserSessions(userId: number): Promise<void> {
+    await db
+      .update(userSessions)
+      .set({ isActive: false })
+      .where(eq(userSessions.userId, userId));
+  }
+
+  async cleanExpiredSessions(): Promise<void> {
+    await db
+      .update(userSessions)
+      .set({ isActive: false })
+      .where(lte(userSessions.expiresAt, new Date()));
+  }
+
+  // Enhanced User methods implementation
+  async updateUserFailedLogin(id: number, increment: boolean = true): Promise<void> {
+    if (increment) {
+      await db
+        .update(users)
+        .set({ 
+          failedLoginAttempts: sql`${users.failedLoginAttempts} + 1`,
+          lastFailedLogin: new Date()
+        })
+        .where(eq(users.id, id));
+    } else {
+      // Reset failed attempts on successful login
+      await db
+        .update(users)
+        .set({ 
+          failedLoginAttempts: 0,
+          lastFailedLogin: null,
+          accountLockedUntil: null
+        })
+        .where(eq(users.id, id));
+    }
+  }
+
+  async updateUserPassword(id: number, passwordHash: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        password: passwordHash,
+        mustChangePassword: false
+      })
+      .where(eq(users.id, id));
+  }
+
+  async lockUserAccount(id: number, lockUntil: Date): Promise<void> {
+    await db
+      .update(users)
+      .set({ accountLockedUntil: lockUntil })
+      .where(eq(users.id, id));
+  }
+
+  async unlockUserAccount(id: number): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        accountLockedUntil: null,
+        failedLoginAttempts: 0
+      })
+      .where(eq(users.id, id));
+  }
+
+  async updateUser(id: number, user: Partial<User>): Promise<User> {
+    const [updatedUser] = await db
+      .update(users)
+      .set(user)
+      .where(eq(users.id, id))
+      .returning();
+    return updatedUser;
+  }
+
+  async deactivateUser(id: number): Promise<void> {
+    await db
+      .update(users)
+      .set({ isActive: false })
+      .where(eq(users.id, id));
+      
+    // Also deactivate all user sessions
+    await this.deactivateAllUserSessions(id);
   }
 }
 
