@@ -7,6 +7,22 @@ import { Calendar, Clock, Share2, ArrowLeft } from "lucide-react";
 import ImageModal from "@/components/image-modal";
 import type { BlogPost } from "@shared/schema";
 
+// Simple Markdown renderer
+const renderMarkdown = (content: string) => {
+  return content
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+    .replace(/^## (.*$)/gm, '<h2 class="text-3xl font-bold mt-10 mb-6 text-foreground">$1</h2>')
+    .replace(/^### (.*$)/gm, '<h3 class="text-2xl font-semibold mt-8 mb-4 text-foreground">$1</h3>')
+    .replace(/^- (.*$)/gm, '<li class="ml-6 mb-2 list-disc">$1</li>')
+    .replace(/^\d+\. (.*$)/gm, '<li class="ml-6 mb-2 list-decimal">$1</li>')
+    .replace(/^> (.*$)/gm, '<blockquote class="border-l-4 border-primary pl-6 py-2 my-4 bg-muted/50 italic rounded-r-lg">$1</blockquote>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary underline hover:text-secondary transition-colors">$1</a>')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg my-6 shadow-lg" />')
+    .replace(/\n\n/g, '</p><p class="mb-6">')
+    .replace(/\n/g, '<br>');
+};
+
 export default function BlogPostPage() {
   const params = useParams();
   const [, setLocation] = useLocation();
@@ -38,17 +54,17 @@ export default function BlogPostPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[hsl(252,100%,71%)]"></div>
+      <div className="min-h-screen bg-gradient-to-br from-muted to-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (!blogPost) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-muted to-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-[hsl(213,27%,19%)] mb-4">Статья не найдена</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4">Статья не найдена</h1>
           <Button onClick={() => setLocation('/')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Вернуться на главную
@@ -77,9 +93,9 @@ export default function BlogPostPage() {
         </>
       )}
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      <div className="min-h-screen bg-gradient-to-br from-muted to-background">
         {/* Header */}
-        <header className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-50">
+        <header className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
           <div className="max-w-4xl mx-auto px-8 py-4 flex items-center justify-between">
             <Button variant="ghost" onClick={() => setLocation('/')}>
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -97,27 +113,27 @@ export default function BlogPostPage() {
           {/* Article Header */}
           <header className="mb-12">
             <div className="flex items-center gap-4 mb-6">
-              <Badge className="bg-gradient-to-r from-[hsl(252,100%,71%)] to-[hsl(340,100%,69%)] text-white">
+              <Badge className="bg-gradient-to-r from-primary to-secondary text-primary-foreground">
                 {blogPost.category}
               </Badge>
               {blogPost.createdAt && (
-                <div className="flex items-center gap-1 text-[hsl(213,27%,19%)]/70">
+                <div className="flex items-center gap-1 text-muted-foreground">
                   <Calendar className="w-4 h-4" />
                   {new Date(blogPost.createdAt).toLocaleDateString('ru-RU')}
                 </div>
               )}
-              <div className="flex items-center gap-1 text-[hsl(213,27%,19%)]/70">
+              <div className="flex items-center gap-1 text-muted-foreground">
                 <Clock className="w-4 h-4" />
                 5 мин чтения
               </div>
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-bold text-[hsl(213,27%,19%)] mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
               {blogPost.title}
             </h1>
 
             {blogPost.excerpt && (
-              <p className="text-xl text-[hsl(213,27%,19%)]/80 leading-relaxed font-medium max-w-3xl">
+              <p className="text-xl text-muted-foreground leading-relaxed font-medium max-w-3xl">
                 {blogPost.excerpt}
               </p>
             )}
@@ -144,10 +160,15 @@ export default function BlogPostPage() {
 
           {/* Article Content */}
           <div className="prose prose-xl max-w-none">
-            <div 
-              className="text-[hsl(213,27%,19%)] leading-relaxed [&>p]:mb-6 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:mt-6 [&>h3]:mb-3"
-              dangerouslySetInnerHTML={{ __html: blogPost.content.replace(/\n/g, '<br>') }}
-            />
+            <div className="text-foreground leading-relaxed">
+              <p className="mb-6">
+                <span 
+                  dangerouslySetInnerHTML={{ 
+                    __html: renderMarkdown(blogPost.content || '')
+                  }}
+                />
+              </p>
+            </div>
           </div>
         </article>
 

@@ -4,21 +4,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
-  Plus, Edit, Trash2, Save, X, Eye, EyeOff, Calendar, Search,
-  BookOpen, FileText, Tag
+  Plus, Edit, Trash2, Eye, EyeOff, Calendar, Search,
+  BookOpen, FileText
 } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
+import ContentEditor from "./content-editor";
+
 import { useToast } from "@/hooks/use-toast";
 import type { BlogPost, InsertBlogPost } from "@shared/schema";
 
 export default function BlogManagement() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [showEditor, setShowEditor] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -31,13 +31,16 @@ export default function BlogManagement() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: InsertBlogPost) => apiRequest("/api/blog-posts", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+    mutationFn: (data: InsertBlogPost) => 
+      fetch("/api/blog-posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       setIsCreateOpen(false);
+      setShowEditor(false);
       toast({ title: "Статья создана успешно" });
     },
     onError: () => {
@@ -47,13 +50,15 @@ export default function BlogManagement() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<BlogPost> }) => 
-      apiRequest(`/api/blog-posts/${id}`, {
-        method: "PATCH",
+      fetch(`/api/blog-posts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      }),
+      }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       setEditingPost(null);
+      setShowEditor(false);
       toast({ title: "Статья обновлена успешно" });
     },
     onError: () => {
@@ -62,9 +67,10 @@ export default function BlogManagement() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/blog-posts/${id}`, {
-      method: "DELETE",
-    }),
+    mutationFn: (id: number) => 
+      fetch(`/api/blog-posts/${id}`, {
+        method: "DELETE",
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       toast({ title: "Статья удалена" });
@@ -76,17 +82,18 @@ export default function BlogManagement() {
 
   const togglePublishMutation = useMutation({
     mutationFn: ({ id, isPublished }: { id: number; isPublished: boolean }) =>
-      apiRequest(`/api/blog-posts/${id}`, {
-        method: "PATCH",
+      fetch(`/api/blog-posts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isPublished }),
-      }),
+      }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
       toast({ title: "Статус публикации изменен" });
     }
   });
 
-  const categories = ["Уход", "Сезонные советы", "Вода", "Обрезка", "Удобрения"];
+  const categories = ["care", "seasonal", "water", "pruning", "fertilizer", "arrangement"];
 
   const filteredPosts = blogPosts?.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -202,30 +209,39 @@ export default function BlogManagement() {
     );
   };
 
+  // Show full-page editor when creating or editing
+  if (showEditor) {
+    return (
+      <ContentEditor
+        post={editingPost}
+        onSave={(data) => {
+          if (editingPost) {
+            updateMutation.mutate({ id: editingPost.id, data });
+          } else {
+            createMutation.mutate(data as InsertBlogPost);
+          }
+        }}
+        onCancel={() => {
+          setShowEditor(false);
+          setEditingPost(null);
+          setIsCreateOpen(false);
+        }}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold">Управление блогом</h2>
-          <p className="text-gray-600">Создание и редактирование статей</p>
+          <h2 className="text-2xl font-bold text-foreground">Управление блогом</h2>
+          <p className="text-muted-foreground">Создание и редактирование статей</p>
         </div>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Новая статья
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Создать новую статью</DialogTitle>
-            </DialogHeader>
-            <BlogForm
-              onSubmit={(data) => createMutation.mutate(data)}
-              onCancel={() => setIsCreateOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => { setIsCreateOpen(true); setShowEditor(true); }}>
+          <Plus className="w-4 h-4 mr-2" />
+          Новая статья
+        </Button>
       </div>
 
       {/* Filters */}
@@ -326,18 +342,24 @@ export default function BlogManagement() {
                     >
                       {post.isPublished ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setEditingPost(post)}
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => { 
+                        setEditingPost(post); 
+                        setShowEditor(true); 
+                      }}
                     >
                       <Edit className="w-4 h-4" />
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
-                      onClick={() => deleteMutation.mutate(post.id)}
-                      disabled={deleteMutation.isPending}
+                      onClick={() => {
+                        if (confirm('Вы уверены, что хотите удалить эту статью?')) {
+                          deleteMutation.mutate(post.id);
+                        }
+                      }}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -349,21 +371,7 @@ export default function BlogManagement() {
         )}
       </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={!!editingPost} onOpenChange={(open) => !open && setEditingPost(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Редактировать статью</DialogTitle>
-          </DialogHeader>
-          {editingPost && (
-            <BlogForm
-              post={editingPost}
-              onSubmit={(data) => updateMutation.mutate({ id: editingPost.id, data })}
-              onCancel={() => setEditingPost(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+
     </div>
   );
 }
