@@ -17,6 +17,85 @@ export interface FlowerRecommendation {
   careInstructions: string;
 }
 
+// Blog content generation function using DeepSeek API
+export async function generateBlogContent(prompt: string): Promise<string> {
+  try {
+    console.log('Generating blog content with DeepSeek API...');
+    console.log('API Key exists:', !!DEEPSEEK_API_KEY);
+    
+    if (!DEEPSEEK_API_KEY) {
+      throw new Error('DeepSeek API key not configured');
+    }
+
+    const systemPrompt = `Ты - Профессор Ботаникус, эксперт-ботаник и флорист с многолетним опытом.
+    
+ТВОЯ РОЛЬ:
+- Создавать профессиональный контент для блога цветочного магазина "Цветокрафт"
+- Писать экспертные статьи о цветах, растениях и флористике
+- Давать практические советы по уходу за цветами
+- Делиться знаниями о символике и значении различных растений
+
+СТИЛЬ НАПИСАНИЯ:
+- Профессиональный, но доступный для обычных читателей
+- Используй научные знания, но объясняй простым языком
+- Добавляй практические советы и лайфхаки
+- Структурируй текст с заголовками, списками и подзаголовками
+- Пиши на русском языке
+
+ФОРМАТ ОТВЕТА:
+- Создавай готовый контент для блога в формате Markdown
+- Включай заголовки (##, ###), списки, выделение текста
+- Длина статьи: 300-800 слов
+- Добавляй практические советы в конце статьи
+
+Отвечай только на темы связанные с цветами, растениями и флористикой.`;
+
+    const requestBody = {
+      model: "deepseek-chat",
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: prompt }
+      ],
+      max_tokens: 1200,
+      temperature: 0.8,
+    };
+
+    console.log('Making request to DeepSeek API...');
+    const response = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    console.log('Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('DeepSeek API error response:', errorText);
+      throw new Error(`DeepSeek API error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log('DeepSeek API response received successfully');
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid DeepSeek API response structure:', data);
+      throw new Error('Invalid response from DeepSeek API');
+    }
+
+    return data.choices[0].message.content || 'Извините, не удалось создать контент.';
+  } catch (error) {
+    console.error('DeepSeek API error:', error);
+    if (error instanceof Error) {
+      return `Извините, Профессор Ботаникус временно недоступен: ${error.message}`;
+    }
+    return 'Извините, Профессор Ботаникус временно недоступен. Попробуйте позже.';
+  }
+}
+
 export class FlowerChatbotService {
   private systemPrompt = `Меня зовут Флора - я ваш персональный консультант-флорист в цветочном магазине "Цветокрафт". 🌸
 

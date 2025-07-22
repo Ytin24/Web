@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Plus, Edit, Trash2, Eye, EyeOff, Calendar, Search,
+  Plus, Edit, Trash2, Eye, EyeOff, Calendar, Search, Save,
   BookOpen, FileText, Bot, Sparkles, Loader2, Lightbulb
 } from "lucide-react";
 import ContentEditor from "./content-editor";
@@ -200,7 +201,7 @@ export default function BlogManagement() {
   if (showEditor) {
     return (
       <ContentEditor
-        post={editingPost}
+        post={editingPost || undefined}
         onSave={(data) => {
           if (editingPost) {
             updateMutation.mutate({ id: editingPost.id, data });

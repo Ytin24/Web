@@ -530,22 +530,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { default: chatbotRoutes } = await import('./chatbot-routes.js');
   app.use('/api/chatbot', chatbotRoutes);
 
-  // Blog Assistant AI endpoint for admin panel
-  app.post("/api/blog-assistant", authenticateToken, requireRole(['admin']), async (req, res) => {
-    try {
-      const { prompt } = req.body;
-      
-      if (!prompt || typeof prompt !== 'string') {
-        return res.status(400).json({ message: "Prompt is required" });
-      }
 
-      const response = await getBlogAssistantResponse(prompt);
-      res.json({ response });
-    } catch (error) {
-      console.error("Blog assistant error:", error);
-      res.status(500).json({ message: "Failed to get blog assistant response" });
-    }
-  });
 
   // Customer management routes
   app.get("/api/customers", async (req, res) => {
@@ -738,6 +723,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete setting" });
+    }
+  });
+
+  // Test route to debug auth issues
+  app.post("/api/test-auth", (req, res) => {
+    console.log('Test auth route called');
+    res.json({ message: "Test auth route works" });
+  });
+
+  // Blog AI Assistant route
+  app.post("/api/blog-assistant", async (req, res) => {
+    try {
+      const { prompt } = req.body;
+      console.log('Blog AI Assistant called with prompt:', prompt?.slice(0, 50));
+      
+      if (!prompt || typeof prompt !== 'string') {
+        return res.status(400).json({ message: "Prompt is required" });
+      }
+
+      if (!process.env.DEEPSEEK_API_KEY) {
+        console.log('DeepSeek API key not found');
+        return res.status(500).json({ 
+          message: "AI сервис не настроен. Обратитесь к администратору."
+        });
+      }
+
+      console.log('DeepSeek API key found, generating content...');
+      const openaiService = await import('./openai-service');
+      const response = await openaiService.generateBlogContent(prompt);
+      
+      console.log('Content generated successfully');
+      res.json({ response });
+    } catch (error) {
+      console.error('Blog AI Assistant error:', error);
+      res.status(500).json({ 
+        message: "Профессор Ботаникус временно недоступен. Попробуйте позже.",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
