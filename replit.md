@@ -130,6 +130,8 @@ The application is designed for easy deployment on platforms like Replit while m
 - Created dedicated /flower-ai page with advanced recommendation system
 - Updated navigation to include AI Florist section
 - Added proper error handling and JSON parsing for API responses
+- Added Markdown support for beautifully formatted chat responses (react-markdown + remark-gfm)
+- Implemented informational tooltip with auto-show/hide functionality for AI assistant discovery
 
 ## Recent Changes
 
