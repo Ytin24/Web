@@ -1,10 +1,25 @@
 import { Flower, Phone, Mail, MapPin, Clock } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Footer() {
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const [location, setLocation] = useLocation();
+
+  const handleNavigation = (sectionId: string) => {
+    if (location === '/') {
+      // If on home page, scroll to section
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If on other page, navigate to home and then scroll
+      setLocation('/');
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
     }
   };
 
@@ -78,7 +93,7 @@ export default function Footer() {
               ].map((link) => (
                 <button
                   key={link.id}
-                  onClick={() => scrollToSection(link.id)}
+                  onClick={() => handleNavigation(link.id)}
                   className="block text-white/70 hover:text-white transition-colors"
                 >
                   {link.label}
@@ -98,19 +113,19 @@ export default function Footer() {
                 Все услуги
               </a>
               <button
-                onClick={() => scrollToSection("portfolio")}
+                onClick={() => handleNavigation("portfolio")}
                 className="block text-left w-full text-white/70 hover:text-white transition-colors"
               >
                 Свадебные букеты
               </button>
               <button
-                onClick={() => scrollToSection("portfolio")}
+                onClick={() => handleNavigation("portfolio")}
                 className="block text-left w-full text-white/70 hover:text-white transition-colors"
               >
                 Корпоративное оформление
               </button>
               <button
-                onClick={() => scrollToSection("contact")}
+                onClick={() => handleNavigation("contact")}
                 className="block text-left w-full text-white/70 hover:text-white transition-colors"
               >
                 Доставка цветов
@@ -129,23 +144,23 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4">Контакты</h4>
             <div className="space-y-3">
               <div className="flex items-center">
-                <Phone className="w-5 h-5 mr-3 text-[hsl(252,100%,71%)]" />
+                <Phone className="w-5 h-5 mr-3 text-primary" />
                 <a href="tel:88001234567" className="text-white/70 hover:text-white transition-colors">
                   8 (800) 123-45-67
                 </a>
               </div>
               <div className="flex items-center">
-                <Mail className="w-5 h-5 mr-3 text-[hsl(252,100%,71%)]" />
+                <Mail className="w-5 h-5 mr-3 text-primary" />
                 <a href="mailto:info@tsvetokraft.ru" className="text-white/70 hover:text-white transition-colors">
                   info@tsvetokraft.ru
                 </a>
               </div>
               <div className="flex items-center">
-                <MapPin className="w-5 h-5 mr-3 text-[hsl(252,100%,71%)]" />
+                <MapPin className="w-5 h-5 mr-3 text-primary" />
                 <span className="text-white/70">г. Москва, ул. Цветочная, д. 15</span>
               </div>
               <div className="flex items-center">
-                <Clock className="w-5 h-5 mr-3 text-[hsl(252,100%,71%)]" />
+                <Clock className="w-5 h-5 mr-3 text-primary" />
                 <span className="text-white/70">Пн-Вс: 8:00 - 22:00</span>
               </div>
             </div>
