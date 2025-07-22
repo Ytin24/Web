@@ -3,32 +3,32 @@
 @tailwind utilities;
 
 :root {
-  /* Светлая тема - мягкие, естественные тона */
-  --background: hsl(45, 20%, 98%); /* Молочно-белый с теплым оттенком */
-  --foreground: hsl(340, 15%, 25%); /* Мягкий темно-розоватый вместо черного */
-  --muted: hsl(45, 15%, 94%); /* Светло-кремовый */
-  --muted-foreground: hsl(340, 10%, 45%); /* Приглушенный розово-серый */
-  --popover: hsl(45, 25%, 97%);
-  --popover-foreground: hsl(340, 15%, 30%);
-  --card: hsl(0, 0%, 100%, 0.8); /* Полупрозрачный белый */
-  --card-foreground: hsl(340, 15%, 25%);
-  --border: hsl(340, 20%, 88%); /* Мягкий розово-серый */
-  --input: hsl(45, 15%, 92%);
+  /* Светлая тема - чистые, контрастные цвета */
+  --background: hsl(0, 0%, 100%); /* Чистый белый */
+  --foreground: hsl(222, 84%, 4.9%); /* Глубокий темно-синий */
+  --muted: hsl(210, 40%, 98%); /* Очень светло-серый */
+  --muted-foreground: hsl(215.4, 16.3%, 46.9%); /* Серый */
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222, 84%, 4.9%);
+  --card: hsl(0, 0%, 100%); /* Чистый белый */
+  --card-foreground: hsl(222, 84%, 4.9%);
+  --border: hsl(214.3, 31.8%, 91.4%); /* Светло-серая граница */
+  --input: hsl(214.3, 31.8%, 91.4%);
   --primary: hsl(320, 60%, 65%); /* Элегантный розовый */
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(260, 50%, 70%); /* Мягкий фиолетовый */
   --secondary-foreground: hsl(0, 0%, 100%);
   --accent: hsl(80, 40%, 65%); /* Приглушенный зеленый */
-  --accent-foreground: hsl(340, 15%, 25%);
-  --destructive: hsl(0, 70%, 60%);
+  --accent-foreground: hsl(222, 84%, 4.9%);
+  --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(0, 0%, 100%);
   --ring: hsl(320, 60%, 65%);
   --radius: 1rem;
   /* Стеклянный эффект для светлой темы */
-  --glass-bg: rgba(255, 255, 255, 0.35);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --glass-shadow: rgba(200, 180, 200, 0.2);
-  --slate: hsl(340, 15%, 25%);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(220, 220, 220, 0.6);
+  --glass-shadow: rgba(0, 0, 0, 0.08);
+  --slate: hsl(222, 84%, 4.9%);
   --gradient-primary: linear-gradient(135deg, hsl(320, 60%, 65%) 0%, hsl(260, 50%, 70%) 100%);
   --gradient-secondary: linear-gradient(135deg, hsl(260, 50%, 70%) 0%, hsl(80, 40%, 65%) 100%);
 }
@@ -86,9 +86,9 @@
   .glass-premium {
     backdrop-filter: blur(24px) saturate(200%) brightness(110%);
     -webkit-backdrop-filter: blur(24px) saturate(200%) brightness(110%);
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(230, 230, 230, 0.8);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
 
   .dark .glass-premium {

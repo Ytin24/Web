@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { 
   Send, Bot, User, Flower, Sparkles, MessageCircle, 
-  X, Minimize2, Maximize2, Loader2 
+  X, Minimize2, Maximize2, Loader2, Move3D 
 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
@@ -42,9 +42,15 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
+  const [chatSize, setChatSize] = useState({ width: 400, height: 500 });
+  const [isResizing, setIsResizing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const resizeRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  
+  const isMobile = window.innerWidth < 768;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -59,6 +65,46 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
       inputRef.current?.focus();
     }
   }, [isOpen, isMinimized]);
+
+  // Resize functionality for desktop only
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (isMobile) return;
+    
+    e.preventDefault();
+    setIsResizing(true);
+    
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startWidth = chatSize.width;
+    const startHeight = chatSize.height;
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = startX - e.clientX;
+      const deltaY = startY - e.clientY;
+      
+      const newWidth = Math.max(320, Math.min(800, startWidth + deltaX));
+      const newHeight = Math.max(400, Math.min(700, startHeight + deltaY));
+      
+      setChatSize({ width: newWidth, height: newHeight });
+    };
+    
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, [isMobile, chatSize]);
+
+  const handleMinimizeToggle = useCallback(() => {
+    setIsMinimized(prev => {
+      const newState = !prev;
+      console.log('Toggling minimize:', newState);
+      return newState;
+    });
+  }, []);
 
   const chatMutation = useMutation({
     mutationFn: async (messages: ChatMessage[]) => {
@@ -143,8 +189,30 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   if (!isOpen) return null;
 
   return (
-    <Card className={`fixed bottom-4 right-4 w-96 sm:w-[28rem] lg:w-[36rem] xl:w-[42rem] max-w-[calc(100vw-2rem)] ${isMinimized ? 'h-auto' : 'h-[32rem] sm:h-[36rem] lg:h-[42rem]'} flex flex-col shadow-2xl border-2 border-primary/20 bg-background/95 backdrop-blur-sm z-50 transition-all duration-300 ${className}`}
-         style={{ resize: 'both', overflow: 'auto', minWidth: '24rem', minHeight: '24rem', maxWidth: 'calc(100vw - 2rem)', maxHeight: 'calc(100vh - 2rem)' }}>
+    <div 
+      ref={chatRef}
+      className={`fixed bottom-4 right-4 flex flex-col shadow-2xl z-50 transition-all duration-300 ${className} ${
+        isResizing ? 'select-none' : ''
+      }`}
+      style={{
+        width: isMobile ? 'calc(100vw - 2rem)' : `${chatSize.width}px`,
+        height: isMinimized ? 'auto' : (isMobile ? '70vh' : `${chatSize.height}px`),
+        maxWidth: 'calc(100vw - 2rem)',
+        maxHeight: 'calc(100vh - 2rem)',
+      }}
+    >
+      <Card className="w-full h-full flex flex-col bg-background/95 backdrop-blur-sm border-2 border-primary/20 relative overflow-hidden">
+        {/* Resize handle - только на desktop */}
+        {!isMobile && (
+          <div
+            ref={resizeRef}
+            onMouseDown={handleMouseDown}
+            className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize bg-primary/20 hover:bg-primary/40 transition-colors flex items-center justify-center group z-10"
+            title="Перетащите для изменения размера"
+          >
+            <Move3D className="w-3 h-3 text-primary/60 group-hover:text-primary" />
+          </div>
+        )}
       {/* Header */}
       <CardHeader className="flex-row items-center justify-between py-3 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
@@ -167,10 +235,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => {
-              console.log('Minimize button clicked, current state:', isMinimized);
-              setIsMinimized(!isMinimized);
-            }}
+            onClick={handleMinimizeToggle}
             className="w-8 h-8 p-0 hover:bg-muted"
             title={isMinimized ? "Развернуть" : "Свернуть"}
           >
@@ -331,6 +396,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
           </div>
         </>
       )}
-    </Card>
+      </Card>
+    </div>
   );
 }
