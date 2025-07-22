@@ -153,7 +153,7 @@ const swaggerDefinition = {
 
 const options = {
   definition: swaggerDefinition,
-  apis: ['./server/routes.ts', './server/auth-routes.ts', './server/webhooks.ts'],
+  apis: ['./server/routes.ts', './server/auth-routes.ts', './server/webhooks.ts', './server/chatbot-routes.ts'],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);

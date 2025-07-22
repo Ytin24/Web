@@ -522,6 +522,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Import and setup chatbot routes
+  const { default: chatbotRoutes } = await import('./chatbot-routes.js');
+  app.use('/api/chatbot', chatbotRoutes);
+
   const httpServer = createServer(app);
   return httpServer;
 }
