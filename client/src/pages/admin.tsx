@@ -6,25 +6,26 @@ import ContentEditor from "@/components/admin/content-editor";
 import CallbackRequests from "@/components/admin/callback-requests";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Settings, Home, BookOpen, Image, Star, Phone } from "lucide-react";
+import type { Section, BlogPost, PortfolioItem, CallbackRequest } from "@shared/schema";
 
 type AdminSection = "dashboard" | "about" | "blog" | "portfolio" | "loyalty" | "requests";
 
 export default function Admin() {
   const [activeSection, setActiveSection] = useState<AdminSection>("dashboard");
 
-  const { data: sections, isLoading: sectionsLoading } = useQuery({
+  const { data: sections, isLoading: sectionsLoading } = useQuery<Section[]>({
     queryKey: ["/api/sections"]
   });
 
-  const { data: callbackRequests } = useQuery({
+  const { data: callbackRequests } = useQuery<CallbackRequest[]>({
     queryKey: ["/api/callback-requests"]
   });
 
-  const { data: blogPosts } = useQuery({
+  const { data: blogPosts } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog-posts"]
   });
 
-  const { data: portfolioItems } = useQuery({
+  const { data: portfolioItems } = useQuery<PortfolioItem[]>({
     queryKey: ["/api/portfolio-items"]
   });
 

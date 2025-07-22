@@ -189,7 +189,7 @@ export default function CallbackRequests() {
                               <Phone className="w-4 h-4 mr-1" />
                               {request.phone}
                             </span>
-                            <span className={`flex items-center ${getPriorityColor(request.createdAt!)}`}>
+                            <span className={`flex items-center ${getPriorityColor(request.createdAt!.toString())}`}>
                               <Clock className="w-4 h-4 mr-1" />
                               {new Date(request.createdAt!).toLocaleString('ru-RU')}
                             </span>

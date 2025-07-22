@@ -283,7 +283,14 @@ export class MemStorage implements IStorage {
 
   async createSection(insertSection: InsertSection): Promise<Section> {
     const id = this.currentSectionId++;
-    const section: Section = { ...insertSection, id };
+    const section: Section = { 
+      ...insertSection, 
+      id,
+      content: insertSection.content || null,
+      description: insertSection.description || null,
+      imageUrl: insertSection.imageUrl || null,
+      isActive: insertSection.isActive ?? true 
+    };
     this.sections.set(id, section);
     return section;
   }
@@ -307,7 +314,14 @@ export class MemStorage implements IStorage {
 
   async createBlogPost(insertBlogPost: InsertBlogPost): Promise<BlogPost> {
     const id = this.currentBlogPostId++;
-    const blogPost: BlogPost = { ...insertBlogPost, id, createdAt: new Date() };
+    const blogPost: BlogPost = { 
+      ...insertBlogPost, 
+      id, 
+      createdAt: new Date(),
+      excerpt: insertBlogPost.excerpt || null,
+      imageUrl: insertBlogPost.imageUrl || null,
+      isPublished: insertBlogPost.isPublished ?? false
+    };
     this.blogPosts.set(id, blogPost);
     return blogPost;
   }
@@ -351,7 +365,13 @@ export class MemStorage implements IStorage {
 
   async createPortfolioItem(insertPortfolioItem: InsertPortfolioItem): Promise<PortfolioItem> {
     const id = this.currentPortfolioItemId++;
-    const portfolioItem: PortfolioItem = { ...insertPortfolioItem, id, createdAt: new Date() };
+    const portfolioItem: PortfolioItem = { 
+      ...insertPortfolioItem, 
+      id, 
+      createdAt: new Date(),
+      description: insertPortfolioItem.description || null,
+      isActive: insertPortfolioItem.isActive ?? true
+    };
     this.portfolioItems.set(id, portfolioItem);
     return portfolioItem;
   }
@@ -387,7 +407,9 @@ export class MemStorage implements IStorage {
       ...insertCallbackRequest, 
       id, 
       status: 'pending',
-      createdAt: new Date() 
+      createdAt: new Date(),
+      message: insertCallbackRequest.message || null,
+      callTime: insertCallbackRequest.callTime || null
     };
     this.callbackRequests.set(id, callbackRequest);
     return callbackRequest;

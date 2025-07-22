@@ -65,22 +65,23 @@ export default function ContentEditor({ section }: ContentEditorProps) {
   const queryClient = useQueryClient();
 
   // Section-specific data fetching
-  const { data: sectionData, isLoading: sectionLoading } = useQuery({
+  const { data: sectionData, isLoading: sectionLoading } = useQuery<Section>({
     queryKey: ["/api/sections", section],
+    queryFn: () => fetch(`/api/sections/${section}`).then(res => res.json()),
     enabled: section === "about",
   });
 
-  const { data: blogPosts, isLoading: blogLoading } = useQuery({
+  const { data: blogPosts, isLoading: blogLoading } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog-posts"],
     enabled: section === "blog",
   });
 
-  const { data: portfolioItems, isLoading: portfolioLoading } = useQuery({
+  const { data: portfolioItems, isLoading: portfolioLoading } = useQuery<PortfolioItem[]>({
     queryKey: ["/api/portfolio-items"],
     enabled: section === "portfolio",
   });
 
-  const { data: loyaltyLevels, isLoading: loyaltyLoading } = useQuery({
+  const { data: loyaltyLevels, isLoading: loyaltyLoading } = useQuery<LoyaltyProgram[]>({
     queryKey: ["/api/loyalty-program"],
     enabled: section === "loyalty",
   });
@@ -254,7 +255,7 @@ export default function ContentEditor({ section }: ContentEditorProps) {
         description: sectionData.description || "",
         content: sectionData.content || "",
         imageUrl: sectionData.imageUrl || "",
-        isActive: sectionData.isActive,
+        isActive: sectionData.isActive ?? true,
       });
     }
   }, [sectionData, sectionForm, section]);
