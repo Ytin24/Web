@@ -1,9 +1,9 @@
 import { 
-  users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images,
+  users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images, apiTokens,
   type User, type InsertUser, type Section, type InsertSection,
   type BlogPost, type InsertBlogPost, type PortfolioItem, type InsertPortfolioItem,
   type CallbackRequest, type InsertCallbackRequest, type LoyaltyProgram, type InsertLoyaltyProgram,
-  type Image, type InsertImage
+  type Image, type InsertImage, type ApiToken, type InsertApiToken
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -11,8 +11,19 @@ import { eq } from "drizzle-orm";
 export interface IStorage {
   // Users
   getUser(id: number): Promise<User | undefined>;
+  getUserById(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getAllUsers(): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserLastLogin(id: number): Promise<void>;
+
+  // API Tokens
+  getApiTokenById(id: number): Promise<ApiToken | undefined>;
+  getApiTokenByToken(token: string): Promise<ApiToken | undefined>;
+  getApiTokensByUserId(userId: number): Promise<ApiToken[]>;
+  createApiToken(token: InsertApiToken): Promise<ApiToken>;
+  updateApiTokenLastUsed(id: number): Promise<void>;
+  revokeApiToken(id: number): Promise<void>;
 
   // Sections
   getAllSections(): Promise<Section[]>;
@@ -41,7 +52,7 @@ export interface IStorage {
   getAllCallbackRequests(): Promise<CallbackRequest[]>;
   getCallbackRequest(id: number): Promise<CallbackRequest | undefined>;
   createCallbackRequest(request: InsertCallbackRequest): Promise<CallbackRequest>;
-  updateCallbackRequestStatus(id: number, status: string): Promise<CallbackRequest>;
+  updateCallbackRequest(id: number, data: Partial<InsertCallbackRequest>): Promise<CallbackRequest>;
   deleteCallbackRequest(id: number): Promise<void>;
 
   // Loyalty Program
@@ -78,6 +89,50 @@ export class DatabaseStorage implements IStorage {
       .values(insertUser)
       .returning();
     return user;
+  }
+
+  async updateUserLastLogin(id: number): Promise<void> {
+    await db
+      .update(users)
+      .set({ lastLogin: new Date() })
+      .where(eq(users.id, id));
+  }
+
+  // API Tokens
+  async getApiTokenById(id: number): Promise<ApiToken | undefined> {
+    const [token] = await db.select().from(apiTokens).where(eq(apiTokens.id, id));
+    return token || undefined;
+  }
+
+  async getApiTokenByToken(token: string): Promise<ApiToken | undefined> {
+    const [apiToken] = await db.select().from(apiTokens).where(eq(apiTokens.token, token));
+    return apiToken || undefined;
+  }
+
+  async getApiTokensByUserId(userId: number): Promise<ApiToken[]> {
+    return db.select().from(apiTokens).where(eq(apiTokens.userId, userId));
+  }
+
+  async createApiToken(insertToken: InsertApiToken): Promise<ApiToken> {
+    const [token] = await db
+      .insert(apiTokens)
+      .values(insertToken)
+      .returning();
+    return token;
+  }
+
+  async updateApiTokenLastUsed(id: number): Promise<void> {
+    await db
+      .update(apiTokens)
+      .set({ lastUsed: new Date() })
+      .where(eq(apiTokens.id, id));
+  }
+
+  async revokeApiToken(id: number): Promise<void> {
+    await db
+      .update(apiTokens)
+      .set({ isActive: false })
+      .where(eq(apiTokens.id, id));
   }
 
   // Sections
@@ -199,10 +254,10 @@ export class DatabaseStorage implements IStorage {
     return request;
   }
 
-  async updateCallbackRequestStatus(id: number, status: string): Promise<CallbackRequest> {
+  async updateCallbackRequest(id: number, data: Partial<InsertCallbackRequest>): Promise<CallbackRequest> {
     const [updatedRequest] = await db
       .update(callbackRequests)
-      .set({ status })
+      .set(data)
       .where(eq(callbackRequests.id, id))
       .returning();
     return updatedRequest;

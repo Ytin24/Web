@@ -6,6 +6,22 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  role: text("role").notNull().default("manager"), // 'super_admin', 'manager'
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  lastLogin: timestamp("last_login"),
+});
+
+export const apiTokens = pgTable("api_tokens", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  token: text("token").notNull().unique(),
+  name: text("name").notNull(), // Token description
+  permissions: text("permissions").notNull(), // JSON array of permissions
+  expiresAt: timestamp("expires_at"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  lastUsed: timestamp("last_used"),
 });
 
 export const sections = pgTable("sections", {
@@ -79,6 +95,17 @@ export const images = pgTable("images", {
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  role: true,
+  isActive: true,
+});
+
+export const insertApiTokenSchema = createInsertSchema(apiTokens).pick({
+  userId: true,
+  token: true,
+  name: true,
+  permissions: true,
+  expiresAt: true,
+  isActive: true,
 });
 
 export const insertSectionSchema = createInsertSchema(sections).pick({
@@ -158,3 +185,6 @@ export type LoyaltyProgram = typeof loyaltyProgram.$inferSelect;
 
 export type InsertImage = z.infer<typeof insertImageSchema>;
 export type Image = typeof images.$inferSelect;
+
+export type InsertApiToken = z.infer<typeof insertApiTokenSchema>;
+export type ApiToken = typeof apiTokens.$inferSelect;

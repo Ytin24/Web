@@ -6,18 +6,146 @@ import {
   insertSectionSchema, insertBlogPostSchema, insertPortfolioItemSchema, 
   insertCallbackRequestSchema, insertLoyaltyProgramSchema, insertImageSchema
 } from "@shared/schema";
+import { 
+  authenticateToken, 
+  requireRole, 
+  validateInput, 
+  rateLimit, 
+  securityHeaders,
+  type AuthRequest 
+} from "./auth";
+import { setupAuthRoutes } from "./auth-routes";
+import { 
+  registerWebhookEndpoint, 
+  testWebhookEndpoint, 
+  n8nApiEndpoint,
+  n8nIntegration,
+  initializeDefaultWebhooks 
+} from "./webhooks";
+import { setupSwagger } from "./swagger";
+import { injectYandexScripts, yandexIntegration } from "./yandex";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
-  // Sections routes
-  app.get("/api/sections", async (req, res) => {
+  // Apply security middleware
+  app.use(securityHeaders);
+  app.use(injectYandexScripts);
+  
+  // Setup authentication routes
+  setupAuthRoutes(app);
+  
+  // Setup API documentation
+  setupSwagger(app);
+  
+  // Initialize webhooks
+  await initializeDefaultWebhooks();
+
+  /**
+   * @swagger
+   * /api/config:
+   *   get:
+   *     tags: [Configuration]
+   *     summary: Get public configuration
+   *     description: Get public configuration for frontend (maps, analytics, etc.)
+   *     responses:
+   *       200:
+   *         description: Public configuration
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 maps:
+   *                   type: object
+   *                   properties:
+   *                     hasApiKey:
+   *                       type: boolean
+   *                     config:
+   *                       type: object
+   *                 metrics:
+   *                   type: object
+   *                   properties:
+   *                     hasCounterId:
+   *                       type: boolean
+   */
+  app.get("/api/config", (req, res) => {
+    res.json({
+      maps: {
+        hasApiKey: !!process.env.YANDEX_MAPS_API_KEY,
+        config: yandexIntegration.getMapConfig()
+      },
+      metrics: {
+        hasCounterId: !!process.env.YANDEX_METRICS_COUNTER_ID
+      }
+    });
+  });
+
+  // Public routes (no authentication required)
+
+  /**
+   * @swagger
+   * /api/sections:
+   *   get:
+   *     tags: [Sections]
+   *     summary: Get all sections (public)
+   *     description: Retrieve all active website sections for public display
+   *     responses:
+   *       200:
+   *         description: Sections retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Section'
+   */
+  app.get("/api/sections", rateLimit(60 * 1000, 60), async (req, res) => {
     try {
       const sections = await storage.getAllSections();
-      res.json(sections);
+      // Filter only active sections for public API
+      const activeSections = sections.filter(s => s.isActive);
+      res.json(activeSections);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch sections" });
+      console.error('Get sections error:', error);
+      res.status(500).json({ error: "Failed to fetch sections" });
     }
   });
+
+  // Protected admin routes
+  
+  /**
+   * @swagger
+   * /api/admin/sections:
+   *   get:
+   *     tags: [Sections Admin]
+   *     summary: Get all sections (admin)
+   *     description: Retrieve all website sections including inactive ones (requires authentication)
+   *     security:
+   *       - BearerAuth: []
+   *       - ApiKeyAuth: []
+   *     responses:
+   *       200:
+   *         description: Sections retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Section'
+   */
+  app.get("/api/admin/sections", 
+    authenticateToken, 
+    requireRole(['super_admin', 'manager']), 
+    async (req: AuthRequest, res) => {
+      try {
+        const sections = await storage.getAllSections();
+        res.json(sections);
+      } catch (error) {
+        console.error('Get admin sections error:', error);
+        res.status(500).json({ error: "Failed to fetch sections" });
+      }
+    }
+  );
 
   app.get("/api/sections/:name", async (req, res) => {
     try {
