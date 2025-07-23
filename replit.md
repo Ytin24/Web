@@ -6,7 +6,15 @@
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+**Communication Style**: Simple, everyday language. Запоминать все нюансы чтобы при добавлении функционала не терялся и не выбивался из стиля сайта.
+
+**Development Style Preferences**:
+- Maintain consistent visual aesthetics across all components
+- Follow established patterns for glass morphism and natural floral design
+- Use semantic color tokens (`text-foreground`, `text-muted-foreground`) instead of hardcoded colors
+- Implement responsive design with mobile-first approach
+- Add proper TypeScript typing and error handling
+- Keep animations smooth but performance-optimized
 
 ## System Architecture
 
@@ -42,12 +50,18 @@ The application features a comprehensive admin panel that allows management of:
 - **Portfolio Items**: Gallery management with categorization
 - **Callback Requests**: Customer inquiry management with status tracking
 - **Loyalty Programs**: Multi-tier customer loyalty system management
+- **Products**: Complete product catalog with categories, pricing, and inventory
+- **Customers & CRM**: Customer relationship management with sales tracking
+- **Color Schemes**: Site-wide color customization with live preview system
 
 ### User Interface Components
-- **Glass Morphism Design**: Modern glass-effect styling throughout the application
-- **Responsive Layout**: Mobile-first design with adaptive components
-- **Animation System**: Custom scroll-reveal animations and floating elements
+- **Glass Morphism Design**: Modern glass-effect styling throughout the application with natural aesthetics
+- **Responsive Layout**: Mobile-first design optimized for iPhone 13 Pro and all screen sizes
+- **Animation System**: Custom scroll-reveal animations, floating elements, and Framer Motion integration
 - **Component Library**: Comprehensive UI component system based on Radix primitives
+- **Color System**: Dynamic CSS custom properties with three predefined color schemes
+- **Theme Support**: Light/dark theme with semantic color tokens and accessibility compliance
+- **Performance Optimization**: Device-specific optimizations with reduced animations on mobile
 
 ### Business Logic
 - **Multi-language Support**: Russian language interface for the target market
@@ -79,9 +93,10 @@ The application features a comprehensive admin panel that allows management of:
 
 ### UI and Styling
 - **Radix UI**: Accessible component primitives for complex UI elements
-- **Tailwind CSS**: Utility-first CSS framework with custom theming
+- **Tailwind CSS**: Utility-first CSS framework with custom CSS variables for dynamic theming
 - **Lucide React**: Icon system for consistent visual elements
-- **class-variance-authority**: Type-safe styling variants
+- **class-variance-authority**: Type-safe styling variants and component composition
+- **Framer Motion**: Advanced animation library for smooth, performant interactions
 
 ### Data Management
 - **TanStack Query**: Server state management and caching
@@ -111,10 +126,12 @@ The application features a comprehensive admin panel that allows management of:
 
 ### Architecture Benefits
 - **Type Safety**: End-to-end TypeScript ensures runtime reliability
-- **Performance**: Serverless database and optimized builds for fast loading
+- **Performance**: Serverless database, optimized builds, device-specific optimizations
 - **Scalability**: Component-based architecture allows for easy feature expansion
-- **Maintainability**: Shared schemas and utilities reduce code duplication
-- **User Experience**: Modern UI patterns with smooth animations and responsive design
+- **Maintainability**: Shared schemas, utilities, and centralized color management
+- **User Experience**: Modern UI patterns with smooth animations, responsive design, and accessibility
+- **Customization**: Dynamic color schemes with real-time preview and admin control
+- **Mobile Optimization**: Performance-aware animations and responsive design patterns
 
 The application is designed for easy deployment on platforms like Replit while maintaining production-ready architecture patterns for potential scaling to dedicated hosting environments.
 
@@ -267,3 +284,52 @@ The application is designed for easy deployment on platforms like Replit while m
 - Updated all hover states with proper contrast: lighter colors on light theme, brighter on dark theme
 - Added enhanced button animations with scale effects and rotation on interaction
 - Optimized focus states for accessibility with pink/purple color scheme throughout interface
+
+### Unified Color Palette System & Admin Customization (2025-01-23)
+- Created comprehensive unified color palette system with three predefined schemes:
+  - **floralPink**: Soft pink-to-purple gradients with warm undertones (default)
+  - **botanicalGreen**: Natural green palette with earth tones and botanical feel
+  - **royalPurple**: Rich purple scheme with luxury aesthetic and deep contrast
+- Implemented complete database schema for color scheme settings with proper relationships
+- Built full-stack color scheme management: database storage, API routes, admin interface
+- Added admin color scheme management tab with live preview and real-time switching
+- Integrated color scheme provider with React context for efficient state management
+- Color schemes dynamically update CSS custom properties throughout entire application
+- Each scheme includes complete color definitions: primary, secondary, accent, background variants
+- Admin can preview schemes before applying with instant visual feedback
+- System automatically loads and applies saved color scheme on application startup
+- Enhanced admin panel with dedicated "Цвета" tab for comprehensive color customization
+
+## Design System Guidelines
+
+### Visual Design Patterns
+- **Glass Morphism**: All cards use `glass-effect` class with backdrop blur and subtle borders
+- **Natural Aesthetics**: Soft, organic color transitions with botanical-inspired naming
+- **Consistent Spacing**: Use padding classes (p-4, p-6, p-8) and margin utilities consistently
+- **Typography**: Gradient text for headings (`gradient-text` class), semantic foreground colors
+- **Hover States**: Light theme uses lighter colors, dark theme uses brighter contrasting colors
+
+### Component Architecture
+- **Shared Components**: Located in `client/src/components/` with proper TypeScript exports
+- **Admin Components**: Separate folder `client/src/components/admin/` for admin-specific UI
+- **Icon Usage**: Lucide React icons with consistent sizing (w-4 h-4, w-5 h-5, w-6 h-6)
+- **Form Patterns**: React Hook Form + Zod validation + shadcn/ui form components
+- **State Management**: TanStack Query for server state, React useState for local UI state
+
+### Color System Implementation
+- **CSS Variables**: All colors defined as CSS custom properties in `:root` and `.dark`
+- **Semantic Tokens**: Use `text-foreground`, `bg-background`, `border-border` instead of hardcoded
+- **Theme Support**: Components automatically adapt to light/dark themes
+- **Color Schemes**: Three predefined schemes with complete color definitions and descriptions
+
+### Animation and Performance
+- **Mobile Optimization**: Reduced animations on mobile devices using `useDeviceDetection`
+- **Framer Motion**: Spring animations for modals and interactive elements
+- **CSS Transitions**: Subtle hover effects with consistent timing (transition-all duration-200)
+- **Performance Hooks**: `usePerformanceOptimization` for device-specific optimizations
+
+### Database and API Patterns
+- **Schema Design**: Drizzle ORM with shared types between frontend and backend
+- **API Routes**: RESTful endpoints with proper error handling and TypeScript validation
+- **Authentication**: JWT tokens with role-based access control for admin features
+- **Data Fetching**: TanStack Query with proper cache invalidation and loading states
