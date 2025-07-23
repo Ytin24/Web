@@ -122,6 +122,18 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   }, []);
 
   const [isStreaming, setIsStreaming] = useState(false);
+  
+  // Безопасность - сбрасываем isStreaming через 30 секунд в любом случае
+  useEffect(() => {
+    if (isStreaming) {
+      const timeout = setTimeout(() => {
+        console.warn('Force resetting streaming state after timeout');
+        setIsStreaming(false);
+      }, 30000);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [isStreaming]);
 
   const sendStreamingMessage = async (messages: ChatMessage[]) => {
     setIsStreaming(true);
@@ -163,7 +175,6 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
             if (line.startsWith('data: ')) {
               const data = line.slice(6);
               if (data === '[DONE]') {
-                setIsStreaming(false);
                 return;
               }
               
