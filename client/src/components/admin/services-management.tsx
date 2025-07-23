@@ -269,13 +269,13 @@ export function ServicesManagement() {
       </CardHeader>
       <CardContent>
         {/* Action Buttons */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div className="text-sm text-muted-foreground">
             Всего услуг: {services.length}
           </div>
           <Button
             onClick={handleAdd}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-full sm:w-auto"
           >
             <Plus className="h-4 w-4" />
             Добавить услугу
@@ -285,49 +285,55 @@ export function ServicesManagement() {
         {/* Services List */}
         <div className="space-y-4">
           {services.map((service) => (
-            <Card key={service.id} className="p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
+            <Card key={service.id} className="p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <div className="flex-1 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     {getCategoryIcon(service.category)}
-                    <h3 className="font-semibold">{service.name}</h3>
+                    <h3 className="font-semibold text-sm sm:text-base">{service.name}</h3>
                     {service.isPopular && (
-                      <Badge variant="secondary" className="flex items-center gap-1">
+                      <Badge variant="secondary" className="flex items-center gap-1 text-xs">
                         <Star className="h-3 w-3" />
-                        Популярная
+                        <span className="hidden xs:inline">Популярная</span>
                       </Badge>
                     )}
                     {!service.isActive && (
-                      <Badge variant="outline" className="flex items-center gap-1">
+                      <Badge variant="outline" className="flex items-center gap-1 text-xs">
                         <EyeOff className="h-3 w-3" />
-                        Скрыта
+                        <span className="hidden xs:inline">Скрыта</span>
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground mb-2">
+                  <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                     {service.shortDescription || service.description}
                   </p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    {service.price && <span>Цена: {service.price}</span>}
-                    {service.duration && <span>Время: {service.duration}</span>}
-                    <span>Категория: {categories.find(c => c.value === service.category)?.label}</span>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    {service.price && <span className="bg-muted px-2 py-1 rounded">{service.price}</span>}
+                    {service.duration && <span className="bg-muted px-2 py-1 rounded">{service.duration}</span>}
+                    <span className="bg-muted px-2 py-1 rounded">
+                      {categories.find(c => c.value === service.category)?.label}
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex sm:flex-col gap-2 justify-end">
                   <Button
                     variant="outline" 
                     size="sm"
                     onClick={() => handleEdit(service)}
+                    className="flex-1 sm:flex-none"
                   >
                     <Edit className="h-4 w-4" />
+                    <span className="ml-1 sm:hidden">Редактировать</span>
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => deleteMutation.mutate(service.id)}
                     disabled={deleteMutation.isPending}
+                    className="flex-1 sm:flex-none"
                   >
                     <Trash2 className="h-4 w-4" />
+                    <span className="ml-1 sm:hidden">Удалить</span>
                   </Button>
                 </div>
               </div>
@@ -337,7 +343,7 @@ export function ServicesManagement() {
 
         {/* Service Form Modal */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto mx-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingService ? "Редактировать услугу" : "Новая услуга"}
@@ -351,7 +357,7 @@ export function ServicesManagement() {
             </DialogHeader>
             
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Название</Label>
                   <Input
@@ -403,7 +409,7 @@ export function ServicesManagement() {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="price">Цена</Label>
                   <Input
@@ -442,7 +448,7 @@ export function ServicesManagement() {
                 />
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="isActive"
@@ -472,7 +478,7 @@ export function ServicesManagement() {
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-4">
+              <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4">
                 <Button
                   type="button"
                   variant="outline"
@@ -481,6 +487,7 @@ export function ServicesManagement() {
                     setEditingService(null);
                     form.reset();
                   }}
+                  className="w-full sm:w-auto"
                 >
                   <X className="h-4 w-4 mr-2" />
                   Отменить
@@ -488,6 +495,7 @@ export function ServicesManagement() {
                 <Button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
+                  className="w-full sm:w-auto"
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {editingService ? "Обновить" : "Создать"}

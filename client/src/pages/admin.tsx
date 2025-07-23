@@ -156,62 +156,62 @@ export default function Admin() {
   const renderDashboard = () => (
     <div className="space-y-8">
       {/* Stats Cards */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <Card className="glass-effect border-border/50 bg-gradient-to-br from-destructive/10 to-destructive/20 dark:from-destructive/20 dark:to-destructive/30">
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2 sm:pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-destructive-foreground">Новые заявки</CardTitle>
-              <Phone className="w-5 h-5 text-destructive" />
+              <CardTitle className="text-xs sm:text-sm font-medium text-destructive-foreground">Новые заявки</CardTitle>
+              <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-destructive" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-destructive">{pendingRequests}</div>
-            <div className="text-sm text-muted-foreground mt-1">Требуют обработки</div>
+          <CardContent className="pt-0">
+            <div className="text-xl sm:text-3xl font-bold text-destructive">{pendingRequests}</div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Требуют обработки</div>
           </CardContent>
         </Card>
 
         <Card className="glass-effect border-border/50 bg-gradient-to-br from-primary/10 to-primary/20 dark:from-primary/20 dark:to-primary/30">
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2 sm:pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-primary-foreground">Статьи блога</CardTitle>
-              <BookOpen className="w-5 h-5 text-primary" />
+              <CardTitle className="text-xs sm:text-sm font-medium text-primary-foreground">Статьи блога</CardTitle>
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-primary">{publishedBlogs}</div>
-            <div className="text-sm text-muted-foreground mt-1">Опубликовано</div>
+          <CardContent className="pt-0">
+            <div className="text-xl sm:text-3xl font-bold text-primary">{publishedBlogs}</div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Опубликовано</div>
           </CardContent>
         </Card>
 
         <Card className="glass-effect border-border/50 bg-gradient-to-br from-secondary/10 to-secondary/20 dark:from-secondary/20 dark:to-secondary/30">
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2 sm:pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-secondary-foreground">Портфолио</CardTitle>
-              <Image className="w-5 h-5 text-secondary" />
+              <CardTitle className="text-xs sm:text-sm font-medium text-secondary-foreground">Портфолио</CardTitle>
+              <Image className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-secondary">{activePortfolios}</div>
-            <div className="text-sm text-muted-foreground mt-1">Активных работ</div>
+          <CardContent className="pt-0">
+            <div className="text-xl sm:text-3xl font-bold text-secondary">{activePortfolios}</div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Активных работ</div>
           </CardContent>
         </Card>
 
         <Card className="glass-effect border-border/50 bg-gradient-to-br from-accent/10 to-accent/20 dark:from-accent/20 dark:to-accent/30">
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2 sm:pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-accent-foreground">Лояльность</CardTitle>
-              <Star className="w-5 h-5 text-accent" />
+              <CardTitle className="text-xs sm:text-sm font-medium text-accent-foreground">Лояльность</CardTitle>
+              <Star className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-accent">{totalLoyaltyLevels}</div>
-            <div className="text-sm text-muted-foreground mt-1">Уровней программы</div>
+          <CardContent className="pt-0">
+            <div className="text-xl sm:text-3xl font-bold text-accent">{totalLoyaltyLevels}</div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Уровней программы</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Recent Activity */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <Card className="glass-effect border-border/50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
@@ -220,19 +220,19 @@ export default function Admin() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {callbackRequests?.slice(0, 5).map(request => (
-                <div key={request.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border/30">
+                <div key={request.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg border border-border/30 gap-2">
                   <div>
-                    <div className="font-medium text-foreground">{request.name}</div>
-                    <div className="text-sm text-muted-foreground">{request.phone}</div>
+                    <div className="font-medium text-foreground text-sm sm:text-base">{request.name}</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">{request.phone}</div>
                   </div>
-                  <Badge variant={request.status === 'pending' ? 'destructive' : 'secondary'}>
+                  <Badge variant={request.status === 'pending' ? 'destructive' : 'secondary'} className="self-start sm:self-auto text-xs">
                     {request.status === 'pending' ? 'Новая' : 'Обработана'}
                   </Badge>
                 </div>
               )) || (
-                <div className="text-center py-6 text-muted-foreground">
+                <div className="text-center py-4 sm:py-6 text-muted-foreground text-sm">
                   Нет заявок
                 </div>
               )}
@@ -248,19 +248,19 @@ export default function Admin() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {blogPosts?.slice(0, 5).map(post => (
-                <div key={post.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border/30">
-                  <div>
-                    <div className="font-medium text-foreground truncate max-w-48">{post.title}</div>
-                    <div className="text-sm text-muted-foreground">{post.category}</div>
+                <div key={post.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg border border-border/30 gap-2">
+                  <div className="min-w-0">
+                    <div className="font-medium text-foreground truncate text-sm sm:text-base">{post.title}</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">{post.category}</div>
                   </div>
-                  <Badge variant={post.isPublished ? 'default' : 'secondary'}>
+                  <Badge variant={post.isPublished ? 'default' : 'secondary'} className="self-start sm:self-auto text-xs">
                     {post.isPublished ? 'Опубликовано' : 'Черновик'}
                   </Badge>
                 </div>
               )) || (
-                <div className="text-center py-6 text-muted-foreground">
+                <div className="text-center py-4 sm:py-6 text-muted-foreground text-sm">
                   Нет статей
                 </div>
               )}
@@ -358,50 +358,50 @@ export default function Admin() {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/50">
       {/* Header */}
       <header className="glass-effect border-b border-border/50 sticky top-0 z-50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <Flower className="w-5 h-5 text-primary-foreground" />
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <Flower className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold gradient-text">Цветокрафт</h1>
-                <p className="text-sm text-muted-foreground">Панель управления</p>
+                <h1 className="text-lg sm:text-2xl font-bold gradient-text">Цветокрафт</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">Панель управления</p>
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
+              <div className="text-xs sm:text-sm text-muted-foreground hidden md:block">
                 Вошел как: <span className="font-medium text-foreground">{currentUser?.username}</span>
               </div>
               <ThemeToggle />
-              <Button variant="outline" onClick={() => window.location.href = '/'}>
-                <Home className="w-4 h-4 mr-2" />
-                На сайт
+              <Button variant="outline" size="sm" onClick={() => window.location.href = '/'} className="px-2 sm:px-3">
+                <Home className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">На сайт</span>
               </Button>
-              <Button variant="destructive" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Выход
+              <Button variant="destructive" size="sm" onClick={handleLogout} className="px-2 sm:px-3">
+                <LogOut className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Выход</span>
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           {/* Tab Navigation */}
-          <TabsList className="glass-effect border border-border/50 bg-muted/30 p-2 h-auto flex-wrap justify-start gap-2">
+          <TabsList className="glass-effect border border-border/50 bg-muted/30 p-1 sm:p-2 h-auto flex-wrap justify-start gap-1 sm:gap-2 overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <TabsTrigger 
                   key={tab.id} 
                   value={tab.id}
-                  className="flex items-center gap-2 px-4 py-3 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground glass-hover"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground glass-hover text-xs sm:text-sm whitespace-nowrap min-w-fit"
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{tab.label}</span>
+                  <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden xs:inline sm:inline">{tab.label}</span>
                 </TabsTrigger>
               );
             })}
