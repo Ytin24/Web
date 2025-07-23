@@ -248,4 +248,53 @@ router.post('/sentiment', async (req, res) => {
   }
 });
 
+// Chat analysis route - analyze chat conversation and extract key information
+router.post("/analyze", async (req, res) => {
+  try {
+    const { messages } = req.body;
+    
+    if (!messages || !Array.isArray(messages)) {
+      return res.status(400).json({ message: "Invalid messages array" });
+    }
+
+    const { openaiService } = await import('./openai-service');
+    
+    // Создаем контекст разговора для анализа
+    const conversationText = messages
+      .map(msg => `${msg.role === 'user' ? 'Клиент' : 'Флора'}: ${msg.content}`)
+      .join('\n');
+
+    const analysisPrompt = `Проанализируй разговор с клиентом и извлеки ключевую информацию для заявки на обратный звонок.
+
+РАЗГОВОР:
+${conversationText}
+
+Составь краткое сообщение для формы обратной связи, включив:
+1. Тип букета/цветов, которые интересуют клиента
+2. Повод или событие (если упоминалось)  
+3. Предпочтения по цветам, стилю, размеру
+4. Бюджет (если обсуждался)
+5. Срочность заказа
+6. Любые особые пожелания
+
+Ответь ТОЛЬКО текстом сообщения без дополнительных комментариев. Максимум 200 символов.`;
+
+    const summary = await openaiService.generateChatResponse([
+      { role: 'user', content: analysisPrompt }
+    ]);
+
+    res.json({ 
+      summary: summary.content,
+      success: true 
+    });
+
+  } catch (error) {
+    console.error('Chat analysis error:', error);
+    res.status(500).json({ 
+      message: "Ошибка анализа чата",
+      summary: "Интересуется букетами. Прошу связаться для консультации и оформления заказа." 
+    });
+  }
+});
+
 export default router;

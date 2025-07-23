@@ -8,7 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { 
   Send, Bot, User, Flower, Sparkles, MessageCircle, 
-  X, Minimize2, Maximize2, Loader2, Move3D, Flower2, Heart, Zap 
+  X, Minimize2, Maximize2, Loader2, Move3D, Flower2, Heart, Zap, Phone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMutation } from '@tanstack/react-query';
@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
+import ContactFormModal from '@/components/contact-form-modal';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -46,6 +47,8 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   const [chatSize, setChatSize] = useState({ width: 480, height: 600 });
   const [isResizing, setIsResizing] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [contactMessage, setContactMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
@@ -158,6 +161,44 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
       console.error('Chat error:', error);
     }
   });
+
+  const analyzeConversationMutation = useMutation({
+    mutationFn: async (messages: ChatMessage[]) => {
+      const response = await fetch('/api/chatbot/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setContactMessage(data.summary);
+      setIsContactModalOpen(true);
+    },
+    onError: (error) => {
+      console.error('Analysis error:', error);
+      // Используем базовое сообщение если анализ не удался
+      setContactMessage('Интересуется букетами. Прошу связаться для консультации и оформления заказа.');
+      setIsContactModalOpen(true);
+    },
+  });
+
+  const handleContactRequest = () => {
+    // Анализируем разговор только если есть сообщения пользователя
+    const userMessages = messages.filter(msg => msg.role === 'user');
+    if (userMessages.length > 0) {
+      analyzeConversationMutation.mutate(messages);
+    } else {
+      // Если разговора еще не было, используем стандартное сообщение
+      setContactMessage('Интересуется цветочными услугами. Прошу связаться для консультации.');
+      setIsContactModalOpen(true);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -523,7 +564,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
           )}
 
           {/* Input */}
-          <div className="p-3 sm:p-4 border-t">
+          <div className="p-3 sm:p-4 border-t space-y-3">
             <div className="flex gap-2">
               <Input
                 ref={inputRef}
@@ -543,6 +584,30 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                 <Send className="w-4 h-4" />
               </Button>
             </div>
+            
+            {/* Contact button - show when user has been chatting */}
+            {messages.filter(msg => msg.role === 'user').length > 0 && (
+              <Button
+                onClick={handleContactRequest}
+                disabled={analyzeConversationMutation.isPending}
+                variant="outline"
+                size="sm"
+                className="w-full bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 dark:from-green-950/20 dark:to-emerald-950/20 dark:hover:from-green-900/30 dark:hover:to-emerald-900/30 border-green-200/60 hover:border-green-300 dark:border-green-800/50 text-green-700 dark:text-green-300 transition-all duration-200"
+              >
+                {analyzeConversationMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Анализирую разговор...
+                  </>
+                ) : (
+                  <>
+                    <Phone className="w-4 h-4 mr-2" />
+                    Связаться с флористом
+                  </>
+                )}
+              </Button>
+            )}
+            
             {/* Show suggestions button when hidden */}
             {messages.length === 1 && !showSuggestions && (
               <div className="mt-2 flex justify-center">
@@ -561,6 +626,15 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
       )}
         </Card>
       </motion.div>
+      
+      {/* Contact Form Modal */}
+      <ContactFormModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        initialMessage={contactMessage}
+        title="Связаться с флористом"
+        description="Флора проанализировала наш разговор и подготовила заявку. Наш флорист свяжется с вами для уточнения деталей."
+      />
     </AnimatePresence>
   );
 }
