@@ -33,7 +33,7 @@ export default function ProductsManagement() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterCategory, setFilterCategory] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -121,7 +121,7 @@ export default function ProductsManagement() {
   const filteredProducts = products.filter((product: Product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = !filterCategory || product.category === filterCategory;
+    const matchesCategory = !filterCategory || filterCategory === "all" || product.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -355,7 +355,7 @@ export default function ProductsManagement() {
                 <SelectValue placeholder="Все категории" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Все категории</SelectItem>
+                <SelectItem value="all">Все категории</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.value} value={category.value}>
                     {category.label}
