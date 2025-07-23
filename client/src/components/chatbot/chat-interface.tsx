@@ -130,7 +130,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
       }
 
       let accumulatedContent = '';
-      let assistantMessage: ChatMessage | null = null;
+      let assistantMessageCreated = false;
       
       while (true) {
         const { done, value } = await reader.read();
@@ -155,16 +155,17 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
               if (content) {
                 accumulatedContent += content;
                 
-                if (!assistantMessage) {
-                  // Create new assistant message
-                  assistantMessage = {
+                if (!assistantMessageCreated) {
+                  // Create new assistant message only once
+                  const assistantMessage: ChatMessage = {
                     role: 'assistant',
                     content: accumulatedContent,
                     timestamp: new Date(),
                   };
-                  setMessages(prev => [...prev, assistantMessage!]);
+                  setMessages(prev => [...prev, assistantMessage]);
+                  assistantMessageCreated = true;
                 } else {
-                  // Update the last message
+                  // Update the last message content
                   setMessages(prev => {
                     const newMessages = [...prev];
                     const lastIndex = newMessages.length - 1;
@@ -286,14 +287,14 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed top-4 left-4 right-4 bottom-4 sm:bottom-20 sm:right-4 sm:left-auto sm:top-auto z-[60] sm:w-[400px] sm:h-[600px] md:w-[480px] max-w-none sm:max-w-[90vw]"
           >
-            <Card className="h-full max-h-full overflow-hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-2 border-pink-200/50 dark:border-purple-600/50 shadow-2xl rounded-none sm:rounded-lg flex flex-col">
+            <Card className="h-full max-h-full overflow-hidden glass-effect border shadow-2xl rounded-none sm:rounded-lg flex flex-col">
               {/* Header */}
-              <CardHeader className="p-3 sm:p-4 bg-gradient-to-r from-pink-400/90 to-purple-500/90 text-white rounded-none sm:rounded-t-lg flex-shrink-0">
+              <CardHeader className="p-3 sm:p-4 gradient-primary text-white rounded-none sm:rounded-t-lg flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <Avatar className="w-10 h-10 bg-white/20 backdrop-blur-sm border-2 border-white/30">
-                        <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-lg">
+                        <AvatarFallback className="gradient-primary text-white font-bold text-lg">
                           🌸
                         </AvatarFallback>
                       </Avatar>
@@ -325,16 +326,16 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
                         className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
                         {message.role === 'assistant' && (
-                          <Avatar className="w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-400 flex-shrink-0">
-                            <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold">
+                          <Avatar className="w-8 h-8 gradient-primary flex-shrink-0">
+                            <AvatarFallback className="gradient-primary text-white font-bold">
                               Ф
                             </AvatarFallback>
                           </Avatar>
                         )}
                         <div className={`max-w-[80%] ${
                           message.role === 'user' 
-                            ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white' 
-                            : 'bg-background border border-border'
+                            ? 'gradient-primary text-white' 
+                            : 'natural-card border'
                         } rounded-lg p-3 shadow-sm`}>
                           <div className="prose prose-sm max-w-none dark:prose-invert">
                             <ReactMarkdown 
@@ -352,8 +353,8 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
                           </div>
                         </div>
                         {message.role === 'user' && (
-                          <Avatar className="w-8 h-8 bg-gradient-to-r from-blue-400 to-indigo-500 flex-shrink-0">
-                            <AvatarFallback className="bg-gradient-to-r from-blue-400 to-indigo-500 text-white font-bold">
+                          <Avatar className="w-8 h-8 bg-muted flex-shrink-0">
+                            <AvatarFallback className="bg-muted text-foreground font-bold">
                               Я
                             </AvatarFallback>
                           </Avatar>
@@ -363,16 +364,16 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
                     
                     {isTyping && (
                       <div className="flex gap-3">
-                        <Avatar className="w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-400">
-                          <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold">
+                        <Avatar className="w-8 h-8 gradient-primary">
+                          <AvatarFallback className="gradient-primary text-white font-bold">
                             Ф
                           </AvatarFallback>
                         </Avatar>
-                        <div className="bg-background border border-border rounded-lg p-3 shadow-sm">
+                        <div className="natural-card border rounded-lg p-3 shadow-sm">
                           <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-secondary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                           </div>
                         </div>
                       </div>
@@ -418,7 +419,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
                 )}
 
                 {/* Input */}
-                <div className="p-3 sm:p-4 border-t space-y-3 flex-shrink-0 bg-white/95 dark:bg-gray-900/95">
+                <div className="p-3 sm:p-4 border-t space-y-3 flex-shrink-0 bg-background/95">
                   <div className="flex gap-2">
                     <Input
                       ref={inputRef}

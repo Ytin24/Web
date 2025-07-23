@@ -124,9 +124,9 @@ export default function ContactFormModal({
   if (isSubmitted) {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-effect border">
           <DialogHeader>
-            <DialogTitle className="text-center text-foreground flex items-center justify-center gap-2">
+            <DialogTitle className="text-center gradient-text flex items-center justify-center gap-2">
               <Phone className="w-6 h-6 text-primary" />
               Заявка отправлена!
             </DialogTitle>
@@ -151,9 +151,9 @@ export default function ContactFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto glass-effect border">
         <DialogHeader>
-          <DialogTitle className="text-foreground flex items-center gap-2">
+          <DialogTitle className="gradient-text flex items-center gap-2">
             <Phone className="w-5 h-5 text-primary" />
             {title}
           </DialogTitle>
@@ -260,7 +260,7 @@ export default function ContactFormModal({
 
             <Button 
               type="submit" 
-              className="w-full h-11"
+              className="w-full h-11 gradient-primary hover:opacity-90 transition-opacity"
               disabled={createCallbackMutation.isPending}
             >
               {createCallbackMutation.isPending ? (
