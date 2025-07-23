@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Badge } from "@/components/ui/badge";
 import { Star, Gift, Phone, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -102,7 +103,7 @@ export default function LoyaltyModal({ isOpen, onClose }: LoyaltyModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-foreground flex items-center justify-center gap-2">
             <Star className="w-6 h-6 text-foreground" />
@@ -145,7 +146,7 @@ export default function LoyaltyModal({ isOpen, onClose }: LoyaltyModalProps) {
           </div>
 
           {/* Registration Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 Имя *
@@ -156,18 +157,18 @@ export default function LoyaltyModal({ isOpen, onClose }: LoyaltyModalProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full"
+                className="w-full h-12 text-base"
+                autoComplete="given-name"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 Номер телефона *
               </label>
-              <Input
-                type="tel"
+              <PhoneInput
                 placeholder="+7 (___) ___-__-__"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={setPhone}
                 required
                 className="w-full"
               />
@@ -176,18 +177,18 @@ export default function LoyaltyModal({ isOpen, onClose }: LoyaltyModalProps) {
               </p>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                className="flex-1"
+                className="flex-1 h-12 text-base"
               >
                 Отмена
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-primary to-secondary text-primary-foreground"
+                className="flex-1 h-12 text-base bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold"
                 disabled={!phone.trim() || !name.trim() || submitMutation.isPending}
               >
                 {submitMutation.isPending ? "Отправляем..." : "Присоединиться"}

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { MapPin, Clock, Truck, Phone, Mail, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -79,15 +80,15 @@ export default function ContactSection() {
           </AppleText>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           {/* Contact Form */}
           <AppleCard>
-            <GlassCard className="p-8 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
+            <GlassCard className="p-6 sm:p-8 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
               <AppleText>
                 <h3 className="text-2xl font-bold text-foreground mb-6">Заказать обратный звонок</h3>
               </AppleText>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
                   <FormField
                     control={form.control}
                     name="name"
@@ -97,7 +98,8 @@ export default function ContactSection() {
                         <FormControl>
                           <Input 
                             placeholder="Введите ваше имя" 
-                            className="glass-effect border-border focus:border-primary"
+                            className="glass-effect border-border focus:border-primary h-12 text-base"
+                            autoComplete="given-name"
                             {...field} 
                           />
                         </FormControl>
@@ -113,11 +115,11 @@ export default function ContactSection() {
                       <FormItem>
                         <FormLabel className="text-foreground font-semibold">Номер телефона *</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="tel" 
+                          <PhoneInput 
                             placeholder="+7 (___) ___-__-__" 
-                            className="glass-effect border-border focus:border-primary"
-                            {...field} 
+                            className="glass-effect border-border focus:border-primary h-12"
+                            value={field.value}
+                            onChange={field.onChange}
                           />
                         </FormControl>
                         <FormMessage />
@@ -133,9 +135,9 @@ export default function ContactSection() {
                         <FormLabel className="text-foreground font-semibold">Сообщение</FormLabel>
                         <FormControl>
                           <Textarea 
-                            rows={4} 
+                            rows={3} 
                             placeholder="Опишите ваши пожелания..."
-                            className="glass-effect border-border focus:border-primary resize-none"
+                            className="glass-effect border-border focus:border-primary resize-none text-base min-h-[80px]"
                             {...field} 
                           />
                         </FormControl>
@@ -152,7 +154,7 @@ export default function ContactSection() {
                         <FormLabel className="text-foreground font-semibold">Когда удобно позвонить?</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger className="glass-effect border-border focus:border-primary">
+                            <SelectTrigger className="glass-effect border-border focus:border-primary h-12 text-base">
                               <SelectValue placeholder="Выберите время" />
                             </SelectTrigger>
                           </FormControl>
@@ -192,7 +194,7 @@ export default function ContactSection() {
                   <Button 
                     type="submit" 
                     size="lg"
-                    className="w-full floating-action font-bold py-4 text-lg shadow-xl group" 
+                    className="w-full h-12 floating-action font-bold text-base shadow-xl group" 
                     disabled={createCallbackMutation.isPending}
                   >
                     {createCallbackMutation.isPending ? (
