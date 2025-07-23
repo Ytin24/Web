@@ -1,8 +1,20 @@
 import { Flower, Phone, Mail, MapPin, Clock } from "lucide-react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import type { ContactInfo } from "@shared/schema";
 
 export default function Footer() {
   const [location, setLocation] = useLocation();
+
+  // Fetch dynamic contact information
+  const { data: contactInfo } = useQuery<ContactInfo>({
+    queryKey: ['/api/contact-info'],
+    queryFn: async () => {
+      const response = await fetch('/api/contact-info');
+      if (!response.ok) throw new Error('Failed to fetch contact info');
+      return response.json();
+    },
+  });
 
   const handleNavigation = (sectionId: string) => {
     if (location === '/') {
@@ -145,23 +157,23 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center">
                 <Phone className="w-5 h-5 mr-3 text-primary" />
-                <a href="tel:88001234567" className="text-muted-foreground hover:text-foreground transition-colors">
-                  8 (800) 123-45-67
+                <a href={`tel:${contactInfo?.phone?.replace(/[^+\d]/g, '') || '88001234567'}`} className="text-muted-foreground hover:text-foreground transition-colors">
+                  {contactInfo?.phone || "8 (800) 123-45-67"}
                 </a>
               </div>
               <div className="flex items-center">
                 <Mail className="w-5 h-5 mr-3 text-primary" />
-                <a href="mailto:info@tsvetokraft.ru" className="text-muted-foreground hover:text-foreground transition-colors">
-                  info@tsvetokraft.ru
+                <a href={`mailto:${contactInfo?.email || 'info@tsvetokraft.ru'}`} className="text-muted-foreground hover:text-foreground transition-colors">
+                  {contactInfo?.email || "info@tsvetokraft.ru"}
                 </a>
               </div>
               <div className="flex items-center">
                 <MapPin className="w-5 h-5 mr-3 text-primary" />
-                <span className="text-muted-foreground">г. Москва, ул. Цветочная, д. 15</span>
+                <span className="text-muted-foreground">{contactInfo?.address || "г. Москва, ул. Цветочная, д. 15"}</span>
               </div>
               <div className="flex items-center">
                 <Clock className="w-5 h-5 mr-3 text-primary" />
-                <span className="text-muted-foreground">Пн-Вс: 8:00 - 22:00</span>
+                <span className="text-muted-foreground">{contactInfo?.workingHours || "Пн-Вс: 8:00 - 22:00"}</span>
               </div>
             </div>
           </div>

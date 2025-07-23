@@ -218,6 +218,19 @@ export const settings = pgTable("settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Contact Information Table for site contact details
+export const contactInfo = pgTable("contact_info", {
+  id: serial("id").primaryKey(),
+  phone: text("phone").notNull(),
+  email: text("email").notNull(),
+  address: text("address").notNull(),
+  workingHours: text("working_hours").notNull(),
+  socialMedia: text("social_media"), // JSON string with social media links
+  additionalInfo: text("additional_info"), // JSON string for extra contact details
+  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedBy: integer("updated_by").references(() => users.id),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -370,6 +383,15 @@ export const insertSettingSchema = createInsertSchema(settings).pick({
   description: true,
 });
 
+export const insertContactInfoSchema = createInsertSchema(contactInfo).pick({
+  phone: true,
+  email: true,
+  address: true,
+  workingHours: true,
+  socialMedia: true,
+  additionalInfo: true,
+});
+
 // Site Settings table for color scheme and other global settings
 export const siteSettings = pgTable("site_settings", {
   id: serial("id").primaryKey(),
@@ -409,6 +431,9 @@ export type LoyaltyProgram = typeof loyaltyProgram.$inferSelect;
 
 export type InsertImage = z.infer<typeof insertImageSchema>;
 export type Image = typeof images.$inferSelect;
+
+export type InsertContactInfo = z.infer<typeof insertContactInfoSchema>;
+export type ContactInfo = typeof contactInfo.$inferSelect;
 
 export type InsertApiToken = z.infer<typeof insertApiTokenSchema>;
 export type ApiToken = typeof apiTokens.$inferSelect;

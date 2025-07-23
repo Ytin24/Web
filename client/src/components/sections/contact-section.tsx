@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import type { ContactInfo } from "@shared/schema";
 import { MapPin, Clock, Truck, Phone, Mail, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,20 @@ const callbackSchema = z.object({
 export default function ContactSection() {
   const { toast } = useToast();
   const { getTooltip } = usePlayfulTooltips();
+
+  // Fetch dynamic contact information
+  const { data: contactInfo } = useQuery<ContactInfo>({
+    queryKey: ['/api/contact-info'],
+    queryFn: async () => {
+      const response = await fetch('/api/contact-info');
+      if (!response.ok) throw new Error('Failed to fetch contact info');
+      return response.json();
+    },
+  });
+
+  // Parse social media and additional info
+  const socialMedia = contactInfo?.socialMedia ? JSON.parse(contactInfo.socialMedia) : {};
+  const additionalInfo = contactInfo?.additionalInfo ? JSON.parse(contactInfo.additionalInfo) : {};
   
   const form = useForm<z.infer<typeof callbackSchema>>({
     resolver: zodResolver(callbackSchema),
@@ -214,7 +229,7 @@ export default function ContactSection() {
                   </Button>
                   
                   <p className="text-center text-sm text-muted-foreground">
-                    Или позвоните нам прямо сейчас: <a href="tel:+78001234567" className="text-primary font-semibold">8 (800) 123-45-67</a>
+                    Или позвоните нам прямо сейчас: <a href={`tel:${contactInfo?.phone?.replace(/[^+\d]/g, '') || '+78001234567'}`} className="text-primary font-semibold">{contactInfo?.phone || "8 (800) 123-45-67"}</a>
                   </p>
                 </form>
               </Form>
@@ -227,13 +242,13 @@ export default function ContactSection() {
               {
                 icon: MapPin,
                 title: "Наш адрес",
-                description: "г. Москва, ул. Цветочная, д. 15",
+                description: contactInfo?.address || "г. Москва, ул. Цветочная, д. 15",
                 gradient: "from-primary to-secondary"
               },
               {
                 icon: Clock,
                 title: "Часы работы",
-                description: "Пн-Вс: 8:00 - 22:00",
+                description: contactInfo?.workingHours || "Пн-Вс: 8:00 - 22:00",
                 gradient: "from-secondary to-accent"
               },
               {
