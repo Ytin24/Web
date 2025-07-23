@@ -94,7 +94,7 @@ export default function Footer() {
                 <button
                   key={link.id}
                   onClick={() => handleNavigation(link.id)}
-                  className="block text-white/70 hover:text-white transition-colors"
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {link.label}
                 </button>
@@ -108,31 +108,31 @@ export default function Footer() {
             <nav className="space-y-3">
               <a 
                 href="/services"
-                className="block text-white/70 hover:text-white transition-colors"
+                className="block text-muted-foreground hover:text-foreground transition-colors"
               >
                 Все услуги
               </a>
               <button
                 onClick={() => handleNavigation("portfolio")}
-                className="block text-left w-full text-white/70 hover:text-white transition-colors"
+                className="block text-left w-full text-muted-foreground hover:text-foreground transition-colors"
               >
                 Свадебные букеты
               </button>
               <button
                 onClick={() => handleNavigation("portfolio")}
-                className="block text-left w-full text-white/70 hover:text-white transition-colors"
+                className="block text-left w-full text-muted-foreground hover:text-foreground transition-colors"
               >
                 Корпоративное оформление
               </button>
               <button
                 onClick={() => handleNavigation("contact")}
-                className="block text-left w-full text-white/70 hover:text-white transition-colors"
+                className="block text-left w-full text-muted-foreground hover:text-foreground transition-colors"
               >
                 Доставка цветов
               </button>
               <a
                 href="mailto:info@tsvetokraft.ru?subject=Мастер-классы"
-                className="block text-white/70 hover:text-white transition-colors"
+                className="block text-muted-foreground hover:text-foreground transition-colors"
               >
                 Мастер-классы
               </a>
@@ -145,23 +145,23 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center">
                 <Phone className="w-5 h-5 mr-3 text-primary" />
-                <a href="tel:88001234567" className="text-white/70 hover:text-white transition-colors">
+                <a href="tel:88001234567" className="text-muted-foreground hover:text-foreground transition-colors">
                   8 (800) 123-45-67
                 </a>
               </div>
               <div className="flex items-center">
                 <Mail className="w-5 h-5 mr-3 text-primary" />
-                <a href="mailto:info@tsvetokraft.ru" className="text-white/70 hover:text-white transition-colors">
+                <a href="mailto:info@tsvetokraft.ru" className="text-muted-foreground hover:text-foreground transition-colors">
                   info@tsvetokraft.ru
                 </a>
               </div>
               <div className="flex items-center">
                 <MapPin className="w-5 h-5 mr-3 text-primary" />
-                <span className="text-white/70">г. Москва, ул. Цветочная, д. 15</span>
+                <span className="text-muted-foreground">г. Москва, ул. Цветочная, д. 15</span>
               </div>
               <div className="flex items-center">
                 <Clock className="w-5 h-5 mr-3 text-primary" />
-                <span className="text-white/70">Пн-Вс: 8:00 - 22:00</span>
+                <span className="text-muted-foreground">Пн-Вс: 8:00 - 22:00</span>
               </div>
             </div>
           </div>

@@ -70,7 +70,7 @@ export default function AboutSection() {
               <div key={index} className="natural-card p-6 natural-hover">
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-4 shadow-md">
-                    <feature.icon className="w-6 h-6 text-white" />
+                    <feature.icon className="w-6 h-6 text-primary-foreground" />
                   </div>
                   <h3 className="text-xl font-semibold text-foreground">{feature.title}</h3>
                 </div>

@@ -179,3 +179,20 @@ The application is designed for easy deployment on platforms like Replit while m
 - Created dynamic image routes (/api/images) for programmatic image management
 - All sections, blog posts, and portfolio items now use database-referenced dynamic images
 - Images are categorized (hero, about, portfolio, blog, general) with proper theming and alt text
+
+### Playful Floating Tooltips with Personality Implementation (2025-01-23)
+- Created comprehensive tooltip system with five distinct personalities (cheerful, wise, excited, caring, mysterious)
+- Added dynamic tooltip messages that change based on hover duration for enhanced user engagement
+- Implemented stable tooltip hooks with proper state management to prevent infinite re-renders
+- Created demonstration page at /tooltips-demo showcasing all tooltip personalities and features
+- Enhanced user experience with floating tooltips that add character and charm to navigation elements
+- Added proper CSS theming support for tooltips with personality-specific colors and animations
+
+### Text Contrast and Theme Accessibility Improvements (2025-01-23)
+- Fixed all white text appearing on light theme by replacing with proper semantic color tokens
+- Replaced hardcoded `text-white` classes with theme-aware `text-foreground` and `text-muted-foreground`
+- Updated footer navigation links to use proper contrast colors for both light and dark themes
+- Enhanced gradient text visibility in dark theme with brighter color values
+- Fixed playful tooltip text contrast using semantic foreground colors
+- Updated button variants to use theme-appropriate text colors instead of hardcoded white
+- Improved overall accessibility and readability across all theme modes

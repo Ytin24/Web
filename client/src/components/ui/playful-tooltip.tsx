@@ -240,7 +240,7 @@ export default function PlayfulTooltip({
             {/* Content */}
             <div className="flex items-center gap-2">
               <span className="text-lg">{style.emoji}</span>
-              <span className="text-gray-800 dark:text-gray-200">
+              <span className="text-foreground">
                 {showPersonality ? playfulMessages[personality][0] : content}
               </span>
             </div>

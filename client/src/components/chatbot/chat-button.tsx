@@ -45,7 +45,7 @@ export default function ChatButton() {
             
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-sm">Ф</span>
+                <span className="text-primary-foreground font-bold text-sm">Ф</span>
               </div>
               
               <div className="flex-1">
