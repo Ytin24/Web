@@ -825,8 +825,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async lockUserAccount(id: number, lockUntil: Date): Promise<void> {
-    // Защита от блокировки root-пользователя
-    if (id === 1) {
+    // Защита от блокировки root-пользователя (ID может быть 1 или 3)
+    const user = await this.getUserById(id);
+    if (user?.username === 'root') {
       console.warn('Попытка заблокировать root-пользователя заблокирована системой защиты');
       return; // Не блокируем root'а, но не выбрасываем ошибку чтобы не нарушить flow логина
     }
@@ -849,7 +850,8 @@ export class DatabaseStorage implements IStorage {
 
   async updateUser(id: number, userData: Partial<InsertUser>): Promise<User> {
     // Защита от самоблокировки root-пользователя
-    if (id === 1 && userData.isActive === false) {
+    const user = await this.getUserById(id);
+    if (user?.username === 'root' && userData.isActive === false) {
       throw new Error('Нельзя деактивировать root-пользователя - это заблокирует доступ к системе');
     }
     
@@ -863,7 +865,8 @@ export class DatabaseStorage implements IStorage {
 
   async deactivateUser(id: number): Promise<void> {
     // Защита от деактивации root-пользователя
-    if (id === 1) {
+    const user = await this.getUserById(id);
+    if (user?.username === 'root') {
       throw new Error('Нельзя деактивировать root-пользователя - это заблокирует доступ к системе');
     }
     

@@ -209,8 +209,9 @@ router.put('/users/:id', authenticateToken, async (req: AuthRequest, res: Respon
       });
     }
 
-    // Защита от самоблокировки root-пользователя
-    if (userId === 1 && req.body.isActive === false) {
+      // Защита от самоблокировки root-пользователя
+    const targetUser = await storage.getUserById(userId);
+    if (targetUser?.username === 'root' && req.body.isActive === false) {
       return res.status(400).json({
         success: false,
         error: 'Нельзя деактивировать root-пользователя - это заблокирует доступ к системе'
@@ -249,6 +250,15 @@ router.post('/users/:id/deactivate', authenticateToken, async (req: AuthRequest,
       return res.status(400).json({
         success: false,
         error: 'Неверный ID пользователя'
+      });
+    }
+
+    // Дополнительная защита на уровне API
+    const targetUser = await storage.getUserById(userId);
+    if (targetUser?.username === 'root') {
+      return res.status(403).json({
+        success: false,
+        error: 'Нельзя деактивировать root-пользователя - это заблокирует доступ к системе'
       });
     }
 
