@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { usePerformanceOptimization } from "@/hooks/use-performance-optimization";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Admin from "@/pages/admin";
@@ -47,12 +48,23 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="tsvetokraft-theme">
         <TooltipProvider>
-          <Toaster />
-          <Router />
-          <ChatButton />
+          <AppContent />
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
+  );
+}
+
+// Component to initialize color scheme and render app content
+function AppContent() {
+  useColorScheme(); // Initialize color scheme
+  
+  return (
+    <>
+      <Toaster />
+      <Router />
+      <ChatButton />
+    </>
   );
 }
 

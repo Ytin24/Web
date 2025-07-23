@@ -1,6 +1,7 @@
 import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import type { ColorSchemeName } from "./color-palette";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -368,6 +369,24 @@ export const insertSettingSchema = createInsertSchema(settings).pick({
   value: true,
   description: true,
 });
+
+// Site Settings table for color scheme and other global settings
+export const siteSettings = pgTable("site_settings", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(), // 'colorScheme', 'siteName', etc.
+  value: text("value").notNull(), // JSON string for complex values
+  description: text("description"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedBy: integer("updated_by").references(() => users.id),
+});
+
+export const insertSiteSettingsSchema = createInsertSchema(siteSettings).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export type SiteSetting = typeof siteSettings.$inferSelect;
+export type InsertSiteSetting = z.infer<typeof insertSiteSettingsSchema>;
 
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;

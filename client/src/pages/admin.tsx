@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   Home, BookOpen, Image, Star, Phone, Plus, Edit, Trash2, 
-  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock, Code, Flower, LogOut, Loader2, Package
+  Save, X, Eye, EyeOff, Activity, Users, TrendingUp, Clock, Code, Flower, LogOut, Loader2, Package, Palette
 } from "lucide-react";
 import BlogManagement from "@/components/admin/blog-management";
 import PortfolioManagement from "@/components/admin/portfolio-management";
@@ -18,6 +18,7 @@ import TokenManagement from "@/components/admin/token-management";
 import ApiDocumentation from "@/components/admin/api-documentation";
 import CustomersManagement from "@/components/admin/customers-management";
 import CRMManagement from "@/components/admin/crm-management";
+import { ColorSchemeManagement } from "@/components/admin/color-scheme-management";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Section, BlogPost, PortfolioItem, CallbackRequest, LoyaltyProgram } from "@shared/schema";
 
@@ -337,6 +338,7 @@ export default function Admin() {
     { id: "crm", label: "CRM", icon: TrendingUp },
     { id: "loyalty", label: "Лояльность", icon: Star },
     { id: "products", label: "Товары", icon: Package },
+    { id: "colors", label: "Цвета", icon: Palette },
     { id: "tokens", label: "API", icon: Code },
   ];
 
@@ -445,6 +447,10 @@ export default function Admin() {
                   <ProductsManagement />
                 </CardContent>
               </Card>
+            </TabsContent>
+            
+            <TabsContent value="colors" className="mt-0">
+              <ColorSchemeManagement />
             </TabsContent>
             
             <TabsContent value="tokens" className="mt-0">
