@@ -1,6 +1,5 @@
 // Using DeepSeek API for flower recommendations and chat
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-const DEEPSEEK_BASE_URL = 'https://api.deepseek.com';
+import { OPENAI_API_KEY } from './secrets';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -21,9 +20,9 @@ export interface FlowerRecommendation {
 export async function generateBlogContent(prompt: string): Promise<string> {
   try {
     console.log('Generating blog content with DeepSeek API...');
-    console.log('API Key exists:', !!DEEPSEEK_API_KEY);
+    console.log('API Key exists:', !!OPENAI_API_KEY);
     
-    if (!DEEPSEEK_API_KEY) {
+    if (!OPENAI_API_KEY) {
       throw new Error('DeepSeek API key not configured');
     }
 
@@ -61,11 +60,11 @@ export async function generateBlogContent(prompt: string): Promise<string> {
     };
 
     console.log('Making request to DeepSeek API...');
-    const response = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+    const response = await fetch(`https://api.deepseek.com/v1/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify(requestBody),
     });
@@ -135,11 +134,11 @@ export class FlowerChatbotService {
         ...messages
       ];
 
-      const response = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+      const response = await fetch(`https://api.deepseek.com/v1/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
           model: "deepseek-chat",
@@ -190,7 +189,7 @@ export class FlowerChatbotService {
 
   async getChatStreamResponse(messages: ChatMessage[]): Promise<ReadableStream> {
     try {
-      if (!DEEPSEEK_API_KEY) {
+      if (!OPENAI_API_KEY) {
         // Возвращаем стрим с fallback ответом
         const fallbackContent = `Привет! Меня зовут **Флора** 🌸 
 
@@ -244,11 +243,11 @@ export class FlowerChatbotService {
         ...messages
       ];
 
-      const response = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+      const response = await fetch(`https://api.deepseek.com/v1/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
           model: "deepseek-chat",
@@ -311,11 +310,11 @@ ${colors ? `Предпочитаемые цвета: ${colors.join(', ')}` : ''}
   "careInstructions": "краткие советы по уходу"
 }`;
 
-      const response = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+      const response = await fetch(`https://api.deepseek.com/v1/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
           model: "deepseek-chat",
@@ -352,11 +351,11 @@ ${colors ? `Предпочитаемые цвета: ${colors.join(', ')}` : ''}
 
   async analyzeSentiment(text: string): Promise<{ rating: number; confidence: number }> {
     try {
-      const response = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+      const response = await fetch(`https://api.deepseek.com/v1/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
           model: "deepseek-chat",
@@ -448,15 +447,15 @@ class BlogAssistantService {
 
   async getBlogContent(prompt: string): Promise<string> {
     try {
-      if (!DEEPSEEK_API_KEY) {
+      if (!OPENAI_API_KEY) {
         throw new Error("DeepSeek API key not configured");
       }
 
-      const response = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+      const response = await fetch(`https://api.deepseek.com/v1/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
           model: "deepseek-chat",

@@ -4,6 +4,7 @@ import authRoutes from "./auth-routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeRootUser, initializeSettings, cleanupExpiredSessions } from './init-root-user';
 import { securityHeaders } from "./auth";
+import './secrets';
 
 const app = express();
 app.use(express.json());
