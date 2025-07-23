@@ -87,11 +87,9 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
   useEffect(() => {
     const userMessages = messages.filter(msg => msg.role === 'user');
     if (userMessages.length >= 1) {
-      const newState = false;
-      setShowSuggestions(newState);
-      return newState;
+      setShowSuggestions(false);
     }
-  }, []);
+  }, [messages]);
 
   // Simple function to send message with streaming
   const sendMessage = async (userMessage: string) => {
@@ -286,7 +284,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-2 sm:bottom-20 sm:right-4 sm:inset-auto z-[60] w-full h-full sm:w-[400px] sm:h-[600px] md:w-[480px] max-w-none sm:max-w-[90vw]"
+            className="fixed top-4 left-4 right-4 bottom-4 sm:bottom-20 sm:right-4 sm:left-auto sm:top-auto z-[60] w-auto h-auto sm:w-[400px] sm:h-[600px] md:w-[480px] max-w-none sm:max-w-[90vw]"
           >
             <Card className="h-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-2 border-pink-200/50 dark:border-purple-600/50 shadow-2xl rounded-none sm:rounded-lg">
               {/* Header */}
