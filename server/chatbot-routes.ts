@@ -358,64 +358,115 @@ router.post("/analyze", async (req, res) => {
       .map(msg => `${msg.role === 'user' ? 'Клиент' : 'Флора'}: ${msg.content}`)
       .join('\n');
 
-    // Простой анализ без использования AI - извлекаем ключевые слова
+    // Создаем естественное описание разговора для формы обратной связи
+    const userMessages = messages.filter(msg => msg.role === 'user');
+    const assistantMessages = messages.filter(msg => msg.role === 'assistant');
+    
     let summary = '';
-    const userMessages = messages.filter(msg => msg.role === 'user').map(msg => msg.content.toLowerCase());
-    const fullText = userMessages.join(' ');
     
-    // Определяем тип цветов
-    const flowerTypes = [];
-    if (fullText.includes('роз')) flowerTypes.push('розы');
-    if (fullText.includes('пион')) flowerTypes.push('пионы');
-    if (fullText.includes('тюльпан')) flowerTypes.push('тюльпаны');
-    if (fullText.includes('лилии')) flowerTypes.push('лилии');
-    if (fullText.includes('хризантем')) flowerTypes.push('хризантемы');
-    
-    // Определяем повод
-    let occasion = '';
-    if (fullText.includes('день рожден') || fullText.includes('др')) occasion = 'день рождения';
-    else if (fullText.includes('свадьб')) occasion = 'свадьба';
-    else if (fullText.includes('8 марта') || fullText.includes('женский день')) occasion = '8 марта';
-    else if (fullText.includes('романтик') || fullText.includes('любим')) occasion = 'романтический повод';
-    else if (fullText.includes('мам')) occasion = 'для мамы';
-    
-    // Определяем цвета
-    const colors = [];
-    if (fullText.includes('розов')) colors.push('розовые');
-    if (fullText.includes('красн')) colors.push('красные');
-    if (fullText.includes('бел')) colors.push('белые');
-    if (fullText.includes('желт')) colors.push('желтые');
-    
-    // Определяем бюджет
-    let budget = '';
-    const budgetMatch = fullText.match(/(\d+)\s*(руб|рублей|тысяч|к)/);
-    if (budgetMatch) {
-      budget = `до ${budgetMatch[1]} руб`;
-    }
-    
-    // Определяем срочность
-    let urgency = '';
-    if (fullText.includes('завтра') || fullText.includes('срочно') || fullText.includes('сегодня')) {
-      urgency = 'Срочно';
-    }
-    
-    // Составляем итоговое сообщение
-    const parts = [];
-    if (flowerTypes.length > 0) parts.push(`Интересуется: ${flowerTypes.join(', ')}`);
-    if (occasion) parts.push(`Повод: ${occasion}`);
-    if (colors.length > 0) parts.push(`Цвета: ${colors.join(', ')}`);
-    if (budget) parts.push(`Бюджет: ${budget}`);
-    if (urgency) parts.push(urgency);
-    
-    if (parts.length > 0) {
+    if (userMessages.length > 0) {
+      const fullText = userMessages.map(msg => msg.content).join(' ').toLowerCase();
+      
+      // Определяем основные темы разговора
+      let mainTopics = [];
+      let recipient = '';
+      let occasion = '';
+      let preferences = [];
+      let budget = '';
+      let urgency = '';
+      
+      // Получатель
+      if (fullText.includes('мам')) recipient = 'маме';
+      else if (fullText.includes('жен')) recipient = 'жене';
+      else if (fullText.includes('девушк')) recipient = 'девушке';
+      else if (fullText.includes('бабушк')) recipient = 'бабушке';
+      else if (fullText.includes('сестр')) recipient = 'сестре';
+      else if (fullText.includes('подруг')) recipient = 'подруге';
+      else if (fullText.includes('коллег')) recipient = 'коллеге';
+      
+      // Повод
+      if (fullText.includes('день рожден') || fullText.includes('др')) occasion = 'на день рождения';
+      else if (fullText.includes('8 марта') || fullText.includes('женский день')) occasion = 'на 8 марта';
+      else if (fullText.includes('свадьб')) occasion = 'на свадьбу';
+      else if (fullText.includes('юбилей')) occasion = 'на юбилей';
+      else if (fullText.includes('романтик') || fullText.includes('свидани')) occasion = 'для романтического вечера';
+      else if (fullText.includes('извинен') || fullText.includes('прощен')) occasion = 'для примирения';
+      
+      // Цветы и предпочтения
+      if (fullText.includes('роз')) preferences.push('розы');
+      if (fullText.includes('пион')) preferences.push('пионы');
+      if (fullText.includes('тюльпан')) preferences.push('тюльпаны');
+      if (fullText.includes('лилии')) preferences.push('лилии');
+      if (fullText.includes('хризантем')) preferences.push('хризантемы');
+      if (fullText.includes('герберы')) preferences.push('герберы');
+      if (fullText.includes('орхиде')) preferences.push('орхидеи');
+      
+      // Цвета
+      let colors = [];
+      if (fullText.includes('розов')) colors.push('розовые');
+      if (fullText.includes('красн')) colors.push('красные');
+      if (fullText.includes('бел')) colors.push('белые');
+      if (fullText.includes('желт')) colors.push('желтые');
+      if (fullText.includes('фиолет') || fullText.includes('сирен')) colors.push('фиолетовые');
+      
+      // Бюджет
+      const budgetMatch = fullText.match(/(\d+)\s*(руб|рублей|тысяч|к)/);
+      if (budgetMatch) {
+        const amount = budgetMatch[1];
+        budget = budgetMatch[0].includes('тысяч') || budgetMatch[0].includes('к') 
+          ? `в пределах ${amount} тысяч рублей`
+          : `бюджет до ${amount} рублей`;
+      }
+      
+      // Срочность
+      if (fullText.includes('завтра') || fullText.includes('срочно') || fullText.includes('сегодня')) {
+        urgency = 'срочно';
+      }
+      
+      // Составляем естественное сообщение
+      let parts = [];
+      
+      if (recipient && occasion) {
+        parts.push(`Клиент обсуждал букет ${recipient} ${occasion}`);
+      } else if (recipient) {
+        parts.push(`Клиент интересовался букетом ${recipient}`);
+      } else if (occasion) {
+        parts.push(`Клиент обсуждал букет ${occasion}`);
+      } else {
+        parts.push('Клиент интересовался букетом');
+      }
+      
+      if (preferences.length > 0) {
+        if (colors.length > 0) {
+          const flowersText = preferences.length === 1 ? preferences[0] : preferences.join(', ');
+          const colorsText = colors.length === 1 ? colors[0] : colors.join(' и ');
+          parts.push(`Хотелось бы уточнить возможность сделать букет из ${flowersText} в ${colorsText} тонах`);
+        } else {
+          const flowersText = preferences.length === 1 ? preferences[0] : preferences.join(', ');
+          parts.push(`Хотелось бы уточнить возможность сделать букет из ${flowersText}`);
+        }
+      } else if (colors.length > 0) {
+        parts.push(`Предпочтения по цветам: ${colors.join(', ')}`);
+      }
+      
+      if (budget) {
+        parts.push(budget.charAt(0).toUpperCase() + budget.slice(1));
+      }
+      
+      if (urgency) {
+        parts.push(`Нужно ${urgency}`);
+      }
+      
+      // Добавляем вежливое окончание
+      parts.push('Прошу связаться для уточнения деталей и оформления заказа.');
+      
       summary = parts.join('. ') + '.';
+      
+      // Делаем первую букву заглавной и исправляем грамматику
+      summary = summary.charAt(0).toUpperCase() + summary.slice(1);
+      
     } else {
-      summary = 'Интересуется букетами. Прошу связаться для консультации и оформления заказа.';
-    }
-    
-    // Ограничиваем длину до 200 символов
-    if (summary.length > 200) {
-      summary = summary.substring(0, 197) + '...';
+      summary = 'Клиент интересовался цветочными композициями. Прошу связаться для консультации и подбора подходящего букета.';
     }
 
     res.json({ 

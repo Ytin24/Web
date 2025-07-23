@@ -312,10 +312,13 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
     const userMessages = messages.filter(msg => msg.role === 'user');
     if (userMessages.length > 0) {
       analyzeConversationMutation.mutate(messages);
+      // Закрываем чат после нажатия на кнопку
+      onClose();
     } else {
       // Если разговора еще не было, используем стандартное сообщение
       setContactMessage('Интересуется цветочными услугами. Прошу связаться для консультации.');
       setIsContactModalOpen(true);
+      onClose();
     }
   };
 
