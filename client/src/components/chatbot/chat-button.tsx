@@ -79,7 +79,7 @@ export default function ChatButton() {
                   size="sm"
                   variant="ghost"
                   onClick={() => setShowTooltip(false)}
-                  className="absolute top-1 right-1 w-6 h-6 p-0 hover:bg-white/20 dark:hover:bg-black/20 rounded-full transition-all duration-200"
+                  className="absolute top-1 right-1 w-6 h-6 p-0 hover:bg-pink-100/50 dark:hover:bg-pink-300/20 hover:text-pink-600 dark:hover:text-pink-300 rounded-full transition-all duration-200"
                 >
                   <X className="w-3 h-3" />
                 </Button>

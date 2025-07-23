@@ -358,7 +358,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                     variant="ghost" 
                     size="sm" 
                     onClick={() => setIsMinimized(!isMinimized)}
-                    className="h-8 w-8 p-0 hover:bg-pink-100 dark:hover:bg-pink-900/20 hover:text-pink-600 rounded-full transition-all duration-200"
+                    className="h-8 w-8 p-0 hover:bg-pink-100/70 dark:hover:bg-pink-300/20 hover:text-pink-600 dark:hover:text-pink-300 rounded-full transition-all duration-200"
                     title={isMinimized ? "Развернуть" : "Свернуть"}
                   >
                     {isMinimized ? (
@@ -378,7 +378,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                   variant="ghost" 
                   size="sm" 
                   onClick={onClose}
-                  className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600 rounded-full transition-all duration-200"
+                  className="h-8 w-8 p-0 hover:bg-red-100/70 dark:hover:bg-red-300/20 hover:text-red-600 dark:hover:text-red-300 rounded-full transition-all duration-200"
                   title="Закрыть чат"
                 >
                   <X className="w-4 h-4" />
@@ -493,7 +493,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowSuggestions(false)}
-                  className="w-6 h-6 p-0 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  className="w-6 h-6 p-0 hover:bg-pink-100/70 dark:hover:bg-pink-300/20 text-muted-foreground hover:text-pink-600 dark:hover:text-pink-300 transition-colors"
                   title="Скрыть предложения"
                 >
                   <X className="w-3 h-3" />
@@ -509,7 +509,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                       setInputValue(suggestion.text);
                       setTimeout(() => handleSendMessage(), 100);
                     }}
-                    className="text-left h-auto p-2 sm:p-3 bg-background/60 hover:bg-primary/10 border border-border/50 hover:border-primary/50 transition-all duration-200"
+                    className="text-left h-auto p-2 sm:p-3 bg-background/60 hover:bg-pink-50/70 dark:hover:bg-pink-400/20 border border-border/50 hover:border-pink-300/70 dark:hover:border-pink-400/40 transition-all duration-200"
                     title={suggestion.description}
                   >
                     <div className="flex flex-col items-start w-full">
@@ -538,7 +538,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim() || chatMutation.isPending}
                 size="sm"
-                className="px-3 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600"
+                className="px-3 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500/90 hover:to-purple-600/90 dark:hover:from-pink-300 dark:hover:to-purple-400 shadow-md hover:shadow-lg transition-all duration-200"
               >
                 <Send className="w-4 h-4" />
               </Button>
@@ -550,7 +550,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowSuggestions(true)}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-xs text-muted-foreground hover:text-pink-600 dark:hover:text-pink-300 hover:bg-pink-50/50 dark:hover:bg-pink-400/10 rounded-md px-2 py-1 transition-colors"
                 >
                   Показать быстрые предложения
                 </Button>
