@@ -172,7 +172,7 @@ export interface IStorage {
   updateUserPassword(id: number, passwordHash: string): Promise<void>;
   lockUserAccount(id: number, lockUntil: Date): Promise<void>;
   unlockUserAccount(id: number): Promise<void>;
-  updateUser(id: number, user: Partial<User>): Promise<User>;
+  updateUser(id: number, user: Partial<InsertUser>): Promise<User>;
   deactivateUser(id: number): Promise<void>;
 }
 
@@ -809,6 +809,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async lockUserAccount(id: number, lockUntil: Date): Promise<void> {
+    // Защита от блокировки root-пользователя
+    if (id === 1) {
+      console.warn('Попытка заблокировать root-пользователя заблокирована системой защиты');
+      return; // Не блокируем root'а, но не выбрасываем ошибку чтобы не нарушить flow логина
+    }
+    
     await db
       .update(users)
       .set({ accountLockedUntil: lockUntil })
@@ -826,6 +832,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUser(id: number, userData: Partial<InsertUser>): Promise<User> {
+    // Защита от самоблокировки root-пользователя
+    if (id === 1 && userData.isActive === false) {
+      throw new Error('Нельзя деактивировать root-пользователя - это заблокирует доступ к системе');
+    }
+    
     const [updatedUser] = await db
       .update(users)
       .set(userData)
@@ -835,12 +846,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deactivateUser(id: number): Promise<void> {
+    // Защита от деактивации root-пользователя
+    if (id === 1) {
+      throw new Error('Нельзя деактивировать root-пользователя - это заблокирует доступ к системе');
+    }
+    
     await db
       .update(users)
       .set({ isActive: false })
       .where(eq(users.id, id));
       
-    // Also deactivate all user sessions
+    // Также деактивировать все сессии пользователя
     await this.deactivateAllUserSessions(id);
   }
 

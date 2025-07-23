@@ -164,4 +164,140 @@ router.get('/status', authenticateToken, async (req: AuthRequest, res: Response)
   }
 });
 
+// Получить всех пользователей (только для super_admin)
+router.get('/users', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.role !== 'super_admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Доступ запрещен. Требуется роль super_admin.'
+      });
+    }
+
+    const users = await storage.getAllUsers();
+    // Удаляем пароли из ответа
+    const safeUsers = users.map(({ password, ...user }) => user);
+    
+    res.json({
+      success: true,
+      users: safeUsers
+    });
+  } catch (error) {
+    console.error('Get users error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Не удалось получить список пользователей'
+    });
+  }
+});
+
+// Обновить пользователя (с защитой root'а)
+router.put('/users/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.role !== 'super_admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Доступ запрещен. Требуется роль super_admin.'
+      });
+    }
+
+    const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Неверный ID пользователя'
+      });
+    }
+
+    // Защита от самоблокировки root-пользователя
+    if (userId === 1 && req.body.isActive === false) {
+      return res.status(400).json({
+        success: false,
+        error: 'Нельзя деактивировать root-пользователя - это заблокирует доступ к системе'
+      });
+    }
+
+    const updatedUser = await storage.updateUser(userId, req.body);
+    const { password, ...safeUser } = updatedUser;
+    
+    res.json({
+      success: true,
+      message: 'Пользователь успешно обновлен',
+      user: safeUser
+    });
+  } catch (error) {
+    console.error('Update user error:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Не удалось обновить пользователя'
+    });
+  }
+});
+
+// Деактивировать пользователя (с защитой root'а)
+router.post('/users/:id/deactivate', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.role !== 'super_admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Доступ запрещен. Требуется роль super_admin.'
+      });
+    }
+
+    const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Неверный ID пользователя'
+      });
+    }
+
+    await storage.deactivateUser(userId);
+    
+    res.json({
+      success: true,
+      message: 'Пользователь успешно деактивирован'
+    });
+  } catch (error) {
+    console.error('Deactivate user error:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Не удалось деактивировать пользователя'
+    });
+  }
+});
+
+// Разблокировать пользователя
+router.post('/users/:id/unlock', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.role !== 'super_admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Доступ запрещен. Требуется роль super_admin.'
+      });
+    }
+
+    const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Неверный ID пользователя'
+      });
+    }
+
+    await storage.unlockUserAccount(userId);
+    
+    res.json({
+      success: true,
+      message: 'Пользователь успешно разблокирован'
+    });
+  } catch (error) {
+    console.error('Unlock user error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Не удалось разблокировать пользователя'
+    });
+  }
+});
+
 export default router;

@@ -287,6 +287,16 @@ export const insertUserSchema = createInsertSchema(users).pick({
   isActive: true,
 });
 
+export const updateUserSchema = createInsertSchema(users).pick({
+  username: true,
+  email: true,
+  role: true,
+  permissions: true,
+  isActive: true,
+  mustChangePassword: true,
+  notes: true,
+}).partial();
+
 export const insertApiTokenSchema = createInsertSchema(apiTokens).pick({
   userId: true,
   tokenHash: true,
