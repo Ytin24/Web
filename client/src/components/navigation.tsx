@@ -6,6 +6,7 @@ import { AppleButton, MagneticElement } from "@/components/animations/apple-inte
 import { useLocation } from "wouter";
 import PlayfulTooltip from "@/components/ui/playful-tooltip";
 import { usePlayfulTooltips } from "@/hooks/use-playful-tooltips";
+import { API_URL } from '../config';
 
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

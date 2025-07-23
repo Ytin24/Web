@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import ScrollReveal from "@/components/animations/scroll-reveal";
 import { AppleCard, AppleText, AppleButton, MagneticElement } from "@/components/animations/apple-interactions";
 import GlassCard from "@/components/ui/glass-card";
-import { apiRequest } from "@/lib/queryClient";
+import { API_URL } from '../../config';
 import PlayfulTooltip from "@/components/ui/playful-tooltip";
 import { usePlayfulTooltips } from "@/hooks/use-playful-tooltips";
 
@@ -35,7 +35,7 @@ export default function ContactSection() {
   const { data: contactInfo } = useQuery<ContactInfo>({
     queryKey: ['/api/contact-info'],
     queryFn: async () => {
-      const response = await fetch('/api/contact-info');
+      const response = await fetch(`${API_URL}/api/contact-info`);
       if (!response.ok) throw new Error('Failed to fetch contact info');
       return response.json();
     },

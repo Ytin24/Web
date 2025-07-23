@@ -9,13 +9,14 @@ import LoyaltyModal from "@/components/loyalty-modal";
 import type { LoyaltyProgram } from "@shared/schema";
 import PlayfulTooltip from "@/components/ui/playful-tooltip";
 import { usePlayfulTooltips } from "@/hooks/use-playful-tooltips";
+import { API_URL } from '../../config';
 
 export default function LoyaltySection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { getTooltip } = usePlayfulTooltips();
   const { data: loyaltyLevels } = useQuery<LoyaltyProgram[]>({
     queryKey: ["/api/loyalty-program"],
-    queryFn: () => fetch("/api/loyalty-program?active=true").then(res => res.json())
+    queryFn: () => fetch(`${API_URL}/api/loyalty-program?active=true`).then(res => res.json())
   });
 
   const getIcon = (level: string) => {

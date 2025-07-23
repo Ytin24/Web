@@ -8,6 +8,7 @@ import ScrollReveal from "@/components/animations/scroll-reveal";
 import ImageModal from "@/components/image-modal";
 
 import type { BlogPost } from "@shared/schema";
+import { API_URL } from '../../config';
 
 export default function BlogSection() {
   const [, setLocation] = useLocation();
@@ -16,7 +17,7 @@ export default function BlogSection() {
 
   const { data: blogPosts } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog-posts"],
-    queryFn: () => fetch("/api/blog-posts?published=true").then(res => res.json())
+    queryFn: () => fetch(`${API_URL}/api/blog-posts?published=true`).then(res => res.json())
   });
 
   const openBlogPost = (postId: number) => {

@@ -25,6 +25,7 @@ import { Phone, Send, Loader2 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { API_URL } from '../config';
 
 const callbackSchema = z.object({
   name: z.string().min(2, "Имя должно содержать минимум 2 символа"),
@@ -79,7 +80,7 @@ export default function ContactFormModal({
   const createCallbackMutation = useMutation({
     mutationFn: async (data: z.infer<typeof callbackSchema>) => {
       const { consent, ...callbackData } = data;
-      return apiRequest("POST", "/api/callback-requests", callbackData);
+      return apiRequest("POST", `${API_URL}/api/callback-requests`, callbackData);
     },
     onSuccess: () => {
       setIsSubmitted(true);

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ExternalLink, Copy, Check, Code, Book, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { API_URL } from '../../config';
 
 export default function ApiDocumentation() {
   const [copiedEndpoint, setCopiedEndpoint] = useState<string | null>(null);
@@ -23,103 +24,103 @@ export default function ApiDocumentation() {
   const apiEndpoints = [
     {
       method: "GET",
-      path: "/api/sections",
+      path: `${API_URL}/api/sections`,
       description: "Получить все секции сайта",
       category: "Sections"
     },
     {
       method: "POST",
-      path: "/api/sections",
+      path: `${API_URL}/api/sections`,
       description: "Создать новую секцию",
       category: "Sections"
     },
     {
       method: "PUT",
-      path: "/api/sections/:id",
+      path: `${API_URL}/api/sections/:id`,
       description: "Обновить секцию",
       category: "Sections"
     },
     {
       method: "GET",
-      path: "/api/blog-posts",
+      path: `${API_URL}/api/blog-posts`,
       description: "Получить все блог-посты",
       category: "Blog"
     },
     {
       method: "POST",
-      path: "/api/blog-posts",
+      path: `${API_URL}/api/blog-posts`,
       description: "Создать новый блог-пост",
       category: "Blog"
     },
     {
       method: "PUT",
-      path: "/api/blog-posts/:id",
+      path: `${API_URL}/api/blog-posts/:id`,
       description: "Обновить блог-пост",
       category: "Blog"
     },
     {
       method: "DELETE",
-      path: "/api/blog-posts/:id",
+      path: `${API_URL}/api/blog-posts/:id`,
       description: "Удалить блог-пост",
       category: "Blog"
     },
     {
       method: "GET",
-      path: "/api/portfolio-items",
+      path: `${API_URL}/api/portfolio-items`,
       description: "Получить элементы портфолио",
       category: "Portfolio"
     },
     {
       method: "POST",
-      path: "/api/portfolio-items",
+      path: `${API_URL}/api/portfolio-items`,
       description: "Создать элемент портфолио",
       category: "Portfolio"
     },
     {
       method: "PUT",
-      path: "/api/portfolio-items/:id",
+      path: `${API_URL}/api/portfolio-items/:id`,
       description: "Обновить элемент портфолио",
       category: "Portfolio"
     },
     {
       method: "DELETE",
-      path: "/api/portfolio-items/:id",
+      path: `${API_URL}/api/portfolio-items/:id`,
       description: "Удалить элемент портфолио",
       category: "Portfolio"
     },
     {
       method: "GET",
-      path: "/api/callback-requests",
+      path: `${API_URL}/api/callback-requests`,
       description: "Получить заявки на звонок",
       category: "Callbacks"
     },
     {
       method: "POST",
-      path: "/api/callback-requests",
+      path: `${API_URL}/api/callback-requests`,
       description: "Создать заявку на звонок",
       category: "Callbacks"
     },
     {
       method: "PUT",
-      path: "/api/callback-requests/:id",
+      path: `${API_URL}/api/callback-requests/:id`,
       description: "Обновить статус заявки",
       category: "Callbacks"
     },
     {
       method: "GET",
-      path: "/api/loyalty-program",
+      path: `${API_URL}/api/loyalty-program`,
       description: "Получить уровни лояльности",
       category: "Loyalty"
     },
     {
       method: "POST",
-      path: "/api/loyalty-program",
+      path: `${API_URL}/api/loyalty-program`,
       description: "Создать уровень лояльности",
       category: "Loyalty"
     },
     {
       method: "PUT",
-      path: "/api/loyalty-program/:id",
+      path: `${API_URL}/api/loyalty-program/:id`,
       description: "Обновить уровень лояльности",
       category: "Loyalty"
     }
