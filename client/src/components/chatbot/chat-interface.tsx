@@ -8,8 +8,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { 
   Send, Bot, User, Flower, Sparkles, MessageCircle, 
-  X, Minimize2, Maximize2, Loader2, Move3D 
+  X, Minimize2, Maximize2, Loader2, Move3D, Flower2, Heart, Zap 
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
@@ -201,73 +202,190 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   if (!isOpen) return null;
 
   return (
-    <div 
-      ref={chatRef}
-      className={`fixed ${isMobile ? 'bottom-2 right-2' : 'bottom-4 right-4'} flex flex-col shadow-2xl z-[9999] transition-all duration-300 ${className} ${
-        isResizing ? 'select-none' : ''
-      }`}
-      style={{
-        width: isMobile ? 'calc(100vw - 1rem)' : `${chatSize.width}px`,
-        height: isMinimized ? 'auto' : (isMobile ? '80vh' : `${chatSize.height}px`),
-        maxWidth: 'calc(100vw - 1rem)',
-        maxHeight: 'calc(100vh - 1rem)',
-      }}
-    >
-      <Card className="w-full h-full flex flex-col bg-background/95 backdrop-blur-sm border-2 border-primary/20 relative overflow-hidden touch-auto">
-        {/* Resize handle - только на desktop */}
-        {!isMobile && (
-          <div
-            ref={resizeRef}
-            onMouseDown={handleMouseDown}
-            className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize bg-primary/20 hover:bg-primary/40 transition-colors flex items-center justify-center group z-10"
-            title="Перетащите для изменения размера"
-          >
-            <Move3D className="w-3 h-3 text-primary/60 group-hover:text-primary" />
+    <AnimatePresence>
+      <motion.div 
+        ref={chatRef}
+        initial={{ scale: 0.8, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.8, opacity: 0, y: 20 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 30,
+          duration: 0.4
+        }}
+        className={`fixed ${isMobile ? 'bottom-2 right-2' : 'bottom-4 right-4'} flex flex-col shadow-2xl z-[9999] transition-all duration-300 ${className} ${
+          isResizing ? 'select-none' : ''
+        }`}
+        style={{
+          width: isMobile ? 'calc(100vw - 1rem)' : `${chatSize.width}px`,
+          height: isMinimized ? 'auto' : (isMobile ? '80vh' : `${chatSize.height}px`),
+          maxWidth: 'calc(100vw - 1rem)',
+          maxHeight: 'calc(100vh - 1rem)',
+        }}
+      >
+        <Card className="w-full h-full flex flex-col relative overflow-hidden touch-auto border-0 bg-gradient-to-br from-white/95 via-pink-50/90 to-purple-50/90 dark:from-gray-900/95 dark:via-pink-950/80 dark:to-purple-950/80 backdrop-blur-xl shadow-2xl">
+          {/* Animated background gradient */}
+          <motion.div 
+            className="absolute inset-0 bg-gradient-to-r from-pink-400/10 via-purple-400/10 to-pink-400/10"
+            animate={{ backgroundPosition: ["0%", "100%", "0%"] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          />
+          
+          {/* Floating particles background */}
+          <div className="absolute inset-0 overflow-hidden">
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-1 h-1 bg-pink-400/20 rounded-full"
+                animate={{
+                  x: [0, Math.sin(i) * 30, 0],
+                  y: [0, Math.cos(i) * 20, 0],
+                  opacity: [0.3, 0.7, 0.3],
+                  scale: [0.8, 1.2, 0.8]
+                }}
+                transition={{
+                  duration: 5 + i * 0.3,
+                  repeat: Infinity,
+                  delay: i * 0.3,
+                  ease: "easeInOut"
+                }}
+                style={{
+                  left: `${15 + (i % 6) * 12}%`,
+                  top: `${20 + (i % 4) * 15}%`
+                }}
+              />
+            ))}
           </div>
-        )}
-      {/* Header */}
-      <CardHeader className="flex-row items-center justify-between py-3 sm:py-4 px-3 sm:px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Avatar className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-r from-pink-400 to-purple-400">
-              <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-sm">
-                Ф
-              </AvatarFallback>
-            </Avatar>
-            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-background"></div>
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-sm sm:text-base font-semibold">Флора</CardTitle>
-              <Sparkles className="w-4 h-4 text-pink-500" />
+          
+          {/* Decorative corner gradients */}
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-pink-400/15 to-transparent rounded-bl-full"></div>
+          <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-purple-400/15 to-transparent rounded-tr-full"></div>
+          {/* Resize handle - только на desktop */}
+          {!isMobile && (
+            <motion.div
+              ref={resizeRef}
+              onMouseDown={handleMouseDown}
+              className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize bg-gradient-to-br from-pink-400/30 to-purple-400/30 hover:from-pink-400/50 hover:to-purple-400/50 transition-all duration-200 flex items-center justify-center group z-20 rounded-br-lg backdrop-blur-sm"
+              title="Перетащите для изменения размера"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Move3D className="w-3 h-3 text-white group-hover:text-white drop-shadow-sm" />
+            </motion.div>
+          )}
+          
+          {/* Header */}
+          <CardHeader className="relative z-10 flex-row items-center justify-between py-3 sm:py-4 px-3 sm:px-4 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-pink-500/10 backdrop-blur-sm border-b border-pink-200/30 dark:border-pink-800/30">
+            <div className="flex items-center gap-3">
+              <motion.div 
+                className="relative"
+                animate={{ 
+                  rotate: [0, 2, -2, 0],
+                  scale: [1, 1.02, 1]
+                }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <Avatar className="w-10 h-10 sm:w-11 sm:h-11 bg-gradient-to-br from-pink-400 via-purple-400 to-pink-500 shadow-lg">
+                  <AvatarFallback className="bg-gradient-to-br from-pink-400 via-purple-400 to-pink-500 text-white font-bold text-sm relative overflow-hidden">
+                    {/* Inner glow */}
+                    <div className="absolute inset-1 bg-gradient-to-br from-white/20 to-transparent rounded-full"></div>
+                    <Flower2 className="w-5 h-5 relative z-10" />
+                  </AvatarFallback>
+                </Avatar>
+                
+                {/* Status indicator with pulse */}
+                <motion.div 
+                  className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-background shadow-sm"
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <motion.div
+                    className="absolute inset-0.5 bg-green-400 rounded-full"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  />
+                </motion.div>
+              </motion.div>
+              
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <motion.div
+                    animate={{ 
+                      backgroundPosition: ["0%", "100%", "0%"] 
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="bg-gradient-to-r from-pink-600 via-purple-600 to-pink-600 bg-clip-text text-transparent"
+                  >
+                    <CardTitle className="text-sm sm:text-base font-bold">Флора</CardTitle>
+                  </motion.div>
+                  <motion.div
+                    animate={{ 
+                      rotate: [0, 360],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{ 
+                      rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+                      scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                  >
+                    <Sparkles className="w-4 h-4 text-pink-500" />
+                  </motion.div>
+                </div>
+                <motion.p 
+                  className="text-xs text-muted-foreground"
+                  animate={{ opacity: [0.7, 1, 0.7] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                >
+                  <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent font-medium">
+                    AI-флорист • Онлайн • Готова помочь ✨
+                  </span>
+                </motion.p>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-              AI-флорист • Онлайн • Готова помочь
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex gap-1">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={handleMinimizeToggle}
-            className="w-8 h-8 p-0 hover:bg-muted/50 transition-colors"
-            title={isMinimized ? "Развернуть" : "Свернуть"}
-          >
-            {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onClose}
-            className="w-8 h-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600 transition-colors"
-            title="Закрыть чат"
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
-      </CardHeader>
+            
+            <div className="flex items-center gap-2">
+              {!isMobile && (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setIsMinimized(!isMinimized)}
+                    className="h-8 w-8 p-0 hover:bg-pink-100 dark:hover:bg-pink-900/20 hover:text-pink-600 rounded-full transition-all duration-200"
+                    title={isMinimized ? "Развернуть" : "Свернуть"}
+                  >
+                    {isMinimized ? (
+                      <Maximize2 className="w-4 h-4" />
+                    ) : (
+                      <Minimize2 className="w-4 h-4" />
+                    )}
+                  </Button>
+                </motion.div>
+              )}
+              
+              <motion.div
+                whileHover={{ scale: 1.05, rotate: 90 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={onClose}
+                  className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600 rounded-full transition-all duration-200"
+                  title="Закрыть чат"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </motion.div>
+            </div>
+          </CardHeader>
 
       {!isMinimized && (
         <>
@@ -441,7 +559,8 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
           </div>
         </>
       )}
-      </Card>
-    </div>
+        </Card>
+      </motion.div>
+    </AnimatePresence>
   );
 }
