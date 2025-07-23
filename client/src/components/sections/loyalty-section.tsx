@@ -100,57 +100,57 @@ export default function LoyaltySection() {
 
         {/* Additional Features */}
         <AppleCard>
-          <GlassCard className="p-12 transition-all duration-500 hover:shadow-2xl hover:scale-[1.01]">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <h3 className="text-3xl font-bold text-foreground mb-6">Дополнительные преимущества</h3>
-                <div className="space-y-6">
+          <GlassCard className="p-6 sm:p-8 md:p-12 transition-all duration-500 hover:shadow-2xl hover:scale-[1.01]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+              <div className="order-2 md:order-1">
+                <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 sm:mb-6">Дополнительные преимущества</h3>
+                <div className="space-y-4 sm:space-y-6">
                   <div className="flex items-start">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-4 flex-shrink-0 mt-1">
-                      <Gift className="w-6 h-6 text-primary-foreground" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0 mt-1">
+                      <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-foreground text-lg mb-2">Накопительная система</h4>
-                      <p className="text-muted-foreground leading-relaxed">За каждый рубль получайте 1 бонусный балл. 100 баллов = 100 рублей скидки.</p>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-foreground text-base sm:text-lg mb-1 sm:mb-2">Накопительная система</h4>
+                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">За каждый рубль получайте 1 бонусный балл. 100 баллов = 100 рублей скидки.</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center mr-4 flex-shrink-0 mt-1">
-                      <Calendar className="w-6 h-6 text-primary-foreground" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0 mt-1">
+                      <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-foreground text-lg mb-2">Напоминания о событиях</h4>
-                      <p className="text-muted-foreground leading-relaxed">Мы запомним важные даты и напомним о них за 3 дня до события.</p>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-foreground text-base sm:text-lg mb-1 sm:mb-2">Напоминания о событиях</h4>
+                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">Мы запомним важные даты и напомним о них за 3 дня до события.</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center mr-4 flex-shrink-0 mt-1">
-                      <Users className="w-6 h-6 text-primary-foreground" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0 mt-1">
+                      <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-foreground text-lg mb-2">Программа рефералов</h4>
-                      <p className="text-muted-foreground leading-relaxed">Приводите друзей и получайте 500 бонусных баллов за каждого нового клиента.</p>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-foreground text-base sm:text-lg mb-1 sm:mb-2">Программа рефералов</h4>
+                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">Приводите друзей и получайте 500 бонусных баллов за каждого нового клиента.</p>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <div className="text-center">
+              <div className="text-center order-1 md:order-2">
                 <img 
                   src="/api/images/loyalty-happy-customers.svg" 
                   alt="Happy customers with flower bouquets" 
-                  className="rounded-2xl shadow-2xl mb-8 w-full h-auto"
+                  className="rounded-2xl shadow-2xl mb-6 sm:mb-8 w-full h-auto max-w-sm mx-auto"
                 />
                 
                 <AppleButton>
                   <Button 
                     onClick={() => setIsModalOpen(true)}
                     size="lg"
-                    className="floating-action px-10 py-4 text-lg font-bold shadow-2xl group transition-all duration-500 hover:shadow-3xl hover:scale-105"
+                    className="floating-action px-6 sm:px-10 py-3 sm:py-4 text-base sm:text-lg font-bold shadow-2xl group transition-all duration-500 hover:shadow-3xl hover:scale-105 w-full sm:w-auto"
                   >
-                    <Star className="w-5 h-5 mr-3 transition-transform group-hover:scale-110" />
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 transition-transform group-hover:scale-110" />
                     <span>Присоединиться к программе</span>
                   </Button>
                 </AppleButton>

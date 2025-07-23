@@ -214,3 +214,17 @@ The application is designed for easy deployment on platforms like Replit while m
 - Fixed chatbot scroll-through issue by implementing proper z-index layering and body scroll lock
 - Enhanced chatbot interaction by preventing page scrolling when chat interface is active
 - Improved overall user experience with better visual hierarchy and interaction patterns
+
+### Chat Interface Enhancement (2025-01-23)
+- Expanded chat interface dimensions from 400x500px to 480x600px for desktop
+- Increased mobile chat height from 70vh to 80vh for better message visibility
+- Enhanced chat header with informative status ("AI-флорист • Онлайн • Готова помочь")
+- Improved message spacing and padding for better readability
+- Redesigned quick suggestions with better mobile layout and descriptions
+
+### Mobile Responsiveness Fix (2025-01-23)
+- Fixed "дополнительные преимущества" section layout for mobile devices
+- Added proper responsive padding (p-6 sm:p-8 md:p-12) for different screen sizes
+- Implemented responsive grid layout with proper ordering for mobile (order-1/order-2)
+- Adjusted icon sizes, text sizes, and spacing for mobile compatibility
+- Enhanced button responsiveness with full-width on mobile, auto-width on desktop
