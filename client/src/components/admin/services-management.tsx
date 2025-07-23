@@ -68,7 +68,7 @@ export function ServicesManagement() {
       shortDescription: "",
       price: "",
       duration: "",
-      category: "",
+      category: "bouquets",
       features: "",
       imageUrl: "",
       isActive: true,
@@ -104,7 +104,19 @@ export function ServicesManagement() {
       });
       queryClient.invalidateQueries({ queryKey: ['/api/services'] });
       setIsFormOpen(false);
-      form.reset();
+      form.reset({
+        name: "",
+        description: "",
+        shortDescription: "",
+        price: "",
+        duration: "",
+        category: "bouquets",
+        features: "",
+        imageUrl: "",
+        isActive: true,
+        isPopular: false,
+        sortOrder: 0
+      });
     },
     onError: (error: any) => {
       toast({
@@ -143,7 +155,19 @@ export function ServicesManagement() {
       queryClient.invalidateQueries({ queryKey: ['/api/services'] });
       setIsFormOpen(false);
       setEditingService(null);
-      form.reset();
+      form.reset({
+        name: "",
+        description: "",
+        shortDescription: "",
+        price: "",
+        duration: "",
+        category: "bouquets",
+        features: "",
+        imageUrl: "",
+        isActive: true,
+        isPopular: false,
+        sortOrder: 0
+      });
     },
     onError: (error: any) => {
       toast({
@@ -191,7 +215,7 @@ export function ServicesManagement() {
       shortDescription: service.shortDescription || "",
       price: service.price || "",
       duration: service.duration || "",
-      category: service.category,
+      category: service.category || "bouquets",
       features,
       imageUrl: service.imageUrl || "",
       isActive: service.isActive ?? true,
@@ -360,7 +384,7 @@ export function ServicesManagement() {
                   <div className="space-y-2">
                     <Label htmlFor="category">Категория *</Label>
                     <Select 
-                      value={form.watch("category")} 
+                      value={form.watch("category") || "bouquets"} 
                       onValueChange={(value) => form.setValue("category", value)}
                     >
                       <SelectTrigger className="glass-effect">
@@ -496,7 +520,19 @@ export function ServicesManagement() {
                     onClick={() => {
                       setIsFormOpen(false);
                       setEditingService(null);
-                      form.reset();
+                      form.reset({
+                        name: "",
+                        description: "",
+                        shortDescription: "",
+                        price: "",
+                        duration: "",
+                        category: "bouquets",
+                        features: "",
+                        imageUrl: "",
+                        isActive: true,
+                        isPopular: false,
+                        sortOrder: 0
+                      });
                     }}
                   >
                     <X className="h-4 w-4" />
