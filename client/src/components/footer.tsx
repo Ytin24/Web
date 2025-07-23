@@ -27,15 +27,15 @@ export default function Footer() {
     <footer className="py-20 bg-muted dark:bg-background text-foreground relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-muted/80 to-primary/10"></div>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-8">
-        <div className="grid md:grid-cols-4 gap-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <Flower className="w-6 h-6 text-primary-foreground" />
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <Flower className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
               </div>
-              <span className="text-2xl font-bold">Цветокрафт</span>
+              <span className="text-xl sm:text-2xl font-bold">Цветокрафт</span>
             </div>
             <p className="text-muted-foreground leading-relaxed">
               Создаем магию из цветов для ваших особенных моментов. Более 15 лет опыта в цветочном искусстве.

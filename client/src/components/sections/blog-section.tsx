@@ -30,17 +30,17 @@ export default function BlogSection() {
 
   return (
     <section id="blog" className="section-spacing bg-background relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6 text-balance">
             Советы по уходу
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Полезные советы от наших флористов для долгой жизни ваших цветов
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {blogPosts?.slice(0, 3).map((post, index) => (
             <div key={post.id} className="natural-card overflow-hidden group">
               <div className="relative overflow-hidden">
@@ -56,7 +56,7 @@ export default function BlogSection() {
                   <Maximize2 className="w-4 h-4 text-foreground" />
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <div className="flex items-center mb-3">
                   <Badge variant="secondary" className="bg-primary/10 text-primary font-medium">
                     {post.category || 'Советы'}

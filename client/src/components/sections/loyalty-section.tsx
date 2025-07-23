@@ -47,31 +47,31 @@ export default function LoyaltySection() {
 
   return (
     <section id="loyalty" className="py-32 bg-gradient-to-br from-muted to-background relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-8">
-        <div className="text-center mb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 sm:mb-20">
           <AppleText>
-            <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Программа лояльности</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6">Программа лояльности</h2>
           </AppleText>
           <AppleText className="delay-100">
-            <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg lg:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Становитесь частью нашей цветочной семьи и получайте особые привилегии
             </p>
           </AppleText>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
           {loyaltyLevels?.map((level, index) => {
             const Icon = getIcon(level.level);
             const isHighlighted = level.level === 'connoisseur';
             
             return (
               <AppleCard key={level.id}>
-                <GlassCard className={`p-8 text-center glass-hover transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] ${isHighlighted ? 'border-2 border-primary/30' : ''}`}>
-                  <div className={`w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br ${getGradient(level.level)} flex items-center justify-center`}>
-                    <Icon className="w-8 h-8 text-primary-foreground" />
+                <GlassCard className={`p-6 sm:p-8 text-center glass-hover transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] ${isHighlighted ? 'border-2 border-primary/30' : ''}`}>
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-br ${getGradient(level.level)} flex items-center justify-center`}>
+                    <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-primary-foreground" />
                   </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-4">{level.title}</h3>
-                  <p className="text-muted-foreground mb-6 leading-relaxed">
+                  <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 sm:mb-4">{level.title}</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
                     {level.description}
                   </p>
                   <ul className="space-y-3 mb-6">

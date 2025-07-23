@@ -46,7 +46,7 @@ export default function Navigation() {
   return (
     <>
       <nav className="fixed top-0 w-full z-50 glass-premium border-b border-white/20 shadow-lg">
-        <div className="max-w-7xl mx-auto px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <MagneticElement strength={0.15}>
               <PlayfulTooltip
@@ -57,12 +57,12 @@ export default function Navigation() {
               >
                 <button 
                   onClick={() => setLocation('/')}
-                  className="flex items-center space-x-3 group"
+                  className="flex items-center space-x-2 sm:space-x-3 group"
                 >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-subtle-pulse">
-                    <Flower className="w-6 h-6 text-primary-foreground" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-subtle-pulse">
+                    <Flower className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
                   </div>
-                  <span className="text-2xl font-bold gradient-text">Цветокрафт</span>
+                  <span className="text-lg sm:text-2xl font-bold gradient-text">Цветокрафт</span>
                 </button>
               </PlayfulTooltip>
             </MagneticElement>
@@ -119,7 +119,7 @@ export default function Navigation() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className="fixed right-0 top-0 h-full w-64 glass-effect p-6 space-y-4 bg-background/95 backdrop-blur-lg border-l border-border" style={{ marginTop: '80px' }}>
+          <div className="fixed right-0 top-0 h-full w-80 sm:w-64 glass-effect p-4 sm:p-6 space-y-3 sm:space-y-4 bg-background/95 backdrop-blur-lg border-l border-border" style={{ marginTop: '64px' }}>
             {navigationLinks.map((link) => (
               <button
                 key={link.id}

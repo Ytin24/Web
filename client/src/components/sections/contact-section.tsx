@@ -67,10 +67,10 @@ export default function ContactSection() {
 
   return (
     <section id="contact" className="py-32 bg-background relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-8">
-        <div className="text-center mb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 sm:mb-20">
           <AppleText>
-            <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Свяжитесь с нами</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6">Свяжитесь с нами</h2>
           </AppleText>
           <AppleText className="delay-100">
             <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">

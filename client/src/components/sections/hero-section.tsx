@@ -60,9 +60,9 @@ export default function HeroSection() {
       <FloatingElements />
 
       {/* Hero Content */}
-      <div className="relative z-10 text-center px-8 max-w-4xl mx-auto">
-        <div className="natural-card rounded-2xl p-12 bg-white/95 backdrop-blur-sm">
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight text-balance">
+      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <div className="natural-card rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-12 bg-white/95 backdrop-blur-sm">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6 leading-tight text-balance">
             {heroSection?.title?.split(' ').map((word, index) => 
               word === 'магию' ? (
                 <span key={index} className="gradient-text">
@@ -72,11 +72,11 @@ export default function HeroSection() {
             )}
           </h1>
           
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed max-w-2xl mx-auto">
             {heroSection?.description}
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
             <PlayfulTooltip
               content={getTooltip('callback').text}
               personality={getTooltip('callback').personality}
@@ -86,7 +86,7 @@ export default function HeroSection() {
               <Button 
                 onClick={scrollToContact}
                 size="lg"
-                className="px-8 py-4 text-lg font-medium shadow-lg natural-hover"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium shadow-lg natural-hover"
               >
                 <Phone className="w-5 h-5 mr-2" />
                 Заказать звонок
@@ -103,7 +103,7 @@ export default function HeroSection() {
                 onClick={scrollToPortfolio}
                 variant="outline"
                 size="lg"
-                className="px-8 py-4 text-lg font-medium natural-hover"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium natural-hover"
               >
                 <Play className="w-5 h-5 mr-2" />
                 Смотреть работы

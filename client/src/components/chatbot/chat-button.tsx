@@ -32,7 +32,7 @@ export default function ChatButton() {
     <>
       {/* Information Tooltip */}
       {showTooltip && !isOpen && (
-        <Card className="fixed bottom-24 left-4 max-w-64 shadow-xl border-2 border-pink-200 dark:border-pink-800 bg-background/95 backdrop-blur-sm z-50 animate-in slide-in-from-left-2 fade-in duration-300">
+        <Card className="fixed bottom-20 sm:bottom-24 left-2 sm:left-4 max-w-72 sm:max-w-64 shadow-xl border-2 border-pink-200 dark:border-pink-800 bg-background/95 backdrop-blur-sm z-50 animate-in slide-in-from-left-2 fade-in duration-300">
           <CardContent className="p-4 relative">
             <Button
               size="sm"
@@ -74,7 +74,7 @@ export default function ChatButton() {
       {/* Floating Chat Button */}
       <Button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-4 left-4 w-16 h-16 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 hover:scale-110 hover:from-pink-500 hover:to-purple-600 shadow-xl transition-all duration-300 z-50 ${isOpen ? 'hidden' : 'flex'} flex-col items-center justify-center pulse-glow`}
+        className={`fixed bottom-3 sm:bottom-4 left-2 sm:left-4 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 hover:scale-110 hover:from-pink-500 hover:to-purple-600 shadow-xl transition-all duration-300 z-50 ${isOpen ? 'hidden' : 'flex'} flex-col items-center justify-center pulse-glow`}
         size="sm"
         title="Чат с Флорой"
       >

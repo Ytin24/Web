@@ -35,11 +35,11 @@ export default function PortfolioSection() {
 
   return (
     <section id="portfolio" className="py-32 bg-gradient-to-br from-background to-muted/50 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal delay={0.1}>
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">Наши работы</h2>
-            <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+          <div className="text-center mb-16 sm:mb-20">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6">Наши работы</h2>
+            <p className="text-base sm:text-lg lg:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Галерея наших лучших творений для разных событий и настроений
             </p>
           </div>
@@ -47,7 +47,7 @@ export default function PortfolioSection() {
 
         {/* Portfolio Filter */}
         <ScrollReveal delay={0.2}>
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-12">
             {categories.map((category) => (
               <Button
                 key={category.key}
@@ -66,7 +66,7 @@ export default function PortfolioSection() {
         </ScrollReveal>
 
         {/* Portfolio Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredItems.map((item, index) => (
             <ScrollReveal key={item.id} delay={0.3 + index * 0.1}>
               <div className="group">
