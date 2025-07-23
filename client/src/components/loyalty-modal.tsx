@@ -32,10 +32,24 @@ export default function LoyaltyModal({ isOpen, onClose }: LoyaltyModalProps) {
         description: "Мы свяжемся с вами для регистрации в программе лояльности",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      let errorMessage = "Не удалось отправить заявку. Попробуйте еще раз.";
+      
+      // Парсим ошибку, которая приходит как строка "409: {json}"
+      const errorText = error?.message || "";
+      if (errorText.startsWith("409:")) {
+        try {
+          const jsonPart = errorText.substring(4).trim();
+          const errorData = JSON.parse(jsonPart);
+          errorMessage = errorData.message || "Этот номер телефона уже зарегистрирован в программе лояльности";
+        } catch {
+          errorMessage = "Этот номер телефона уже зарегистрирован в программе лояльности";
+        }
+      }
+      
       toast({
         title: "Ошибка",
-        description: "Не удалось отправить заявку. Попробуйте еще раз.",
+        description: errorMessage,
         variant: "destructive",
       });
     }

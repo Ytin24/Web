@@ -407,6 +407,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/callback-requests", async (req, res) => {
     try {
       const validatedData = insertCallbackRequestSchema.parse(req.body);
+      
+      // Проверка на уникальность номера телефона для программы лояльности
+      const isLoyaltyRequest = validatedData.message && (
+        validatedData.message.includes("программа лояльности") ||
+        validatedData.message.includes("программе лояльности") ||
+        validatedData.message.includes("регистрацию в программе лояльности")
+      );
+      
+      if (isLoyaltyRequest) {
+        // Проверяем в таблице клиентов
+        const existingCustomer = await storage.getCustomerByPhone(validatedData.phone);
+        if (existingCustomer) {
+          return res.status(409).json({ 
+            message: "Номер телефона уже зарегистрирован в программе лояльности" 
+          });
+        }
+        
+        // Проверяем в заявках на обратный звонок (для программы лояльности)
+        const existingRequests = await storage.getAllCallbackRequests();
+        const duplicateRequest = existingRequests.find(request => 
+          request.phone === validatedData.phone && 
+          request.message && (
+            request.message.includes("программа лояльности") ||
+            request.message.includes("программе лояльности") ||
+            request.message.includes("регистрацию в программе лояльности")
+          )
+        );
+        
+        if (duplicateRequest) {
+          return res.status(409).json({ 
+            message: "Заявка на регистрацию в программе лояльности с этим номером уже существует" 
+          });
+        }
+      }
+      
       const callbackRequest = await storage.createCallbackRequest(validatedData);
       
       // Отправка webhook уведомления
