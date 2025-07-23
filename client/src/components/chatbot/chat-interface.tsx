@@ -42,7 +42,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
-  const [chatSize, setChatSize] = useState({ width: 400, height: 500 });
+  const [chatSize, setChatSize] = useState({ width: 480, height: 600 });
   const [isResizing, setIsResizing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,8 +92,8 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
       const deltaX = startX - e.clientX;
       const deltaY = startY - e.clientY;
       
-      const newWidth = Math.max(320, Math.min(800, startWidth + deltaX));
-      const newHeight = Math.max(400, Math.min(700, startHeight + deltaY));
+      const newWidth = Math.max(400, Math.min(900, startWidth + deltaX));
+      const newHeight = Math.max(500, Math.min(800, startHeight + deltaY));
       
       setChatSize({ width: newWidth, height: newHeight });
     };
@@ -202,14 +202,14 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   return (
     <div 
       ref={chatRef}
-      className={`fixed bottom-4 right-4 flex flex-col shadow-2xl z-[9999] transition-all duration-300 ${className} ${
+      className={`fixed ${isMobile ? 'bottom-2 right-2' : 'bottom-4 right-4'} flex flex-col shadow-2xl z-[9999] transition-all duration-300 ${className} ${
         isResizing ? 'select-none' : ''
       }`}
       style={{
-        width: isMobile ? 'calc(100vw - 2rem)' : `${chatSize.width}px`,
-        height: isMinimized ? 'auto' : (isMobile ? '70vh' : `${chatSize.height}px`),
-        maxWidth: 'calc(100vw - 2rem)',
-        maxHeight: 'calc(100vh - 2rem)',
+        width: isMobile ? 'calc(100vw - 1rem)' : `${chatSize.width}px`,
+        height: isMinimized ? 'auto' : (isMobile ? '80vh' : `${chatSize.height}px`),
+        maxWidth: 'calc(100vw - 1rem)',
+        maxHeight: 'calc(100vh - 1rem)',
       }}
     >
       <Card className="w-full h-full flex flex-col bg-background/95 backdrop-blur-sm border-2 border-primary/20 relative overflow-hidden touch-auto">
@@ -225,21 +225,25 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
           </div>
         )}
       {/* Header */}
-      <CardHeader className="flex-row items-center justify-between py-3 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
+      <CardHeader className="flex-row items-center justify-between py-3 sm:py-4 px-3 sm:px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Avatar className="w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-400">
-              <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold">
+            <Avatar className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-r from-pink-400 to-purple-400">
+              <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-sm">
                 Ф
               </AvatarFallback>
             </Avatar>
             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-background"></div>
           </div>
-          <div>
-            <CardTitle className="text-sm font-semibold">Флора</CardTitle>
-            <p className="text-xs text-muted-foreground bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">Консультант по цветам</p>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-sm sm:text-base font-semibold">Флора</CardTitle>
+              <Sparkles className="w-4 h-4 text-pink-500" />
+            </div>
+            <p className="text-xs text-muted-foreground bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              AI-флорист • Онлайн • Готова помочь
+            </p>
           </div>
-          <Sparkles className="w-4 h-4 text-primary ml-1" />
         </div>
         
         <div className="flex gap-1">
@@ -247,7 +251,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
             size="sm"
             variant="ghost"
             onClick={handleMinimizeToggle}
-            className="w-8 h-8 p-0 hover:bg-muted"
+            className="w-8 h-8 p-0 hover:bg-muted/50 transition-colors"
             title={isMinimized ? "Развернуть" : "Свернуть"}
           >
             {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
@@ -256,7 +260,8 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
             size="sm"
             variant="ghost"
             onClick={onClose}
-            className="w-8 h-8 p-0"
+            className="w-8 h-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600 transition-colors"
+            title="Закрыть чат"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -267,12 +272,12 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
         <>
           {/* Messages */}
           <CardContent className="flex-1 p-0 overflow-hidden">
-            <ScrollArea className="h-full px-4 py-2">
-              <div className="space-y-4">
+            <ScrollArea className="h-full px-3 sm:px-4 py-3">
+              <div className="space-y-4 sm:space-y-5">
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
+                    className={`flex gap-3 sm:gap-4 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
                   >
                     <Avatar className={`w-8 h-8 ${message.role === 'user' ? 'bg-secondary' : 'bg-gradient-to-r from-pink-400 to-purple-400'}`}>
                       <AvatarFallback className={message.role === 'user' ? 'bg-secondary text-white' : 'bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold'}>
@@ -284,15 +289,15 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                       </AvatarFallback>
                     </Avatar>
                     
-                    <div className={`flex flex-col max-w-[90%] ${message.role === 'user' ? 'items-end' : ''}`}>
+                    <div className={`flex flex-col max-w-[85%] ${message.role === 'user' ? 'items-end' : ''}`}>
                       <div
-                        className={`rounded-2xl px-6 py-4 ${
+                        className={`rounded-2xl px-4 sm:px-6 py-3 sm:py-4 ${
                           message.role === 'user'
                             ? 'bg-primary text-primary-foreground rounded-br-md'
                             : 'bg-muted text-foreground rounded-bl-md'
                         }`}
                       >
-                        <div className="text-base leading-relaxed">
+                        <div className="text-sm sm:text-base leading-relaxed">
                           {message.role === 'assistant' ? (
                             <ReactMarkdown
                               remarkPlugins={[remarkGfm]}
@@ -362,39 +367,25 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
 
           {/* Quick suggestions (show when no messages yet) */}
           {messages.length === 1 && (
-            <div className="p-3 border-t">
-              <p className="text-xs text-muted-foreground mb-2">Быстрые запросы:</p>
-              <div className="flex flex-wrap gap-1">
-                {quickSuggestions.slice(0, 3).map((suggestion, index) => (
+            <div className="border-t border-border bg-muted/20 p-3 sm:p-4">
+              <p className="text-xs text-muted-foreground mb-3 font-medium">✨ Быстрые предложения:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {quickSuggestions.slice(0, 4).map((suggestion, index) => (
                   <Button
                     key={index}
-                    size="sm"
                     variant="outline"
-                    className="text-xs h-7 px-2 justify-start"
+                    size="sm"
                     onClick={() => {
                       setInputValue(suggestion.text);
-                      inputRef.current?.focus();
+                      setTimeout(() => handleSendMessage(), 100);
                     }}
+                    className="text-left h-auto p-2 sm:p-3 bg-background/60 hover:bg-primary/10 border border-border/50 hover:border-primary/50 transition-all duration-200"
                     title={suggestion.description}
                   >
-                    {suggestion.text}
-                  </Button>
-                ))}
-              </div>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {quickSuggestions.slice(3, 6).map((suggestion, index) => (
-                  <Button
-                    key={index + 3}
-                    size="sm"
-                    variant="outline"
-                    className="text-xs h-7 px-2 justify-start"
-                    onClick={() => {
-                      setInputValue(suggestion.text);
-                      inputRef.current?.focus();
-                    }}
-                    title={suggestion.description}
-                  >
-                    {suggestion.text}
+                    <div className="flex flex-col items-start w-full">
+                      <span className="text-xs font-medium text-foreground truncate w-full">{suggestion.text}</span>
+                      <span className="text-xs text-muted-foreground mt-1 truncate w-full">{suggestion.description}</span>
+                    </div>
                   </Button>
                 ))}
               </div>
@@ -402,7 +393,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
           )}
 
           {/* Input */}
-          <div className="p-3 border-t">
+          <div className="p-3 sm:p-4 border-t">
             <div className="flex gap-2">
               <Input
                 ref={inputRef}
@@ -411,13 +402,13 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                 onKeyPress={handleKeyPress}
                 placeholder="Расскажите Флоре о букете, который нужен..."
                 disabled={chatMutation.isPending}
-                className="flex-1"
+                className="flex-1 text-sm"
               />
               <Button
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim() || chatMutation.isPending}
                 size="sm"
-                className="px-3"
+                className="px-3 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600"
               >
                 <Send className="w-4 h-4" />
               </Button>
