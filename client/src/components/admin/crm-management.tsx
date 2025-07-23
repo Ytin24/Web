@@ -19,6 +19,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 
 const paymentMethods = [
+  { value: "not_selected", label: "Не выбран" },
   { value: "cash", label: "Наличные" },
   { value: "card", label: "Карта" },
   { value: "transfer", label: "Перевод" },
