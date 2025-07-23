@@ -208,6 +208,7 @@ export function ServicesManagement() {
   });
 
   const handleEdit = (service: Service) => {
+    console.log("Редактировать услугу - кнопка нажата", service);
     setEditingService(service);
     const features = service.features ? JSON.parse(service.features).join('\n') : '';
     
@@ -225,6 +226,7 @@ export function ServicesManagement() {
       sortOrder: service.sortOrder ?? 0
     });
     setIsFormOpen(true);
+    console.log("isFormOpen установлен в true для редактирования");
   };
 
   const handleDelete = (id: number) => {
@@ -288,6 +290,11 @@ export function ServicesManagement() {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {/* Debug Info */}
+        <div className="mb-4 p-2 bg-yellow-100 dark:bg-yellow-900 rounded text-xs">
+          Debug: isFormOpen = {isFormOpen ? 'true' : 'false'}, editingService = {editingService ? editingService.name : 'null'}
+        </div>
+        
         {/* Action Buttons */}
         <div className="flex justify-between items-center mb-6">
           <div className="text-sm text-muted-foreground">
@@ -295,6 +302,7 @@ export function ServicesManagement() {
           </div>
           <Button
             onClick={() => {
+              console.log("Добавить услугу - кнопка нажата");
               setEditingService(null);
               form.reset({
                 name: "",
@@ -310,6 +318,7 @@ export function ServicesManagement() {
                 sortOrder: 0
               });
               setIsFormOpen(true);
+              console.log("isFormOpen установлен в true");
             }}
             className="flex items-center gap-2"
           >
@@ -375,12 +384,13 @@ export function ServicesManagement() {
         </div>
 
         {/* Service Form */}
-        {isFormOpen && (
-          <Card className="mt-6">
+        {isFormOpen ? (
+          <Card className="mt-6 border-2 border-green-500">
             <CardHeader>
               <CardTitle>
                 {editingService ? "Редактировать услугу" : "Новая услуга"}
               </CardTitle>
+              <div className="text-sm text-green-600">Форма открыта!</div>
             </CardHeader>
             <CardContent>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -559,6 +569,10 @@ export function ServicesManagement() {
               </form>
             </CardContent>
           </Card>
+        ) : (
+          <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded text-center">
+            Форма не открыта (isFormOpen = false)
+          </div>
         )}
       </CardContent>
     </Card>
