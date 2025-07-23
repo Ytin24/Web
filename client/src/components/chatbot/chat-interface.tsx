@@ -63,7 +63,17 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   useEffect(() => {
     if (isOpen && !isMinimized) {
       inputRef.current?.focus();
+      // Предотвращаем прокрутку страницы при открытии чата
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Восстанавливаем прокрутку при закрытии чата
+      document.body.style.overflow = 'auto';
     }
+
+    // Очистка при размонтировании компонента
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   }, [isOpen, isMinimized]);
 
   // Resize functionality for desktop only
@@ -192,7 +202,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   return (
     <div 
       ref={chatRef}
-      className={`fixed bottom-4 right-4 flex flex-col shadow-2xl z-50 transition-all duration-300 ${className} ${
+      className={`fixed bottom-4 right-4 flex flex-col shadow-2xl z-[9999] transition-all duration-300 ${className} ${
         isResizing ? 'select-none' : ''
       }`}
       style={{
@@ -202,7 +212,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
         maxHeight: 'calc(100vh - 2rem)',
       }}
     >
-      <Card className="w-full h-full flex flex-col bg-background/95 backdrop-blur-sm border-2 border-primary/20 relative overflow-hidden">
+      <Card className="w-full h-full flex flex-col bg-background/95 backdrop-blur-sm border-2 border-primary/20 relative overflow-hidden touch-auto">
         {/* Resize handle - только на desktop */}
         {!isMobile && (
           <div
