@@ -53,7 +53,9 @@ export function ServicesManagement() {
   const { data: services = [], isLoading } = useQuery<Service[]>({
     queryKey: ['/api/services'],
     queryFn: async () => {
-      const response = await fetch('/api/services');
+      const response = await fetch('/api/services', {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch services');
       return response.json();
     },
@@ -294,7 +296,19 @@ export function ServicesManagement() {
           <Button
             onClick={() => {
               setEditingService(null);
-              form.reset();
+              form.reset({
+                name: "",
+                description: "",
+                shortDescription: "",
+                price: "",
+                duration: "",
+                category: "bouquets",
+                features: "",
+                imageUrl: "",
+                isActive: true,
+                isPopular: false,
+                sortOrder: 0
+              });
               setIsFormOpen(true);
             }}
             className="flex items-center gap-2"
@@ -340,8 +354,10 @@ export function ServicesManagement() {
                     variant="outline"
                     size="sm"
                     onClick={() => handleEdit(service)}
+                    disabled={updateServiceMutation.isPending}
                   >
                     <Edit className="h-4 w-4" />
+                    Редактировать
                   </Button>
                   <Button
                     variant="outline"
@@ -350,6 +366,7 @@ export function ServicesManagement() {
                     disabled={deleteServiceMutation.isPending}
                   >
                     <Trash2 className="h-4 w-4" />
+                    Удалить
                   </Button>
                 </div>
               </div>

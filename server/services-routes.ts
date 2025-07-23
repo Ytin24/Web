@@ -1,9 +1,17 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { db } from "./db";
 import { services, insertServiceSchema, type Service } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
-import { authenticateToken, requireRole } from "./auth";
+
+// Расширение типа Request для поддержки сессий
+interface SessionRequest extends Request {
+  session?: {
+    userId?: number;
+    user?: { id: number; username: string; role: string };
+    cookie: any;
+  };
+}
 
 const router = Router();
 
@@ -63,9 +71,9 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST /api/services - Create new service (admin only)
-router.post("/", async (req, res) => {
-  // Check authentication with session
-  if (!req.session?.user) {
+router.post("/", async (req: SessionRequest, res: Response) => {
+  // Проверяем авторизацию через сессию
+  if (!req.session?.userId) {
     return res.status(401).json({ error: "Authentication required" });
   }
   try {
@@ -79,7 +87,7 @@ router.post("/", async (req, res) => {
     }
 
     const serviceData = validation.data;
-    const userId = req.session?.user?.id;
+    const userId = req.session?.userId;
 
     const [newService] = await db
       .insert(services)
@@ -101,9 +109,9 @@ router.post("/", async (req, res) => {
 });
 
 // PUT /api/services/:id - Update service (admin only)
-router.put("/:id", async (req, res) => {
-  // Check authentication with session
-  if (!req.session?.user) {
+router.put("/:id", async (req: SessionRequest, res: Response) => {
+  // Проверяем авторизацию через сессию
+  if (!req.session?.userId) {
     return res.status(401).json({ error: "Authentication required" });
   }
   try {
@@ -122,7 +130,7 @@ router.put("/:id", async (req, res) => {
     }
 
     const serviceData = validation.data;
-    const userId = req.session?.user?.id;
+    const userId = req.session?.userId;
 
     const [updatedService] = await db
       .update(services)
@@ -149,9 +157,9 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE /api/services/:id - Delete service (admin only)
-router.delete("/:id", async (req, res) => {
-  // Check authentication with session
-  if (!req.session?.user) {
+router.delete("/:id", async (req: SessionRequest, res: Response) => {
+  // Проверяем авторизацию через сессию
+  if (!req.session?.userId) {
     return res.status(401).json({ error: "Authentication required" });
   }
   try {
