@@ -104,6 +104,102 @@ router.post('/chat', async (req, res) => {
 
 /**
  * @swagger
+ * /api/chatbot/stream:
+ *   post:
+ *     tags: [Chatbot]
+ *     summary: Get streaming AI chatbot response
+ *     description: Get streaming AI chatbot response for real-time conversation
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [messages]
+ *             properties:
+ *               messages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     role:
+ *                       type: string
+ *                       enum: [user, assistant]
+ *                     content:
+ *                       type: string
+ *     responses:
+ *       200:
+ *         description: Streaming response
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ */
+router.post('/stream', async (req, res) => {
+  try {
+    const { messages } = req.body;
+
+    if (!messages || !Array.isArray(messages)) {
+      return res.status(400).json({ 
+        error: 'Требуется массив сообщений' 
+      });
+    }
+
+    // Validate message format
+    const isValidMessage = (msg: any): msg is ChatMessage => {
+      return msg && 
+             typeof msg.role === 'string' && 
+             ['user', 'assistant'].includes(msg.role) &&
+             typeof msg.content === 'string';
+    };
+
+    if (!messages.every(isValidMessage)) {
+      return res.status(400).json({ 
+        error: 'Неверный формат сообщений' 
+      });
+    }
+
+    // Устанавливаем headers для Server-Sent Events
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Cache-Control');
+
+    const stream = await flowerChatbot.getChatStreamResponse(messages);
+    const reader = stream.getReader();
+
+    // Читаем стрим и отправляем данные клиенту
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+        
+        // Преобразуем Uint8Array в строку
+        const chunk = new TextDecoder().decode(value);
+        res.write(chunk);
+      }
+    } finally {
+      reader.releaseLock();
+      res.end();
+    }
+  } catch (error) {
+    console.error('Stream chat endpoint error:', error);
+    res.write(`data: ${JSON.stringify({
+      choices: [{
+        delta: {
+          content: "Извините, произошла техническая ошибка. Попробуйте позже."
+        }
+      }]
+    })}\n\n`);
+    res.write(`data: [DONE]\n\n`);
+    res.end();
+  }
+});
+
+/**
+ * @swagger
  * /api/chatbot/recommend:
  *   post:
  *     tags: [Chatbot]

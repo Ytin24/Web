@@ -147,8 +147,8 @@ export class FlowerChatbotService {
             role: msg.role,
             content: msg.content
           })),
-          max_tokens: 800,
-          temperature: 0.7,
+          max_tokens: 500, // Уменьшено для ускорения
+          temperature: 0.5, // Уменьшено для ускорения
         }),
       });
 
@@ -185,6 +185,105 @@ export class FlowerChatbotService {
 - *Универсальный для любого случая*
 
 Расскажите о **поводе** и **получателе** - постараюсь посоветовать что-то подходящее! А для заказа воспользуйтесь формой обратной связи на сайте.`;
+    }
+  }
+
+  async getChatStreamResponse(messages: ChatMessage[]): Promise<ReadableStream> {
+    try {
+      if (!DEEPSEEK_API_KEY) {
+        // Возвращаем стрим с fallback ответом
+        const fallbackContent = `Привет! Меня зовут **Флора** 🌸 
+
+К сожалению, сейчас у меня технические неполадки, но я все равно могу помочь! Вот популярные варианты:
+
+### 🌹 Классические розы
+- Красные или розовые розы с зеленью
+- *Идеально для романтических поводов*
+
+### 🌻 Яркие герберы  
+- Цветные герберы, хризантемы
+- *Отлично поднимает настроение*
+
+### 💐 Смешанный букет
+- Сезонные цветы разных видов
+- *Универсальный для любого случая*
+
+Расскажите о **поводе** и **получателе** - постараюсь посоветовать что-то подходящее!`;
+
+        return new ReadableStream({
+          start(controller) {
+            // Разбиваем текст на части для симуляции стриминга
+            const parts = fallbackContent.split('\n\n');
+            let index = 0;
+            
+            const sendPart = () => {
+              if (index < parts.length) {
+                const chunk = {
+                  choices: [{
+                    delta: {
+                      content: (index === 0 ? '' : '\n\n') + parts[index]
+                    }
+                  }]
+                };
+                controller.enqueue(`data: ${JSON.stringify(chunk)}\n\n`);
+                index++;
+                setTimeout(sendPart, 100);
+              } else {
+                controller.enqueue(`data: [DONE]\n\n`);
+                controller.close();
+              }
+            };
+            
+            setTimeout(sendPart, 50);
+          }
+        });
+      }
+
+      const allMessages: ChatMessage[] = [
+        { role: 'system', content: this.systemPrompt },
+        ...messages
+      ];
+
+      const response = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: allMessages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          })),
+          max_tokens: 500,
+          temperature: 0.5,
+          stream: true, // Включаем стриминг
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`DeepSeek API error: ${response.status}`);
+      }
+
+      return response.body || new ReadableStream();
+    } catch (error) {
+      console.error('Streaming error:', error);
+      // Возвращаем fallback стрим при ошибке
+      return new ReadableStream({
+        start(controller) {
+          const fallback = "Извините, произошла ошибка. Попробуйте еще раз через несколько секунд.";
+          controller.enqueue(`data: ${JSON.stringify({
+            choices: [{
+              delta: {
+                content: fallback
+              }
+            }]
+          })}\n\n`);
+          controller.enqueue(`data: [DONE]\n\n`);
+          controller.close();
+        }
+      });
     }
   }
 

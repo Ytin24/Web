@@ -121,6 +121,109 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
     });
   }, []);
 
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  const sendStreamingMessage = async (messages: ChatMessage[]) => {
+    setIsStreaming(true);
+    
+    // Добавляем временное сообщение для стриминга
+    const tempAssistantMessage: ChatMessage = {
+      role: 'assistant',
+      content: '',
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, tempAssistantMessage]);
+
+    try {
+      const response = await fetch('/api/chatbot/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: messages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          }))
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response body reader');
+      }
+
+      let accumulatedContent = '';
+      
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data === '[DONE]') {
+                setIsStreaming(false);
+                return;
+              }
+              
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content || '';
+                if (content) {
+                  accumulatedContent += content;
+                  
+                  // Обновляем последнее сообщение с накопленным содержимым
+                  setMessages(prev => {
+                    const newMessages = [...prev];
+                    const lastMessageIndex = newMessages.length - 1;
+                    if (lastMessageIndex >= 0 && newMessages[lastMessageIndex].role === 'assistant') {
+                      newMessages[lastMessageIndex] = {
+                        ...newMessages[lastMessageIndex],
+                        content: accumulatedContent
+                      };
+                    }
+                    return newMessages;
+                  });
+                }
+              } catch (e) {
+                console.warn('Failed to parse streaming data:', data);
+              }
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
+    } catch (error) {
+      console.error('Streaming error:', error);
+      
+      // В случае ошибки удаляем временное сообщение и показываем fallback
+      setMessages(prev => {
+        const newMessages = prev.slice(0, -1); // Удаляем последнее (временное) сообщение
+        return [...newMessages, {
+          role: 'assistant',
+          content: 'Извините, произошла техническая ошибка. Попробуйте еще раз через несколько секунд.',
+          timestamp: new Date(),
+        }];
+      });
+      
+      toast({
+        title: "Ошибка",
+        description: "Не удалось получить ответ. Попробуйте еще раз.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsStreaming(false);
+    }
+  };
+
   const chatMutation = useMutation({
     mutationFn: async (messages: ChatMessage[]) => {
       const response = await fetch('/api/chatbot/chat', {
@@ -213,7 +316,8 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
     setMessages(updatedMessages);
     setInputValue('');
 
-    chatMutation.mutate(updatedMessages);
+    // Используем стриминг для быстрого ответа
+    sendStreamingMessage(updatedMessages);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -503,7 +607,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                   </div>
                 ))}
                 
-                {chatMutation.isPending && (
+                {(chatMutation.isPending || isStreaming) && (
                   <div className="flex gap-3">
                     <Avatar className="w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-400">
                       <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold">
@@ -573,12 +677,12 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Расскажите Флоре о букете, который нужен..."
-                disabled={chatMutation.isPending}
+                disabled={chatMutation.isPending || isStreaming}
                 className="flex-1 text-sm"
               />
               <Button
                 onClick={handleSendMessage}
-                disabled={!inputValue.trim() || chatMutation.isPending}
+                disabled={!inputValue.trim() || chatMutation.isPending || isStreaming}
                 size="sm"
                 className="px-3 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500/90 hover:to-purple-600/90 dark:hover:from-pink-300 dark:hover:to-purple-400 shadow-md hover:shadow-lg transition-all duration-200"
               >
