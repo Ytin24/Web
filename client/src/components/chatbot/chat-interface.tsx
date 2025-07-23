@@ -12,7 +12,6 @@ import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import ContactFormModal from '@/components/contact-form-modal';
-import { API_URL } from '../../config';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -110,7 +109,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
     try {
       const allMessages = [...messages, newUserMessage];
       
-      const response = await fetch(`${API_URL}/api/chatbot/stream`, {
+      const response = await fetch('/api/chatbot/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -218,7 +217,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
     if (userMessages.length > 0) {
       try {
         // Call analysis and wait for result
-        const result = await fetch(`${API_URL}/api/chatbot/analyze`, {
+        const result = await fetch('/api/chatbot/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ messages }),

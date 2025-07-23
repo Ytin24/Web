@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import ScrollReveal from "@/components/animations/scroll-reveal";
 import ImageModal from "@/components/image-modal";
 import type { PortfolioItem } from "@shared/schema";
-import { API_URL } from '../../config';
 
 export default function PortfolioSection() {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -20,7 +19,7 @@ export default function PortfolioSection() {
   
   const { data: portfolioItems } = useQuery<PortfolioItem[]>({
     queryKey: ["/api/portfolio-items"],
-    queryFn: () => fetch(`${API_URL}/api/portfolio-items?active=true`).then(res => res.json())
+    queryFn: () => fetch("/api/portfolio-items?active=true").then(res => res.json())
   });
 
   const categories = [
