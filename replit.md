@@ -228,3 +228,10 @@ The application is designed for easy deployment on platforms like Replit while m
 - Implemented responsive grid layout with proper ordering for mobile (order-1/order-2)
 - Adjusted icon sizes, text sizes, and spacing for mobile compatibility
 - Enhanced button responsiveness with full-width on mobile, auto-width on desktop
+
+### Chat Suggestions Enhancement (2025-01-23)
+- Added toggle functionality for quick suggestions with hide/show button
+- Implemented state management for suggestion visibility (showSuggestions)
+- Added close button (X) in suggestions header for better UX
+- Created "Показать быстрые предложения" button when suggestions are hidden
+- Enhanced user control over chat interface elements for cleaner experience

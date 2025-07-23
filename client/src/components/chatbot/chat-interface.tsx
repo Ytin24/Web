@@ -44,6 +44,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   const [isMinimized, setIsMinimized] = useState(false);
   const [chatSize, setChatSize] = useState({ width: 480, height: 600 });
   const [isResizing, setIsResizing] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
@@ -366,9 +367,20 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
           <Separator />
 
           {/* Quick suggestions (show when no messages yet) */}
-          {messages.length === 1 && (
-            <div className="border-t border-border bg-muted/20 p-3 sm:p-4">
-              <p className="text-xs text-muted-foreground mb-3 font-medium">✨ Быстрые предложения:</p>
+          {messages.length === 1 && showSuggestions && (
+            <div className="border-t border-border bg-muted/20 p-3 sm:p-4 relative">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs text-muted-foreground font-medium">✨ Быстрые предложения:</p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSuggestions(false)}
+                  className="w-6 h-6 p-0 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  title="Скрыть предложения"
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {quickSuggestions.slice(0, 4).map((suggestion, index) => (
                   <Button
@@ -413,6 +425,19 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                 <Send className="w-4 h-4" />
               </Button>
             </div>
+            {/* Show suggestions button when hidden */}
+            {messages.length === 1 && !showSuggestions && (
+              <div className="mt-2 flex justify-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSuggestions(true)}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Показать быстрые предложения
+                </Button>
+              </div>
+            )}
           </div>
         </>
       )}
