@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Input } from './input';
 import { cn } from '@/lib/utils';
+import { useDeviceDetection } from '@/hooks/use-device-detection';
 
 interface PhoneInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> {
   value?: string;
@@ -12,6 +13,7 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
   ({ className, onChange, value = '', ...props }, ref) => {
     const [displayValue, setDisplayValue] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
+    const { isMobile } = useDeviceDetection();
 
     // Функция для форматирования номера телефона
     const formatPhoneNumber = (input: string): string => {
@@ -100,6 +102,13 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       }
     };
 
+    // Мемоизируем финальные стили для производительности
+    const finalClassName = useMemo(() => {
+      const baseClasses = "font-mono h-12 text-base";
+      const mobileClasses = isMobile ? "text-lg" : ""; // Увеличиваем текст на мобильных
+      return cn(baseClasses, mobileClasses, className);
+    }, [className, isMobile]);
+
     return (
       <Input
         ref={inputRef}
@@ -110,7 +119,8 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
         placeholder="+7 (___) ___-__-__"
-        className={cn("font-mono h-12 text-base", className)}
+        className={finalClassName}
+        autoComplete="tel"
         {...props}
       />
     );

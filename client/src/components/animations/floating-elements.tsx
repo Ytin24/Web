@@ -1,17 +1,47 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useDeviceDetection } from '@/hooks/use-device-detection';
 
 export default function FloatingElements() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const frameRef = useRef<number>();
+  const { isMobile, hasReducedMotion, isLowPowerMode } = useDeviceDetection();
+
+  const updateMousePosition = useCallback((e: MouseEvent) => {
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current);
+    }
+    
+    frameRef.current = requestAnimationFrame(() => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    });
+  }, []);
 
   useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
+    // Отключаем на мобильных и слабых устройствах
+    if (isMobile || hasReducedMotion || isLowPowerMode) {
+      return;
+    }
 
-    window.addEventListener('mousemove', updateMousePosition);
-    return () => window.removeEventListener('mousemove', updateMousePosition);
-  }, []);
+    // Throttled mouse tracking только для десктопа
+    window.addEventListener('mousemove', updateMousePosition, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', updateMousePosition);
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
+    };
+  }, [updateMousePosition, isMobile, hasReducedMotion, isLowPowerMode]);
+
+  // Мемоизируем анимационные настройки
+  const animationSettings = useMemo(() => ({
+    transition: { type: "spring", damping: hasReducedMotion ? 50 : 30, stiffness: hasReducedMotion ? 200 : 100 }
+  }), [hasReducedMotion]);
+
+  // Не рендерим на мобильных для экономии ресурсов
+  if (isMobile || hasReducedMotion || isLowPowerMode) {
+    return null;
+  }
 
   // Subtle gradient orbs that react to mouse movement
   return (
@@ -27,7 +57,7 @@ export default function FloatingElements() {
           x: mousePosition.x * 0.01,
           y: mousePosition.y * 0.01,
         }}
-        transition={{ type: "spring", damping: 30 }}
+        transition={animationSettings.transition}
       />
       
       {/* Right gradient blur */}
@@ -41,7 +71,7 @@ export default function FloatingElements() {
           x: mousePosition.x * -0.015,
           y: mousePosition.y * 0.02,
         }}
-        transition={{ type: "spring", damping: 25 }}
+        transition={animationSettings.transition}
       />
 
       {/* Bottom gradient blur */}
@@ -55,7 +85,7 @@ export default function FloatingElements() {
           x: mousePosition.x * 0.008,
           y: mousePosition.y * -0.012,
         }}
-        transition={{ type: "spring", damping: 35 }}
+        transition={animationSettings.transition}
       />
     </div>
   );
