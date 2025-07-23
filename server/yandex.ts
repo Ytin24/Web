@@ -1,4 +1,6 @@
 // Yandex APIs integration
+import { YANDEX_MAPS_API_KEY } from './secrets';
+
 export interface YandexConfig {
   mapsApiKey?: string;
   metricsCounterId?: string;
@@ -13,8 +15,9 @@ export class YandexIntegration {
 
   // Yandex Maps configuration
   getMapConfig() {
+    const apiKey = YANDEX_MAPS_API_KEY;
     return {
-      apiKey: this.config.mapsApiKey,
+      apiKey: apiKey,
       center: [55.751244, 37.618423], // Default to Moscow
       zoom: 10,
       controls: ['zoomControl', 'fullscreenControl']
@@ -62,7 +65,7 @@ export class YandexIntegration {
 
 // Initialize with environment variables
 export const yandexIntegration = new YandexIntegration({
-  mapsApiKey: process.env.YANDEX_MAPS_API_KEY,
+  mapsApiKey: YANDEX_MAPS_API_KEY,
   metricsCounterId: process.env.YANDEX_METRICS_COUNTER_ID
 });
 
