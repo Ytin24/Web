@@ -231,6 +231,25 @@ export const contactInfo = pgTable("contact_info", {
   updatedBy: integer("updated_by").references(() => users.id),
 });
 
+// Services Table for managing business services
+export const services = pgTable("services", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  shortDescription: text("short_description"), // Brief description for cards
+  price: text("price"), // Flexible pricing (e.g., "от 2000₽", "договорная")
+  duration: text("duration"), // Service duration (e.g., "2-3 часа", "1 день")
+  category: text("category").notNull(), // 'bouquets', 'decoration', 'events', 'delivery', 'consultation'
+  features: text("features"), // JSON array of service features
+  imageUrl: text("image_url"),
+  isActive: boolean("is_active").default(true),
+  isPopular: boolean("is_popular").default(false),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedBy: integer("updated_by").references(() => users.id),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -392,6 +411,20 @@ export const insertContactInfoSchema = createInsertSchema(contactInfo).pick({
   additionalInfo: true,
 });
 
+export const insertServiceSchema = createInsertSchema(services).pick({
+  name: true,
+  description: true,
+  shortDescription: true,
+  price: true,
+  duration: true,
+  category: true,
+  features: true,
+  imageUrl: true,
+  isActive: true,
+  isPopular: true,
+  sortOrder: true,
+});
+
 // Site Settings table for color scheme and other global settings
 export const siteSettings = pgTable("site_settings", {
   id: serial("id").primaryKey(),
@@ -434,6 +467,9 @@ export type Image = typeof images.$inferSelect;
 
 export type InsertContactInfo = z.infer<typeof insertContactInfoSchema>;
 export type ContactInfo = typeof contactInfo.$inferSelect;
+
+export type InsertService = z.infer<typeof insertServiceSchema>;
+export type Service = typeof services.$inferSelect;
 
 export type InsertApiToken = z.infer<typeof insertApiTokenSchema>;
 export type ApiToken = typeof apiTokens.$inferSelect;

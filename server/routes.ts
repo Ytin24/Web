@@ -29,6 +29,7 @@ import { setupSwagger } from "./swagger";
 import { injectYandexScripts, yandexIntegration } from "./yandex";
 import colorSchemeRoutes from "./color-scheme-routes";
 import contactRoutes from "./contact-routes";
+import servicesRoutes from "./services-routes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -900,6 +901,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Contact information routes
   app.use('/api/contact-info', contactRoutes);
+  
+  // Services management routes
+  app.use('/api/services', servicesRoutes);
 
   const httpServer = createServer(app);
   return httpServer;
