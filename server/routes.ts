@@ -241,6 +241,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertBlogPostSchema.parse(req.body);
       const blogPost = await storage.createBlogPost(validatedData);
+      
+      // Trigger webhook notification
+      const { webhookService } = await import('./webhook-service');
+      const eventType = blogPost.isPublished ? 'blog.post_published' : 'blog.post_created';
+      await webhookService.triggerWebhook(eventType, {
+        id: blogPost.id,
+        title: blogPost.title,
+        category: blogPost.category,
+        isPublished: blogPost.isPublished,
+        createdAt: blogPost.createdAt
+      });
+      
       res.status(201).json(blogPost);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -395,6 +407,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertCallbackRequestSchema.parse(req.body);
       const callbackRequest = await storage.createCallbackRequest(validatedData);
+      
+      // Trigger webhook notification
+      const { webhookService } = await import('./webhook-service');
+      await webhookService.triggerWebhook('callback.created', {
+        id: callbackRequest.id,
+        name: callbackRequest.name,
+        phone: callbackRequest.phone,
+        message: callbackRequest.message,
+        callTime: callbackRequest.callTime,
+        createdAt: callbackRequest.createdAt
+      });
+      
       res.status(201).json(callbackRequest);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -662,6 +686,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertSaleSchema.parse(req.body);
       const sale = await storage.createSale(validatedData);
+      
+      // Trigger webhook notification
+      const { webhookService } = await import('./webhook-service');
+      await webhookService.triggerWebhook('sale.created', {
+        id: sale.id,
+        customerName: sale.customerName,
+        customerPhone: sale.customerPhone,
+        productName: sale.productName,
+        totalAmount: sale.totalAmount,
+        paymentMethod: sale.paymentMethod,
+        status: sale.status,
+        createdAt: sale.createdAt
+      });
+      
       res.status(201).json(sale);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -904,6 +942,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Services management routes
   app.use('/api/services', servicesRoutes);
+  
+  // Webhook management routes
+  const webhookRoutes = await import('./webhook-routes');
+  app.use('/api/webhooks', webhookRoutes.default);
 
   const httpServer = createServer(app);
   return httpServer;

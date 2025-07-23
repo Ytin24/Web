@@ -63,6 +63,35 @@ export const userSessions = pgTable("user_sessions", {
   lastActivity: timestamp("last_activity").defaultNow(),
 });
 
+// Webhooks table for callback notifications
+export const webhooks = pgTable("webhooks", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  name: text("name").notNull(), // User-friendly name for webhook
+  url: text("url").notNull(), // Callback URL
+  events: text("events").notNull(), // JSON array of subscribed events
+  secret: text("secret"), // Optional webhook secret for signature verification
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  lastTriggered: timestamp("last_triggered"),
+  successCount: integer("success_count").default(0),
+  failureCount: integer("failure_count").default(0),
+});
+
+// Webhook deliveries log
+export const webhookDeliveries = pgTable("webhook_deliveries", {
+  id: serial("id").primaryKey(),
+  webhookId: integer("webhook_id").notNull().references(() => webhooks.id),
+  eventType: text("event_type").notNull(),
+  payload: text("payload").notNull(), // JSON payload sent
+  responseStatus: integer("response_status"), // HTTP status code from callback URL
+  responseBody: text("response_body"), // Response from callback URL
+  attemptCount: integer("attempt_count").default(1),
+  successful: boolean("successful").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  deliveredAt: timestamp("delivered_at"),
+});
+
 export const sections = pgTable("sections", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(), // 'hero', 'about', 'loyalty', etc.
@@ -425,6 +454,16 @@ export const insertServiceSchema = createInsertSchema(services).pick({
   sortOrder: true,
 });
 
+// Webhook schemas
+export const insertWebhookSchema = createInsertSchema(webhooks).pick({
+  name: true,
+  url: true,
+  events: true,
+  secret: true,
+});
+
+export const updateWebhookSchema = insertWebhookSchema.partial();
+
 // Site Settings table for color scheme and other global settings
 export const siteSettings = pgTable("site_settings", {
   id: serial("id").primaryKey(),
@@ -467,6 +506,12 @@ export type Image = typeof images.$inferSelect;
 
 export type InsertContactInfo = z.infer<typeof insertContactInfoSchema>;
 export type ContactInfo = typeof contactInfo.$inferSelect;
+
+// Webhook types
+export type Webhook = typeof webhooks.$inferSelect;
+export type InsertWebhook = typeof webhooks.$inferInsert;
+export type WebhookDelivery = typeof webhookDeliveries.$inferSelect;
+export type InsertWebhookDelivery = typeof webhookDeliveries.$inferInsert;
 
 export type InsertService = z.infer<typeof insertServiceSchema>;
 export type Service = typeof services.$inferSelect;

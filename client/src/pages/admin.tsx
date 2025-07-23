@@ -21,6 +21,7 @@ import CRMManagement from "@/components/admin/crm-management";
 import { ColorSchemeManagement } from "@/components/admin/color-scheme-management";
 import { ContactManagement } from "@/components/admin/contact-management";
 import { ServicesManagement } from "@/components/admin/services-management";
+import WebhooksManagement from "@/components/admin/webhooks-management";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Section, BlogPost, PortfolioItem, CallbackRequest, LoyaltyProgram } from "@shared/schema";
 
@@ -344,6 +345,7 @@ export default function Admin() {
     { id: "contacts", label: "Контакты", icon: MapPin },
     { id: "colors", label: "Цвета", icon: Palette },
     { id: "tokens", label: "API", icon: Code },
+    { id: "webhooks", label: "Webhook'и", icon: Settings },
   ];
 
   return (
@@ -479,6 +481,14 @@ export default function Admin() {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            <TabsContent value="webhooks" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <WebhooksManagement />
+                </CardContent>
+              </Card>
             </TabsContent>
           </div>
         </Tabs>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Test Server</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+        .webhook { background: #f5f5f5; border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin: 10px 0; }
+        .timestamp { color: #666; font-size: 0.8em; }
+        .event-type { font-weight: bold; color: #2196F3; }
+        pre { background: #f9f9f9; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .status { padding: 2px 8px; border-radius: 3px; color: white; font-size: 0.8em; }
+        .success { background: #4CAF50; }
+        .error { background: #f44336; }
+    </style>
+</head>
+<body>
+    <h1>🔗 Webhook Test Server</h1>
+    <p>Этот файл демонстрирует, как можно принимать webhook'и от системы Цветокрафт.</p>
+    
+    <div id="status">
+        <h3>Статус сервера: <span class="status success">Готов к приему webhook'ов</span></h3>
+        <p><strong>Тестовый URL:</strong> https://webhook.site/#!/your-unique-id</p>
+        <p><strong>Или запустите локальный сервер:</strong> python -m http.server 8080</p>
+    </div>
+
+    <div id="instructions">
+        <h2>📋 Инструкции по настройке</h2>
+        
+        <h3>1. Создание webhook'а в админ панели</h3>
+        <ol>
+            <li>Войдите в админ панель Цветокрафт</li>
+            <li>Перейдите на вкладку "Webhook'и"</li>
+            <li>Нажмите "Добавить Webhook"</li>
+            <li>Заполните форму:
+                <ul>
+                    <li><strong>Название:</strong> Тестовый webhook</li>
+                    <li><strong>URL:</strong> https://webhook.site/#!/your-unique-id</li>
+                    <li><strong>События:</strong> Выберите нужные события</li>
+                    <li><strong>Секретный ключ:</strong> my-secret-key (опционально)</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>2. Доступные события</h3>
+        <ul>
+            <li><code>callback.created</code> - Новая заявка на обратный звонок</li>
+            <li><code>callback.updated</code> - Статус заявки изменен</li>
+            <li><code>blog.post_created</code> - Создана новая статья</li>
+            <li><code>blog.post_published</code> - Статья опубликована</li>
+            <li><code>portfolio.item_created</code> - Добавлена новая работа</li>
+            <li><code>sale.created</code> - Новая продажа</li>
+            <li><code>customer.created</code> - Новый клиент</li>
+            <li><code>product.created</code> - Новый товар</li>
+        </ul>
+
+        <h3>3. Формат webhook payload</h3>
+        <pre>{
+  "eventType": "callback.created",
+  "data": {
+    "id": 123,
+    "name": "Иван Петров",
+    "phone": "+7 (900) 123-45-67",
+    "message": "Хочу заказать букет",
+    "callTime": "завтра утром",
+    "createdAt": "2025-01-23T10:00:00Z"
+  },
+  "timestamp": "2025-01-23T10:00:00Z",
+  "source": "tsvetokraft-website"
+}</pre>
+
+        <h3>4. Заголовки webhook'а</h3>
+        <ul>
+            <li><code>Content-Type: application/json</code></li>
+            <li><code>User-Agent: Tsvetokraft-Webhook/1.0</code></li>
+            <li><code>X-Webhook-Event: callback.created</code></li>
+            <li><code>X-Webhook-Timestamp: 2025-01-23T10:00:00Z</code></li>
+            <li><code>X-Webhook-Signature: sha256=...</code> (если указан секретный ключ)</li>
+        </ul>
+
+        <h3>5. Проверка подписи (если используется секретный ключ)</h3>
+        <pre>// Node.js пример
+const crypto = require('crypto');
+
+function verifyWebhookSignature(payload, signature, secret) {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  
+  return signature === `sha256=${expectedSignature}`;
+}</pre>
+    </div>
+
+    <div id="examples">
+        <h2>🔧 Примеры обработки</h2>
+        
+        <h3>PHP обработчик</h3>
+        <pre>&lt;?php
+$payload = file_get_contents('php://input');
+$data = json_decode($payload, true);
+
+if ($data['eventType'] === 'callback.created') {
+    // Отправить email администратору
+    $subject = "Новая заявка: " . $data['data']['name'];
+    $message = "Телефон: " . $data['data']['phone'] . "\n";
+    $message .= "Сообщение: " . $data['data']['message'];
+    
+    mail('admin@example.com', $subject, $message);
+}
+
+http_response_code(200);
+echo json_encode(['status' => 'ok']);
+?&gt;</pre>
+
+        <h3>Python обработчик</h3>
+        <pre>from flask import Flask, request, jsonify
+import smtplib
+from email.mime.text import MIMEText
+
+app = Flask(__name__)
+
+@app.route('/webhook', methods=['POST'])
+def handle_webhook():
+    data = request.json
+    
+    if data['eventType'] == 'sale.created':
+        # Отправить уведомление в Telegram
+        send_telegram_message(f"💰 Новая продажа на {data['data']['totalAmount']} руб!")
+    
+    return jsonify({'status': 'ok'})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)</pre>
+
+        <h3>Интеграция с n8n</h3>
+        <p>Используйте Webhook узел n8n с URL: <code>https://your-n8n.com/webhook/webhook-id</code></p>
+        <p>Настройте автоматизации для:</p>
+        <ul>
+            <li>Отправки уведомлений в Slack/Discord</li>
+            <li>Создания задач в Trello/Notion</li>
+            <li>Отправки SMS через Twilio</li>
+            <li>Синхронизации с CRM системами</li>
+        </ul>
+    </div>
+
+    <div id="recent-webhooks">
+        <h2>📨 Последние webhook'и</h2>
+        <div id="webhook-list">
+            <p>Webhook'и будут отображаться здесь при их получении...</p>
+        </div>
+    </div>
+
+    <script>
+        // Простой JavaScript для отображения webhook'ов (если запустить как сервер)
+        function displayWebhook(webhook) {
+            const webhookList = document.getElementById('webhook-list');
+            const webhookDiv = document.createElement('div');
+            webhookDiv.className = 'webhook';
+            
+            webhookDiv.innerHTML = `
+                <div class="timestamp">${new Date().toLocaleString('ru-RU')}</div>
+                <div class="event-type">${webhook.eventType || 'test-event'}</div>
+                <pre>${JSON.stringify(webhook, null, 2)}</pre>
+            `;
+            
+            webhookList.insertBefore(webhookDiv, webhookList.firstChild);
+        }
+
+        // Демонстрационные данные
+        setTimeout(() => {
+            displayWebhook({
+                eventType: 'callback.created',
+                data: {
+                    id: 1,
+                    name: 'Мария Иванова',
+                    phone: '+7 (900) 123-45-67',
+                    message: 'Интересуют свадебные букеты'
+                },
+                timestamp: new Date().toISOString(),
+                source: 'tsvetokraft-website'
+            });
+        }, 2000);
+    </script>
+</body>
+</html>

@@ -1,13 +1,14 @@
 import { 
   users, sections, blogPosts, portfolioItems, callbackRequests, loyaltyProgram, images, apiTokens, customers, sales, settings,
-  securityLogs, userSessions, products, saleItems,
+  securityLogs, userSessions, products, saleItems, webhooks, webhookDeliveries,
   type User, type InsertUser, type Section, type InsertSection,
   type BlogPost, type InsertBlogPost, type PortfolioItem, type InsertPortfolioItem,
   type CallbackRequest, type InsertCallbackRequest, type LoyaltyProgram, type InsertLoyaltyProgram,
   type Image, type InsertImage, type ApiToken, type InsertApiToken, type Customer, type InsertCustomer,
   type Sale, type InsertSale, type Setting, type InsertSetting,
   type SecurityLog, type InsertSecurityLog, type UserSession, type InsertUserSession,
-  type Product, type InsertProduct, type SaleItem, type InsertSaleItem, type SaleWithItems
+  type Product, type InsertProduct, type SaleItem, type InsertSaleItem, type SaleWithItems,
+  type Webhook, type InsertWebhook, type WebhookDelivery, type InsertWebhookDelivery
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, sql, and, desc, asc, gte, lte } from "drizzle-orm";
@@ -20,6 +21,19 @@ export interface IStorage {
   getAllUsers(): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
   updateUserLastLogin(id: number): Promise<void>;
+
+  // Webhooks
+  getAllWebhooks(): Promise<Webhook[]>;
+  getWebhooksByUserId(userId: number): Promise<Webhook[]>;
+  getWebhook(id: number): Promise<Webhook | undefined>;
+  createWebhook(webhook: InsertWebhook): Promise<Webhook>;
+  updateWebhook(id: number, webhook: Partial<InsertWebhook>): Promise<Webhook>;
+  deleteWebhook(id: number): Promise<void>;
+  updateWebhookStats(id: number, successful: boolean): Promise<void>;
+  
+  // Webhook Deliveries
+  createWebhookDelivery(delivery: InsertWebhookDelivery): Promise<WebhookDelivery>;
+  getWebhookDeliveries(webhookId: number, limit?: number): Promise<WebhookDelivery[]>;
 
   // API Tokens
   getApiTokenById(id: number): Promise<ApiToken | undefined>;
@@ -195,6 +209,78 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ lastLogin: new Date() })
       .where(eq(users.id, id));
+  }
+
+  // Webhooks implementation
+  async getAllWebhooks(): Promise<Webhook[]> {
+    return await db.select().from(webhooks).orderBy(webhooks.createdAt);
+  }
+
+  async getWebhooksByUserId(userId: number): Promise<Webhook[]> {
+    return await db.select().from(webhooks)
+      .where(eq(webhooks.userId, userId))
+      .orderBy(webhooks.createdAt);
+  }
+
+  async getWebhook(id: number): Promise<Webhook | undefined> {
+    const [webhook] = await db.select().from(webhooks).where(eq(webhooks.id, id));
+    return webhook || undefined;
+  }
+
+  async createWebhook(insertWebhook: InsertWebhook): Promise<Webhook> {
+    const [webhook] = await db
+      .insert(webhooks)
+      .values(insertWebhook)
+      .returning();
+    return webhook;
+  }
+
+  async updateWebhook(id: number, webhookData: Partial<InsertWebhook>): Promise<Webhook> {
+    const [updatedWebhook] = await db
+      .update(webhooks)
+      .set(webhookData)
+      .where(eq(webhooks.id, id))
+      .returning();
+    return updatedWebhook;
+  }
+
+  async deleteWebhook(id: number): Promise<void> {
+    await db.delete(webhooks).where(eq(webhooks.id, id));
+  }
+
+  async updateWebhookStats(id: number, successful: boolean): Promise<void> {
+    if (successful) {
+      await db
+        .update(webhooks)
+        .set({ 
+          successCount: sql`${webhooks.successCount} + 1`,
+          lastTriggered: new Date()
+        })
+        .where(eq(webhooks.id, id));
+    } else {
+      await db
+        .update(webhooks)
+        .set({ 
+          failureCount: sql`${webhooks.failureCount} + 1`
+        })
+        .where(eq(webhooks.id, id));
+    }
+  }
+
+  // Webhook Deliveries implementation
+  async createWebhookDelivery(delivery: InsertWebhookDelivery): Promise<WebhookDelivery> {
+    const [webhookDelivery] = await db
+      .insert(webhookDeliveries)
+      .values(delivery)
+      .returning();
+    return webhookDelivery;
+  }
+
+  async getWebhookDeliveries(webhookId: number, limit: number = 50): Promise<WebhookDelivery[]> {
+    return await db.select().from(webhookDeliveries)
+      .where(eq(webhookDeliveries.webhookId, webhookId))
+      .orderBy(sql`${webhookDeliveries.createdAt} DESC`)
+      .limit(limit);
   }
 
   // API Tokens
