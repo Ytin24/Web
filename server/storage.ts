@@ -739,10 +739,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id));
   }
 
-  async updateUser(id: number, user: Partial<User>): Promise<User> {
+  async updateUser(id: number, userData: Partial<InsertUser>): Promise<User> {
     const [updatedUser] = await db
       .update(users)
-      .set(user)
+      .set(userData)
       .where(eq(users.id, id))
       .returning();
     return updatedUser;
@@ -879,9 +879,9 @@ export class DatabaseStorage implements IStorage {
       customerPhone: saleData.customerPhone,
       customerEmail: saleData.customerEmail,
       productName: `${saleData.items.length} товаров`, // Multi-product indicator
-      quantity: saleData.items.length,
-      unitPrice: subtotalAmount / saleData.items.length,
-      subtotal: subtotalAmount,
+      quantity: saleData.items.length.toString(),
+      unitPrice: (subtotalAmount / saleData.items.length).toString(),
+      subtotal: subtotalAmount.toString(),
       taxAmount: taxAmount.toString(),
       totalAmount: totalAmount.toString(),
       notes: saleData.notes,

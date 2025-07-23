@@ -110,7 +110,8 @@ export function generateJwtToken(user: User, sessionToken?: string): string {
 export function getUserPermissions(user: User): string[] {
   const rolePermissions = ROLE_PERMISSIONS[user.role as keyof typeof ROLE_PERMISSIONS] || [];
   const individualPermissions = user.permissions ? JSON.parse(user.permissions) : [];
-  return [...new Set([...rolePermissions, ...individualPermissions])];
+  const allPermissions = [...rolePermissions, ...individualPermissions];
+  return Array.from(new Set(allPermissions));
 }
 
 // Check if user has specific permission
@@ -136,7 +137,7 @@ export async function authenticateToken(req: AuthRequest, res: Response, next: N
     
     // Check for API token first
     if (token?.startsWith('tk_')) {
-      const apiToken = await storage.getApiTokenByToken(token);
+      const apiToken = await storage.getApiTokenByHash(token);
       if (!apiToken || !apiToken.isActive) {
         return res.status(401).json({ error: 'Invalid or inactive API token' });
       }
@@ -330,7 +331,7 @@ export async function loginUserSecure(username: string, password: string, req: R
       
       // Check if we need to lock the account
       const updatedUser = await storage.getUserById(user.id);
-      if (updatedUser && updatedUser.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
+      if (updatedUser && (updatedUser.failedLoginAttempts || 0) >= MAX_FAILED_ATTEMPTS) {
         const lockUntil = new Date(Date.now() + LOCKOUT_TIME);
         await storage.lockUserAccount(user.id, lockUntil);
         
@@ -339,7 +340,7 @@ export async function loginUserSecure(username: string, password: string, req: R
           user.id,
           ipAddress,
           userAgent,
-          { attempts: updatedUser.failedLoginAttempts, lockedUntil: lockUntil },
+          { attempts: updatedUser.failedLoginAttempts || 0, lockedUntil: lockUntil },
           'critical'
         );
         return { success: false, error: 'Account locked due to multiple failed attempts' };
