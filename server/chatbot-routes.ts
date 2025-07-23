@@ -257,34 +257,73 @@ router.post("/analyze", async (req, res) => {
       return res.status(400).json({ message: "Invalid messages array" });
     }
 
-    const { openaiService } = await import('./openai-service');
-    
     // Создаем контекст разговора для анализа
     const conversationText = messages
       .map(msg => `${msg.role === 'user' ? 'Клиент' : 'Флора'}: ${msg.content}`)
       .join('\n');
 
-    const analysisPrompt = `Проанализируй разговор с клиентом и извлеки ключевую информацию для заявки на обратный звонок.
-
-РАЗГОВОР:
-${conversationText}
-
-Составь краткое сообщение для формы обратной связи, включив:
-1. Тип букета/цветов, которые интересуют клиента
-2. Повод или событие (если упоминалось)  
-3. Предпочтения по цветам, стилю, размеру
-4. Бюджет (если обсуждался)
-5. Срочность заказа
-6. Любые особые пожелания
-
-Ответь ТОЛЬКО текстом сообщения без дополнительных комментариев. Максимум 200 символов.`;
-
-    const summary = await openaiService.generateChatResponse([
-      { role: 'user', content: analysisPrompt }
-    ]);
+    // Простой анализ без использования AI - извлекаем ключевые слова
+    let summary = '';
+    const userMessages = messages.filter(msg => msg.role === 'user').map(msg => msg.content.toLowerCase());
+    const fullText = userMessages.join(' ');
+    
+    // Определяем тип цветов
+    const flowerTypes = [];
+    if (fullText.includes('роз')) flowerTypes.push('розы');
+    if (fullText.includes('пион')) flowerTypes.push('пионы');
+    if (fullText.includes('тюльпан')) flowerTypes.push('тюльпаны');
+    if (fullText.includes('лилии')) flowerTypes.push('лилии');
+    if (fullText.includes('хризантем')) flowerTypes.push('хризантемы');
+    
+    // Определяем повод
+    let occasion = '';
+    if (fullText.includes('день рожден') || fullText.includes('др')) occasion = 'день рождения';
+    else if (fullText.includes('свадьб')) occasion = 'свадьба';
+    else if (fullText.includes('8 марта') || fullText.includes('женский день')) occasion = '8 марта';
+    else if (fullText.includes('романтик') || fullText.includes('любим')) occasion = 'романтический повод';
+    else if (fullText.includes('мам')) occasion = 'для мамы';
+    
+    // Определяем цвета
+    const colors = [];
+    if (fullText.includes('розов')) colors.push('розовые');
+    if (fullText.includes('красн')) colors.push('красные');
+    if (fullText.includes('бел')) colors.push('белые');
+    if (fullText.includes('желт')) colors.push('желтые');
+    
+    // Определяем бюджет
+    let budget = '';
+    const budgetMatch = fullText.match(/(\d+)\s*(руб|рублей|тысяч|к)/);
+    if (budgetMatch) {
+      budget = `до ${budgetMatch[1]} руб`;
+    }
+    
+    // Определяем срочность
+    let urgency = '';
+    if (fullText.includes('завтра') || fullText.includes('срочно') || fullText.includes('сегодня')) {
+      urgency = 'Срочно';
+    }
+    
+    // Составляем итоговое сообщение
+    const parts = [];
+    if (flowerTypes.length > 0) parts.push(`Интересуется: ${flowerTypes.join(', ')}`);
+    if (occasion) parts.push(`Повод: ${occasion}`);
+    if (colors.length > 0) parts.push(`Цвета: ${colors.join(', ')}`);
+    if (budget) parts.push(`Бюджет: ${budget}`);
+    if (urgency) parts.push(urgency);
+    
+    if (parts.length > 0) {
+      summary = parts.join('. ') + '.';
+    } else {
+      summary = 'Интересуется букетами. Прошу связаться для консультации и оформления заказа.';
+    }
+    
+    // Ограничиваем длину до 200 символов
+    if (summary.length > 200) {
+      summary = summary.substring(0, 197) + '...';
+    }
 
     res.json({ 
-      summary: summary.content,
+      summary: summary,
       success: true 
     });
 

@@ -243,8 +243,9 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div 
+    <AnimatePresence mode="wait">
+      <motion.div
+        key="chat-interface" 
         ref={chatRef}
         initial={{ scale: 0.8, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -629,6 +630,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
       
       {/* Contact Form Modal */}
       <ContactFormModal
+        key="contact-modal"
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
         initialMessage={contactMessage}
