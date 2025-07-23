@@ -126,13 +126,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
   const sendStreamingMessage = async (messages: ChatMessage[]) => {
     setIsStreaming(true);
     
-    // Добавляем временное сообщение для стриминга
-    const tempAssistantMessage: ChatMessage = {
-      role: 'assistant',
-      content: '',
-      timestamp: new Date(),
-    };
-    setMessages(prev => [...prev, tempAssistantMessage]);
+    let streamingMessage: ChatMessage | null = null;
 
     try {
       const response = await fetch('/api/chatbot/stream', {
@@ -179,18 +173,28 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                 if (content) {
                   accumulatedContent += content;
                   
-                  // Обновляем последнее сообщение с накопленным содержимым
-                  setMessages(prev => {
-                    const newMessages = [...prev];
-                    const lastMessageIndex = newMessages.length - 1;
-                    if (lastMessageIndex >= 0 && newMessages[lastMessageIndex].role === 'assistant') {
-                      newMessages[lastMessageIndex] = {
-                        ...newMessages[lastMessageIndex],
-                        content: accumulatedContent
-                      };
-                    }
-                    return newMessages;
-                  });
+                  // Создаем или обновляем стриминговое сообщение
+                  if (!streamingMessage) {
+                    streamingMessage = {
+                      role: 'assistant',
+                      content: accumulatedContent,
+                      timestamp: new Date(),
+                    };
+                    setMessages(prev => [...prev, streamingMessage!]);
+                  } else {
+                    // Обновляем последнее сообщение с накопленным содержимым
+                    setMessages(prev => {
+                      const newMessages = [...prev];
+                      const lastMessageIndex = newMessages.length - 1;
+                      if (lastMessageIndex >= 0 && newMessages[lastMessageIndex].role === 'assistant') {
+                        newMessages[lastMessageIndex] = {
+                          ...newMessages[lastMessageIndex],
+                          content: accumulatedContent
+                        };
+                      }
+                      return newMessages;
+                    });
+                  }
                 }
               } catch (e) {
                 console.warn('Failed to parse streaming data:', data);
@@ -204,15 +208,27 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
     } catch (error) {
       console.error('Streaming error:', error);
       
-      // В случае ошибки удаляем временное сообщение и показываем fallback
-      setMessages(prev => {
-        const newMessages = prev.slice(0, -1); // Удаляем последнее (временное) сообщение
-        return [...newMessages, {
-          role: 'assistant',
-          content: 'Извините, произошла техническая ошибка. Попробуйте еще раз через несколько секунд.',
-          timestamp: new Date(),
-        }];
-      });
+      // В случае ошибки показываем fallback сообщение
+      const errorMessage: ChatMessage = {
+        role: 'assistant',
+        content: 'Извините, произошла техническая ошибка. Попробуйте еще раз через несколько секунд.',
+        timestamp: new Date(),
+      };
+      
+      if (streamingMessage) {
+        // Если уже есть стриминговое сообщение, заменяем его на ошибку
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const lastMessageIndex = newMessages.length - 1;
+          if (lastMessageIndex >= 0 && newMessages[lastMessageIndex].role === 'assistant') {
+            newMessages[lastMessageIndex] = errorMessage;
+          }
+          return newMessages;
+        });
+      } else {
+        // Если стриминговое сообщение еще не создано, просто добавляем ошибку
+        setMessages(prev => [...prev, errorMessage]);
+      }
       
       toast({
         title: "Ошибка",
@@ -607,7 +623,7 @@ export default function ChatInterface({ isOpen, onClose, className }: ChatInterf
                   </div>
                 ))}
                 
-                {(chatMutation.isPending || isStreaming) && (
+                {(chatMutation.isPending || (isStreaming && messages.length > 0 && messages[messages.length - 1].role === 'user')) && (
                   <div className="flex gap-3">
                     <Avatar className="w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-400">
                       <AvatarFallback className="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold">
