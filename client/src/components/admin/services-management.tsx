@@ -89,8 +89,8 @@ export function ServicesManagement() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
         },
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
 
@@ -127,8 +127,8 @@ export function ServicesManagement() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
         },
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
 
@@ -159,9 +159,7 @@ export function ServicesManagement() {
     mutationFn: async (id: number) => {
       const response = await fetch(`/api/services/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
-        },
+        credentials: 'include',
       });
 
       if (!response.ok) throw new Error('Failed to delete service');
@@ -196,9 +194,9 @@ export function ServicesManagement() {
       category: service.category,
       features,
       imageUrl: service.imageUrl || "",
-      isActive: service.isActive,
-      isPopular: service.isPopular,
-      sortOrder: service.sortOrder
+      isActive: service.isActive ?? true,
+      isPopular: service.isPopular ?? false,
+      sortOrder: service.sortOrder ?? 0
     });
     setIsFormOpen(true);
   };

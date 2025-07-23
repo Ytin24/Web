@@ -63,7 +63,11 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST /api/services - Create new service (admin only)
-router.post("/", authenticateToken, requireRole(['admin', 'super_admin']), async (req, res) => {
+router.post("/", async (req, res) => {
+  // Check authentication with session
+  if (!req.session?.user) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
   try {
     const validation = insertServiceSchema.safeParse(req.body);
     
@@ -75,7 +79,7 @@ router.post("/", authenticateToken, requireRole(['admin', 'super_admin']), async
     }
 
     const serviceData = validation.data;
-    const userId = (req as any).user?.id;
+    const userId = req.session?.user?.id;
 
     const [newService] = await db
       .insert(services)
@@ -97,7 +101,11 @@ router.post("/", authenticateToken, requireRole(['admin', 'super_admin']), async
 });
 
 // PUT /api/services/:id - Update service (admin only)
-router.put("/:id", authenticateToken, requireRole(['admin', 'super_admin']), async (req, res) => {
+router.put("/:id", async (req, res) => {
+  // Check authentication with session
+  if (!req.session?.user) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
@@ -114,7 +122,7 @@ router.put("/:id", authenticateToken, requireRole(['admin', 'super_admin']), asy
     }
 
     const serviceData = validation.data;
-    const userId = (req as any).user?.id;
+    const userId = req.session?.user?.id;
 
     const [updatedService] = await db
       .update(services)
@@ -141,7 +149,11 @@ router.put("/:id", authenticateToken, requireRole(['admin', 'super_admin']), asy
 });
 
 // DELETE /api/services/:id - Delete service (admin only)
-router.delete("/:id", authenticateToken, requireRole(['admin', 'super_admin']), async (req, res) => {
+router.delete("/:id", async (req, res) => {
+  // Check authentication with session
+  if (!req.session?.user) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {

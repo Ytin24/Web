@@ -73,7 +73,7 @@ export default function LoyaltyProgramManagement() {
     onCancel: () => void;
   }) => {
     const [formData, setFormData] = useState({
-      level: program?.level || "",
+      level: program?.level || "bronze",
       title: program?.title || "",
       description: program?.description || "",
       benefits: program?.benefits || '["Преимущество 1", "Преимущество 2"]',

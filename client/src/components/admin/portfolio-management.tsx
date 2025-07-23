@@ -104,7 +104,7 @@ export default function PortfolioManagement() {
     const [formData, setFormData] = useState({
       title: item?.title || "",
       description: item?.description || "",
-      category: item?.category || "",
+      category: item?.category || "wedding",
       imageUrl: item?.imageUrl || "",
       isActive: item?.isActive ?? true
     });
