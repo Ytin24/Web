@@ -284,9 +284,9 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed top-4 left-4 right-4 bottom-4 sm:bottom-20 sm:right-4 sm:left-auto sm:top-auto z-[60] w-auto h-auto sm:w-[400px] sm:h-[600px] md:w-[480px] max-w-none sm:max-w-[90vw]"
+            className="fixed top-4 left-4 right-4 bottom-4 sm:bottom-20 sm:right-4 sm:left-auto sm:top-auto z-[60] sm:w-[400px] sm:h-[600px] md:w-[480px] max-w-none sm:max-w-[90vw]"
           >
-            <Card className="h-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-2 border-pink-200/50 dark:border-purple-600/50 shadow-2xl rounded-none sm:rounded-lg">
+            <Card className="h-full max-h-full overflow-hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-2 border-pink-200/50 dark:border-purple-600/50 shadow-2xl rounded-none sm:rounded-lg flex flex-col">
               {/* Header */}
               <CardHeader className="p-3 sm:p-4 bg-gradient-to-r from-pink-400/90 to-purple-500/90 text-white rounded-none sm:rounded-t-lg flex-shrink-0">
                 <div className="flex items-center justify-between">
@@ -316,7 +316,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
               </CardHeader>
 
               {/* Messages */}
-              <CardContent className="p-0 flex flex-col flex-1 min-h-0">
+              <CardContent className="p-0 flex flex-col flex-1 min-h-0 overflow-hidden">
                 <ScrollArea ref={scrollAreaRef} className="flex-1 min-h-0 p-3 sm:p-4">
                   <div className="space-y-4">
                     {messages.map((message, index) => (
