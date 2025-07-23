@@ -242,7 +242,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = insertBlogPostSchema.parse(req.body);
       const blogPost = await storage.createBlogPost(validatedData);
       
-      // Trigger webhook notification
+      // Отправка webhook уведомления
       const { webhookService } = await import('./webhook-service');
       const eventType = blogPost.isPublished ? 'blog.post_published' : 'blog.post_created';
       await webhookService.triggerWebhook(eventType, {
@@ -408,7 +408,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = insertCallbackRequestSchema.parse(req.body);
       const callbackRequest = await storage.createCallbackRequest(validatedData);
       
-      // Trigger webhook notification
+      // Отправка webhook уведомления
       const { webhookService } = await import('./webhook-service');
       await webhookService.triggerWebhook('callback.created', {
         id: callbackRequest.id,
@@ -687,7 +687,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = insertSaleSchema.parse(req.body);
       const sale = await storage.createSale(validatedData);
       
-      // Trigger webhook notification
+      // Отправка webhook уведомления
       const { webhookService } = await import('./webhook-service');
       await webhookService.triggerWebhook('sale.created', {
         id: sale.id,

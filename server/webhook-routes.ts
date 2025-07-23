@@ -8,7 +8,7 @@ import type { AuthRequest } from './auth';
 
 const router = Router();
 
-// Get all available webhook events
+// Получить все доступные события webhook'ов
 router.get('/events', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const events = Object.entries(WEBHOOK_EVENTS).map(([key, description]) => ({
@@ -18,17 +18,17 @@ router.get('/events', authenticateToken, async (req: AuthRequest, res) => {
     
     res.json(events);
   } catch (error) {
-    console.error('Error fetching webhook events:', error);
-    res.status(500).json({ error: 'Failed to fetch webhook events' });
+    console.error('Ошибка получения событий webhook\'ов:', error);
+    res.status(500).json({ error: 'Не удалось получить события webhook\'ов' });
   }
 });
 
-// Get all webhooks for current user
+// Получить все webhook'и текущего пользователя
 router.get('/', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const webhooks = await storage.getWebhooksByUserId(req.user!.id);
     
-    // Add statistics to each webhook
+    // Добавить статистику к каждому webhook'у
     const webhooksWithStats = await Promise.all(
       webhooks.map(async (webhook) => {
         const stats = await webhookService.getWebhookStats(webhook.id);
@@ -42,8 +42,8 @@ router.get('/', authenticateToken, async (req: AuthRequest, res) => {
     
     res.json(webhooksWithStats);
   } catch (error) {
-    console.error('Error fetching webhooks:', error);
-    res.status(500).json({ error: 'Failed to fetch webhooks' });
+    console.error('Ошибка получения webhook\'ов:', error);
+    res.status(500).json({ error: 'Не удалось получить webhook\'и' });
   }
 });
 

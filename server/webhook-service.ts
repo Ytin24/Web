@@ -9,38 +9,38 @@ export interface WebhookEventData {
   source: string;
 }
 
-// Available webhook events
+// Доступные события webhook'ов
 export const WEBHOOK_EVENTS = {
-  // Callback requests
+  // События заявок на звонок
   'callback.created': 'Новая заявка на обратный звонок',
   'callback.updated': 'Статус заявки изменен',
   
-  // Chat events
+  // События чата с клиентами
   'chat.message_sent': 'Новое сообщение в чате',
   'chat.conversation_started': 'Начат новый диалог',
   
-  // Blog events
+  // События блога
   'blog.post_created': 'Создана новая статья',
   'blog.post_published': 'Статья опубликована',
   
-  // Portfolio events
+  // События портфолио
   'portfolio.item_created': 'Добавлена новая работа в портфолио',
   'portfolio.item_updated': 'Работа в портфолио обновлена',
   
-  // Sales events
+  // События продаж
   'sale.created': 'Новая продажа',
   'sale.updated': 'Продажа обновлена',
   
-  // Product events
+  // События товаров
   'product.created': 'Новый товар добавлен',
   'product.updated': 'Товар обновлен',
   'product.low_stock': 'Товар заканчивается',
   
-  // Customer events
+  // События клиентов
   'customer.created': 'Новый клиент',
   'customer.updated': 'Данные клиента обновлены',
   
-  // System events
+  // Системные события
   'system.backup_completed': 'Резервное копирование завершено',
   'system.error': 'Системная ошибка',
 } as const;
@@ -49,7 +49,7 @@ export type WebhookEventType = keyof typeof WEBHOOK_EVENTS;
 
 export class WebhookService {
   
-  // Send webhook to all subscribed endpoints
+  // Отправка webhook'а всем подписанным адресам
   async triggerWebhook(eventType: WebhookEventType, data: any, userId?: number): Promise<void> {
     const webhooks = userId 
       ? await storage.getWebhooksByUserId(userId)
@@ -58,7 +58,7 @@ export class WebhookService {
     const activeWebhooks = webhooks.filter(w => w.isActive);
     
     if (activeWebhooks.length === 0) {
-      console.log(`No active webhooks found for event: ${eventType}`);
+      console.log(`Активные webhook'и не найдены для события: ${eventType}`);
       return;
     }
 
@@ -69,7 +69,7 @@ export class WebhookService {
       source: 'tsvetokraft-website'
     };
 
-    // Send webhooks in parallel
+    // Отправка webhook'ов параллельно
     const deliveryPromises = activeWebhooks.map(webhook => 
       this.deliverWebhook(webhook, eventData)
     );
@@ -77,11 +77,11 @@ export class WebhookService {
     await Promise.allSettled(deliveryPromises);
   }
 
-  // Deliver webhook to specific endpoint
+  // Доставка webhook'а на конкретный адрес
   private async deliverWebhook(webhook: Webhook, eventData: WebhookEventData): Promise<void> {
     const subscribedEvents = JSON.parse(webhook.events) as string[];
     
-    // Check if webhook is subscribed to this event
+    // Проверка подписки на данное событие
     if (!subscribedEvents.includes(eventData.eventType) && !subscribedEvents.includes('*')) {
       return;
     }
@@ -94,7 +94,7 @@ export class WebhookService {
       'X-Webhook-Timestamp': eventData.timestamp,
     };
 
-    // Add signature if secret is provided
+    // Добавление подписи если указан секретный ключ
     if (webhook.secret) {
       const signature = crypto
         .createHmac('sha256', webhook.secret)
@@ -113,7 +113,7 @@ export class WebhookService {
         method: 'POST',
         headers,
         body: payload,
-        signal: AbortSignal.timeout(30000) // 30 second timeout
+        signal: AbortSignal.timeout(30000) // Таймаут 30 секунд
       });
 
       responseStatus = response.status;
@@ -121,13 +121,13 @@ export class WebhookService {
       successful = response.ok;
 
       if (successful) {
-        console.log(`Webhook ${webhook.name} (${webhook.id}) delivered successfully for event: ${eventData.eventType}`);
+        console.log(`Webhook ${webhook.name} (${webhook.id}) успешно доставлен для события: ${eventData.eventType}`);
       } else {
-        console.error(`Webhook ${webhook.name} (${webhook.id}) failed with status ${responseStatus}: ${responseBody}`);
+        console.error(`Webhook ${webhook.name} (${webhook.id}) ошибка со статусом ${responseStatus}: ${responseBody}`);
       }
 
     } catch (error: any) {
-      console.error(`Webhook ${webhook.name} (${webhook.id}) delivery failed:`, error.message);
+      console.error(`Ошибка доставки webhook'а ${webhook.name} (${webhook.id}):`, error.message);
       responseBody = error.message;
     }
 
@@ -147,12 +147,12 @@ export class WebhookService {
     await storage.updateWebhookStats(webhook.id, successful);
   }
 
-  // Validate webhook URL
+  // Проверка URL webhook'а
   async validateWebhookUrl(url: string, secret?: string): Promise<{ valid: boolean; error?: string }> {
     try {
       const testPayload = {
         eventType: 'webhook.test',
-        data: { message: 'Test webhook from Tsvetokraft' },
+        data: { message: 'Тестовый webhook от Цветокрафт' },
         timestamp: new Date().toISOString(),
         source: 'tsvetokraft-website'
       };
@@ -176,7 +176,7 @@ export class WebhookService {
         method: 'POST',
         headers,
         body: payload,
-        signal: AbortSignal.timeout(10000) // 10 second timeout for validation
+        signal: AbortSignal.timeout(10000) // Таймаут 10 секунд для проверки
       });
 
       return { valid: response.ok };
@@ -185,7 +185,7 @@ export class WebhookService {
     }
   }
 
-  // Get webhook statistics
+  // Получение статистики webhook'а
   async getWebhookStats(webhookId: number): Promise<{
     totalDeliveries: number;
     successfulDeliveries: number;
@@ -195,7 +195,7 @@ export class WebhookService {
   }> {
     const webhook = await storage.getWebhook(webhookId);
     if (!webhook) {
-      throw new Error('Webhook not found');
+      throw new Error('Webhook не найден');
     }
 
     const deliveries = await storage.getWebhookDeliveries(webhookId, 1000);

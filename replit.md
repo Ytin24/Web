@@ -1,45 +1,45 @@
-# Цветокрафт - Flower Shop Website
+# Цветокрафт - Сайт Цветочного Магазина
 
-## Overview
+## Обзор Проекта
 
-Цветокрафт is a modern, multilingual flower shop website built with a full-stack architecture featuring React on the frontend, Express.js on the backend, and PostgreSQL database. The application serves as both a customer-facing website and an administrative content management system for a Russian flower shop business.
+Цветокрафт - современный многофункциональный веб-сайт цветочного магазина, построенный на полностековой архитектуре с React на фронтенде, Express.js на бэкенде и базой данных PostgreSQL. Приложение служит как клиентским веб-сайтом, так и административной системой управления контентом для российского цветочного бизнеса.
 
-## User Preferences
+## Предпочтения Пользователя
 
-**Communication Style**: Simple, everyday language. Запоминать все нюансы чтобы при добавлении функционала не терялся и не выбивался из стиля сайта.
+**Стиль Общения**: Простой, повседневный язык. Запоминать все нюансы чтобы при добавлении функционала не терялся и не выбивался из стиля сайта. Вести всю техническую документацию на русском языке.
 
-**Development Style Preferences**:
-- Maintain consistent visual aesthetics across all components
-- Follow established patterns for glass morphism and natural floral design
-- Use semantic color tokens (`text-foreground`, `text-muted-foreground`) instead of hardcoded colors
-- Implement responsive design with mobile-first approach
-- Add proper TypeScript typing and error handling
-- Keep animations smooth but performance-optimized
+**Предпочтения по Разработке**:
+- Поддерживать согласованную визуальную эстетику во всех компонентах
+- Следовать установленным паттернам для стеклянного морфизма и естественного флористического дизайна
+- Использовать семантические цветовые токены (`text-foreground`, `text-muted-foreground`) вместо жестко заданных цветов
+- Реализовывать адаптивный дизайн с подходом mobile-first
+- Добавлять правильную типизацию TypeScript и обработку ошибок
+- Сохранять плавные анимации, но оптимизированные по производительности
 
-## System Architecture
+## Системная Архитектура
 
-### Frontend Architecture
-- **Framework**: React with TypeScript
-- **Build Tool**: Vite for development and production builds
-- **UI Library**: Radix UI components with shadcn/ui styling system
-- **Styling**: Tailwind CSS with custom CSS variables for theming
-- **State Management**: TanStack Query (React Query) for server state management
-- **Routing**: Wouter for lightweight client-side routing
-- **Forms**: React Hook Form with Zod validation
+### Архитектура Фронтенда
+- **Фреймворк**: React с TypeScript
+- **Инструмент Сборки**: Vite для разработки и производственных сборок
+- **UI Библиотека**: Компоненты Radix UI с системой стилей shadcn/ui
+- **Стилизация**: Tailwind CSS с пользовательскими CSS переменными для тем
+- **Управление Состоянием**: TanStack Query (React Query) для управления состоянием сервера
+- **Маршрутизация**: Wouter для легковесной клиентской маршрутизации
+- **Формы**: React Hook Form с валидацией Zod
 
-### Backend Architecture
-- **Runtime**: Node.js with Express.js framework
-- **Language**: TypeScript with ES modules
-- **API Style**: RESTful API with JSON responses
-- **Middleware**: Express middleware for logging, error handling, and request parsing
-- **Development**: Hot reloading with Vite middleware integration
+### Архитектура Бэкенда
+- **Среда Выполнения**: Node.js с фреймворком Express.js
+- **Язык**: TypeScript с ES модулями
+- **Стиль API**: RESTful API с JSON ответами
+- **Middleware**: Express middleware для логирования, обработки ошибок и парсинга запросов
+- **Разработка**: Горячая перезагрузка с интеграцией Vite middleware
 
-### Database Architecture
-- **Database**: PostgreSQL with Neon serverless hosting
-- **ORM**: Drizzle ORM for type-safe database operations
-- **Schema Management**: Drizzle Kit for migrations and schema updates
-- **Connection**: @neondatabase/serverless for optimized serverless connections
-- **Storage Layer**: DatabaseStorage class implementing persistent data storage (migrated from in-memory MemStorage on 2025-01-22)
+### Архитектура Базы Данных
+- **База Данных**: PostgreSQL с хостингом Neon serverless
+- **ORM**: Drizzle ORM для типобезопасных операций с базой данных
+- **Управление Схемой**: Drizzle Kit для миграций и обновлений схемы
+- **Подключение**: @neondatabase/serverless для оптимизированных serverless подключений
+- **Слой Хранения**: Класс DatabaseStorage, реализующий постоянное хранение данных (мигрирован с in-memory MemStorage 22.01.2025)
 
 ## Key Components
 
@@ -135,21 +135,21 @@ The application features a comprehensive admin panel that allows management of:
 
 The application is designed for easy deployment on platforms like Replit while maintaining production-ready architecture patterns for potential scaling to dedicated hosting environments.
 
-## Recent Changes
+## Последние Изменения
 
-### AI-Powered Chatbot "Флора" Implementation (2025-01-22)
-- Integrated DeepSeek API for intelligent flower recommendations and consultations
-- Created personalized chatbot character "Флора" with clear boundaries and professional guidelines
-- Implemented smart conversation flow: consultation → recommendation → order direction
-- Added beautiful pink-to-purple gradient design theme for chatbot interface
-- Configured fallback responses when API is unavailable
-- Added sentiment analysis for customer feedback monitoring
-- Enhanced Flora chatbot with built-in flower recommendation system and quick command buttons
-- Removed separate /flower-ai page and integrated all AI florist functionality into Flora chat
-- Updated navigation by removing redundant AI Florist link
-- Added proper error handling and JSON parsing for API responses
-- Added Markdown support for beautifully formatted chat responses (react-markdown + remark-gfm)
-- Added quick suggestion buttons for common flower requests (букет для мамы, романтический, свадебный)
+### Реализация ИИ-Чатбота "Флора" (22.01.2025)
+- Интегрирован DeepSeek API для интеллектуальных рекомендаций цветов и консультаций
+- Создан персонализированный персонаж чатбота "Флора" с четкими границами и профессиональными руководящими принципами
+- Реализован умный поток диалога: консультация → рекомендация → направление на заказ
+- Добавлена красивая розово-фиолетовая градиентная тема дизайна для интерфейса чатбота
+- Настроены резервные ответы при недоступности API
+- Добавлен анализ настроений для мониторинга отзывов клиентов
+- Улучшен чатбот Флора с встроенной системой рекомендаций цветов и кнопками быстрых команд
+- Удалена отдельная страница /flower-ai и интегрирован весь функционал ИИ-флориста в чат Флоры
+- Обновлена навигация с удалением избыточной ссылки ИИ Флорист
+- Добавлена правильная обработка ошибок и парсинг JSON для ответов API
+- Добавлена поддержка Markdown для красиво отформатированных ответов чата (react-markdown + remark-gfm)
+- Добавлены кнопки быстрых предложений для популярных запросов цветов (букет для мамы, романтический, свадебный)
 
 ## Recent Changes
 
@@ -311,21 +311,7 @@ The application is designed for easy deployment on platforms like Replit while m
 - System automatically loads and applies saved color scheme on application startup
 - Enhanced admin panel with dedicated "Цвета" tab for comprehensive color customization
 
-### Comprehensive Webhook Notification System Implementation (2025-01-23)
-- Built complete webhook notification system for real-time tracking of website changes and events
-- Created database schema with webhooks and webhook deliveries tables for comprehensive logging
-- Implemented WebhookService class with event triggering, delivery tracking, and retry mechanisms
-- Added webhook management API routes with full CRUD operations, authentication, and validation
-- Integrated webhook events into existing routes: callback requests, blog posts, sales, and customer actions
-- Built comprehensive admin interface for webhook management with event subscription and monitoring
-- Added webhook statistics dashboard showing delivery success rates, failure counts, and recent activity
-- Implemented webhook signature verification using HMAC-SHA256 for secure payload authentication
-- Created webhook testing functionality with URL validation and test payload delivery
-- Added support for multiple event types: callbacks, blog posts, sales, customers, products, portfolio items
-- Included webhook delivery logging with response status tracking and error handling
-- Created webhook test documentation with examples for PHP, Python, and n8n integrations
-- Enhanced admin panel with dedicated "Webhook'и" tab for complete webhook lifecycle management
-- Implemented automatic webhook triggering on all major business events for external system integration
+
 
 ## Design System Guidelines
 
@@ -360,3 +346,29 @@ The application is designed for easy deployment on platforms like Replit while m
 - **API Routes**: RESTful endpoints with proper error handling and TypeScript validation
 - **Authentication**: JWT tokens with role-based access control for admin features
 - **Data Fetching**: TanStack Query with proper cache invalidation and loading states
+
+### Комплексная Реализация Системы Webhook Уведомлений (23.01.2025)
+- Построена полная система webhook уведомлений для отслеживания изменений и событий сайта в режиме реального времени
+- Создана схема базы данных с таблицами webhook'ов и доставок webhook'ов для комплексного логирования
+- Реализован класс WebhookService с запуском событий, отслеживанием доставки и механизмами повторных попыток
+- Добавлены API маршруты управления webhook'ами с полными CRUD операциями, аутентификацией и валидацией
+- Интегрированы webhook события в существующие маршруты: заявки на звонок, статьи блога, продажи и действия клиентов
+- Построен комплексный админ интерфейс для управления webhook'ами с подпиской на события и мониторингом
+- Добавлена панель статистики webhook'ов с показом коэффициентов успешности доставки, количества ошибок и недавней активности
+- Реализована проверка подписи webhook'ов с использованием HMAC-SHA256 для безопасной аутентификации payload
+- Создан функционал тестирования webhook'ов с валидацией URL и доставкой тестовых payload
+- Добавлена поддержка множественных типов событий: заявки, статьи блога, продажи, клиенты, товары, элементы портфолио
+- Включено логирование доставки webhook'ов с отслеживанием статуса ответа и обработкой ошибок
+- Создана тестовая документация webhook'ов с примерами для интеграций PHP, Python и n8n
+- Улучшена админ панель с выделенной вкладкой "Webhook'и" для полного управления жизненным циклом webhook'ов
+- Реализован автоматический запуск webhook'ов на все основные бизнес события для интеграции с внешними системами
+
+### Полная Русификация Технической Документации (23.01.2025)
+- Переведена вся техническая документация проекта на русский язык в соответствии с предпочтениями пользователя
+- Русифицированы комментарии в коде серверной части (webhook-service.ts, webhook-routes.ts, routes.ts)
+- Создана полная русская документация по webhook'ам (WEBHOOK-ДОКУМЕНТАЦИЯ.md) с примерами интеграции
+- Обновлен файл replit.md с русскими заголовками и описаниями архитектуры
+- Переведены пользовательские предпочтения и руководящие принципы разработки
+- Русифицированы все недавние изменения и описания функционала
+- Создана документация с примерами кода для PHP, Python, Node.js и интеграций с внешними системами
+- Добавлены инструкции по безопасности, тестированию и устранению неисправностей на русском языке
