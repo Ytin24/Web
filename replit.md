@@ -235,3 +235,10 @@ The application is designed for easy deployment on platforms like Replit while m
 - Added close button (X) in suggestions header for better UX
 - Created "Показать быстрые предложения" button when suggestions are hidden
 - Enhanced user control over chat interface elements for cleaner experience
+
+### Loyalty Program Button Fix (2025-01-23)
+- Fixed loyalty program button overflow on mobile devices
+- Added proper responsive sizing with max-width constraints (max-w-xs sm:max-w-sm)
+- Implemented text truncation to prevent button content overflow
+- Added shrink-0 to icon to prevent icon compression
+- Enhanced button layout with centered positioning for better mobile display

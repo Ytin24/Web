@@ -144,16 +144,16 @@ export default function LoyaltySection() {
                   className="rounded-2xl shadow-2xl mb-6 sm:mb-8 w-full h-auto max-w-sm mx-auto"
                 />
                 
-                <AppleButton>
+                <div className="w-full flex justify-center">
                   <Button 
                     onClick={() => setIsModalOpen(true)}
                     size="lg"
-                    className="floating-action px-6 sm:px-10 py-3 sm:py-4 text-base sm:text-lg font-bold shadow-2xl group transition-all duration-500 hover:shadow-3xl hover:scale-105 w-full sm:w-auto"
+                    className="floating-action px-4 sm:px-6 md:px-10 py-3 sm:py-4 text-sm sm:text-base md:text-lg font-bold shadow-2xl group transition-all duration-500 hover:shadow-3xl hover:scale-105 w-full max-w-xs sm:max-w-sm md:w-auto"
                   >
-                    <Star className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 transition-transform group-hover:scale-110" />
-                    <span>Присоединиться к программе</span>
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 transition-transform group-hover:scale-110 shrink-0" />
+                    <span className="truncate">Присоединиться к программе</span>
                   </Button>
-                </AppleButton>
+                </div>
               </div>
             </div>
           </GlassCard>
