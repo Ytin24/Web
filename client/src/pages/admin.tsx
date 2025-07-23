@@ -22,6 +22,9 @@ import { ColorSchemeManagement } from "@/components/admin/color-scheme-managemen
 import { ContactManagement } from "@/components/admin/contact-management";
 import { ServicesManagement } from "@/components/admin/services-management";
 import WebhooksManagement from "@/components/admin/webhooks-management";
+import UsersManagement from "@/components/admin/users-management";
+import SettingsManagement from "@/components/admin/settings-management";
+import SectionsManagement from "@/components/admin/sections-management";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Section, BlogPost, PortfolioItem, CallbackRequest, LoyaltyProgram } from "@shared/schema";
 
@@ -342,8 +345,11 @@ export default function Admin() {
     { id: "loyalty", label: "Лояльность", icon: Star },
     { id: "products", label: "Товары", icon: Package },
     { id: "services", label: "Услуги", icon: Settings },
+    { id: "sections", label: "Секции", icon: Edit },
     { id: "contacts", label: "Контакты", icon: MapPin },
     { id: "colors", label: "Цвета", icon: Palette },
+    { id: "users", label: "Пользователи", icon: Users },
+    { id: "settings", label: "Настройки", icon: Settings },
     { id: "tokens", label: "API", icon: Code },
     { id: "webhooks", label: "Webhook'и", icon: Settings },
   ];
@@ -459,12 +465,36 @@ export default function Admin() {
               <ServicesManagement />
             </TabsContent>
             
+            <TabsContent value="sections" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <SectionsManagement />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="contacts" className="mt-0">
               <ContactManagement />
             </TabsContent>
             
             <TabsContent value="colors" className="mt-0">
               <ColorSchemeManagement />
+            </TabsContent>
+
+            <TabsContent value="users" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <UsersManagement />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="settings" className="mt-0">
+              <Card className="glass-effect border-border/50">
+                <CardContent className="p-6">
+                  <SettingsManagement />
+                </CardContent>
+              </Card>
             </TabsContent>
             
             <TabsContent value="tokens" className="mt-0">

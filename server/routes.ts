@@ -30,6 +30,7 @@ import { injectYandexScripts, yandexIntegration } from "./yandex";
 import colorSchemeRoutes from "./color-scheme-routes";
 import contactRoutes from "./contact-routes";
 import servicesRoutes from "./services-routes";
+import settingsRoutes from "./settings-routes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -942,6 +943,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Services management routes
   app.use('/api/services', servicesRoutes);
+  
+  // Settings management routes
+  app.use('/api/settings', settingsRoutes);
   
   // Webhook management routes
   const webhookRoutes = await import('./webhook-routes');

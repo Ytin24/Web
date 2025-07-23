@@ -146,8 +146,10 @@ export interface IStorage {
   // Settings
   getAllSettings(): Promise<Setting[]>;
   getSetting(key: string): Promise<Setting | undefined>;
+  getSettingById(id: number): Promise<Setting | undefined>;
+  createSetting(setting: InsertSetting): Promise<Setting>;
   setSetting(key: string, value: string, description?: string): Promise<Setting>;
-  updateSetting(id: number, setting: Partial<InsertSetting>): Promise<Setting>;
+  updateSetting(key: string, value: string, description?: string): Promise<Setting>;
   deleteSetting(id: number): Promise<void>;
 
   // Security Logs
@@ -656,6 +658,16 @@ export class DatabaseStorage implements IStorage {
     return setting || undefined;
   }
 
+  async getSettingById(id: number): Promise<Setting | undefined> {
+    const [setting] = await db.select().from(settings).where(eq(settings.id, id));
+    return setting || undefined;
+  }
+
+  async createSetting(setting: InsertSetting): Promise<Setting> {
+    const [created] = await db.insert(settings).values(setting).returning();
+    return created;
+  }
+
   async setSetting(key: string, value: string, description?: string): Promise<Setting> {
     const existingSetting = await this.getSetting(key);
     
@@ -675,11 +687,15 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async updateSetting(id: number, settingData: Partial<InsertSetting>): Promise<Setting> {
+  async updateSetting(key: string, value: string, description?: string): Promise<Setting> {
     const [updatedSetting] = await db
       .update(settings)
-      .set({ ...settingData, updatedAt: new Date() })
-      .where(eq(settings.id, id))
+      .set({ 
+        value,
+        description,
+        updatedAt: new Date() 
+      })
+      .where(eq(settings.key, key))
       .returning();
     return updatedSetting;
   }
