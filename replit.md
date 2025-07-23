@@ -284,6 +284,7 @@ The application is designed for easy deployment on platforms like Replit while m
 - Integrated services management tab in admin panel with create, edit, delete functionality
 - Services support features lists, popularity flags, active/inactive status, and custom sorting
 - Enhanced admin panel organization with logical service management placement
+- Removed Flora chat button from admin panel to keep it only on main website pages
 
 ### Enhanced AI Chat Interface with Dynamic Animations (2025-01-23)
 - Redesigned chat button with dynamic pulsing rings, floating sparkles, and animated flower icon

@@ -19,6 +19,7 @@ import Services from "@/pages/services";
 import TooltipsDemo from "@/pages/tooltips-demo";
 
 import ChatButton from "@/components/chatbot/chat-button";
+import { useLocation } from "wouter";
 
 function Router() {
   return (
@@ -58,12 +59,16 @@ function App() {
 // Component to initialize color scheme and render app content
 function AppContent() {
   useColorScheme(); // Initialize color scheme
+  const [location] = useLocation();
+  
+  // Hide chat button on admin pages
+  const isAdminPage = location.startsWith('/admin');
   
   return (
     <>
       <Toaster />
       <Router />
-      <ChatButton />
+      {!isAdminPage && <ChatButton />}
     </>
   );
 }
