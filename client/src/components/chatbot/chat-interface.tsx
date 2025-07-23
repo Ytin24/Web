@@ -286,11 +286,11 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-20 right-4 z-[60] w-[320px] sm:w-[400px] md:w-[480px] max-w-[90vw]"
+            className="fixed inset-2 sm:bottom-20 sm:right-4 sm:inset-auto z-[60] w-full h-full sm:w-[400px] sm:h-[600px] md:w-[480px] max-w-none sm:max-w-[90vw]"
           >
-            <Card className="h-[70vh] sm:h-[600px] bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-2 border-pink-200/50 dark:border-purple-600/50 shadow-2xl">
+            <Card className="h-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-2 border-pink-200/50 dark:border-purple-600/50 shadow-2xl rounded-none sm:rounded-lg">
               {/* Header */}
-              <CardHeader className="p-3 sm:p-4 bg-gradient-to-r from-pink-400/90 to-purple-500/90 text-white rounded-t-lg">
+              <CardHeader className="p-3 sm:p-4 bg-gradient-to-r from-pink-400/90 to-purple-500/90 text-white rounded-none sm:rounded-t-lg flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="relative">
@@ -318,8 +318,8 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
               </CardHeader>
 
               {/* Messages */}
-              <CardContent className="p-0 flex flex-col h-full">
-                <ScrollArea ref={scrollAreaRef} className="flex-1 p-3 sm:p-4">
+              <CardContent className="p-0 flex flex-col flex-1 min-h-0">
+                <ScrollArea ref={scrollAreaRef} className="flex-1 min-h-0 p-3 sm:p-4">
                   <div className="space-y-4">
                     {messages.map((message, index) => (
                       <div
@@ -384,7 +384,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
 
                 {/* Quick suggestions */}
                 {showSuggestions && messages.length === 1 && (
-                  <div className="p-3 sm:p-4 border-t bg-muted/30">
+                  <div className="p-3 sm:p-4 border-t bg-muted/30 flex-shrink-0">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-sm font-medium text-foreground">Быстрые предложения</h4>
                       <Button
@@ -420,7 +420,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
                 )}
 
                 {/* Input */}
-                <div className="p-3 sm:p-4 border-t space-y-3">
+                <div className="p-3 sm:p-4 border-t space-y-3 flex-shrink-0 bg-white/95 dark:bg-gray-900/95">
                   <div className="flex gap-2">
                     <Input
                       ref={inputRef}
